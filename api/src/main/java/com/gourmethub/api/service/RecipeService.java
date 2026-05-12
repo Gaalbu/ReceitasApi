@@ -3,6 +3,7 @@ package com.gourmethub.api.service;
 import org.springframework.stereotype.Service;
 
 import com.gourmethub.api.config.RestTemplate;
+import com.gourmethub.api.model.Recipe;
 
 @Service
 public class RecipeService {
@@ -15,6 +16,11 @@ public class RecipeService {
     public Object searchExternalRecipe(String nome){
         String Url = "https://www.themealdb.com/api/json/v1/1/search.php?s=" + nome;
         return restTemplate.getForObject(Url, Object.class);
+    }
+
+    public Recipe saveRecipe(Recipe recipe) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveRecipe'");
     }
 
 }

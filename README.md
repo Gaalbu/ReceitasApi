@@ -17,7 +17,7 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 ## 3. Esqueleto Funcional (Estrutura de Pastas)
 ```text
 /gourmethub
-├── backend (Spring Boot)
+├── api
 │   ├── src/main/java/com/gourmethub
 │   │   ├── controller (Endpoints)
 │   │   ├── service (Lógica e Integração API)
@@ -25,7 +25,7 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 │   │   ├── model (Entidades)
 │   │   └── config (Security/CORS)
 │   └── src/test/java (JUnit 5)
-├── frontend (Angular)
+├── ui
 │   ├── src/app
 │   │   ├── components (Shared/UI)
 │   │   ├── pages (Login, Dashboard, Recipes)
