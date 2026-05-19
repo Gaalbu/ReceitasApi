@@ -145,11 +145,12 @@ docker compose up --build
 Essa opção sobe automaticamente:
 - PostgreSQL na porta `5432`
 - API Spring Boot na porta `8080`
-- Frontend Angular servido por Nginx na porta `4200`
+- Frontend Angular servido por Nginx na porta `80`
 
 O frontend envia as requisições para `/api`, e o Nginx faz o proxy para a API.
 
 Se aparecer erro de conexão recusada no navegador, confirme que os containers foram recriados com `docker compose up --build`.
+Depois, abra o frontend em `http://localhost/` ou `http://localhost/login`.
 
 ### Backend (API) sem Docker
 ```bash
