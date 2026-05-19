@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13
+    container_name: gourmethub_db
+    environment:
+      POSTGRES_USER: gourmethub
+      POSTGRES_PASSWORD: gourmethub
+      POSTGRES_DB: gourmethub
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
