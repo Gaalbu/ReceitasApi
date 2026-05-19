@@ -29,9 +29,30 @@ export class RecipeComponent implements OnInit {
   }
 
   search() {
-    if (this.searchForm.invalid) return;
-    this.recipeService.searchExternal(this.searchForm.value.q).subscribe((res: any) => {
-      this.results = res?.meals || [];
+    if (this.searchForm.invalid) {
+      console.warn('Formulário inválido');
+      return;
+    }
+    const term = this.searchForm.value.q;
+    const url = `http://localhost:8080/recipes/search?name=${encodeURIComponent(term)}`;
+    console.log('Buscando por:', term);
+    console.log('URL:', url);
+    
+    this.recipeService.searchExternal(term).subscribe({
+      next: (res: any) => {
+        console.log('✓ Resposta recebida:', res);
+        this.results = res?.meals || [];
+        console.log('✓ Results atualizado com', this.results.length, 'itens');
+      },
+      error: (err: any) => {
+        console.error('✗ Erro na busca:', err);
+        console.error('Status:', err?.status);
+        console.error('Message:', err?.message);
+        this.results = [];
+      },
+      complete: () => {
+        console.log('✓ Busca completada');
+      }
     });
   }
 
@@ -41,5 +62,9 @@ export class RecipeComponent implements OnInit {
       next: (r) => (this.message = 'Receita criada'),
       error: () => (this.message = 'Erro ao criar')
     });
+  }
+
+  trackByMeal(index: number, item: any) {
+    return item?.idMeal || item?.id || item?.external_api_id || index;
   }
 }

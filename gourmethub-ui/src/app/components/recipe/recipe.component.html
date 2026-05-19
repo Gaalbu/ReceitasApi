@@ -6,15 +6,22 @@
   </form>
 
   <div class="row">
-    <div *ngFor="let meal of results" class="col-md-4 mb-3">
-      <div class="card">
-        <img [src]="meal.strMealThumb || meal.thumbnail" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">{{ meal.strMeal || meal.name }}</h5>
-          <p class="card-text">{{ (meal.strInstructions || meal.instructions)?.slice(0,120) }}...
+    @for (meal of results; track trackByMeal($index, meal)) {
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <img [src]="meal.strMealThumb || meal.thumbnail" class="card-img-top" />
+          <div class="card-body">
+            <h5 class="card-title">{{ meal.strMeal || meal.name }}</h5>
+            <p class="card-text">{{ (meal.strInstructions || meal.instructions)?.slice(0,200) }}...</p>
+            <p class="card-text text-muted small">ID: {{ meal.idMeal || meal.id || (meal.external_api_id || '—') }}</p>
+          </div>
         </div>
       </div>
-    </div>
+    } @empty {
+      <div class="col-12">
+        <div class="alert alert-light text-muted">Nenhum resultado. Faça uma busca para ver receitas.</div>
+      </div>
+    }
   </div>
 
   <hr />

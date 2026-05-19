@@ -21,6 +21,11 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
+    RecipeComponent,
+    LoginComponent,
+    RegisterComponent,
+    MealPlanComponent,
+    FeedbackComponent,
   ],
   providers: [
     provideClientHydration(withEventReplay()),
