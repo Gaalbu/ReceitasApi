@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-meal-plan',
+  standalone: true,
   templateUrl: './meal-plan.component.html',
   imports: [CommonModule, ReactiveFormsModule]
 })

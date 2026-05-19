@@ -16,19 +16,13 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     App,
   ],
   imports: [
-    RegisterComponent,
-    RecipeComponent,
-    MealPlanComponent,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    FeedbackComponent,
-    LoginComponent
   ],
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],

@@ -21,13 +21,16 @@
   <h4>Criar minha receita</h4>
   <form (ngSubmit)="create()" [formGroup]="createForm">
     <div class="mb-2">
-      <input class="form-control" formControlName="name" placeholder="Nome" />
+      <input class="form-control" formControlName="title" placeholder="Título" />
     </div>
     <div class="mb-2">
-      <input class="form-control" formControlName="description" placeholder="Descricao" />
+      <textarea class="form-control" formControlName="ingredients" placeholder="Ingredientes"></textarea>
     </div>
     <div class="mb-2">
-      <textarea class="form-control" formControlName="instructions" placeholder="Instrucoes"></textarea>
+      <textarea class="form-control" formControlName="instructions" placeholder="Instruções"></textarea>
+    </div>
+    <div class="mb-2">
+      <input type="number" class="form-control" formControlName="prep_time" placeholder="Tempo de Preparo (minutos)" />
     </div>
     <button class="btn btn-success" type="submit">Criar</button>
     <div *ngIf="message" class="mt-2 alert alert-info">{{ message }}</div>

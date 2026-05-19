@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RecipeService } from '../../services/recipe.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,15 +10,22 @@ import { CommonModule } from '@angular/common';
   templateUrl: './recipe.component.html',
   imports: [ReactiveFormsModule, CommonModule]
 })
-export class RecipeComponent {
+export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
   createForm!: FormGroup;
   results: any[] = [];
   message = '';
 
-  constructor(private fb: FormBuilder, private recipeService: RecipeService) {
+  constructor(private fb: FormBuilder, private recipeService: RecipeService) {}
+
+  ngOnInit(): void {
     this.searchForm = this.fb.group({ q: ['', Validators.required] });
-    this.createForm = this.fb.group({ name: ['', Validators.required], description: [''], instructions: [''] });
+    this.createForm = this.fb.group({
+      title: ['', Validators.required],
+      ingredients: ['', Validators.required],
+      instructions: ['', Validators.required],
+      prep_time: [0, Validators.required]
+    });
   }
 
   search() {
