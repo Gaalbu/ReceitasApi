@@ -1,12 +1,12 @@
 <div class="container" style="max-width:800px;margin:1.5rem auto;">
   <h3>Criar Plano de Refeições</h3>
-  <p>Formato rápido para itens (JSON): [{ "dayOfWeek":"MONDAY","mealType":"LUNCH","recipeId":1 }, ...]</p>
+  <p>Formato rápido para itens (JSON): [&#123; "dayOfWeek":"MONDAY","mealType":"LUNCH","recipeId":1 &#125;, ...]</p>
   <form (ngSubmit)="submit()" [formGroup]="form">
     <div class="mb-2">
       <input class="form-control" formControlName="name" placeholder="Nome do plano" />
     </div>
     <div class="mb-2">
-      <textarea class="form-control" formControlName="itemsJson" rows="6" placeholder='[{ "dayOfWeek":"MONDAY","mealType":"LUNCH","recipeId":1 }]'></textarea>
+      <textarea class="form-control" formControlName="itemsJson" rows="6" placeholder='[&#123; "dayOfWeek":"MONDAY","mealType":"LUNCH","recipeId":1 &#125;]'></textarea>
     </div>
     <button class="btn btn-primary" type="submit">Criar Plano</button>
     <div *ngIf="message" class="mt-2 alert alert-info">{{ message }}</div>

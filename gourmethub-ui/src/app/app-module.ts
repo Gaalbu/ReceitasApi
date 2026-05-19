@@ -2,7 +2,6 @@ import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { LoginComponent } from './components/login/login.component';
@@ -15,18 +14,18 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 @NgModule({
   declarations: [
     App,
-    LoginComponent,
+  ],
+  imports: [
     RegisterComponent,
     RecipeComponent,
     MealPlanComponent,
-    FeedbackComponent
-  ],
-  imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    FeedbackComponent,
+    LoginComponent
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RecipeService } from '../../services/recipe.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-recipe',
-  templateUrl: './recipe.component.html'
+  standalone: true,
+  templateUrl: './recipe.component.html',
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class RecipeComponent {
   searchForm!: FormGroup;

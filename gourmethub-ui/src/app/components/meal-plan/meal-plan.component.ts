@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MealPlanService } from '../../services/mealplan.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-meal-plan',
-  templateUrl: './meal-plan.component.html'
+  templateUrl: './meal-plan.component.html',
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class MealPlanComponent {
   form!: FormGroup;

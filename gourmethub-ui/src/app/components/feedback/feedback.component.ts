@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-feedback',
-  templateUrl: './feedback.component.html'
+  templateUrl: './feedback.component.html',
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class FeedbackComponent {
   @Input() recipeId?: number;
