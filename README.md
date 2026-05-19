@@ -4,11 +4,12 @@
 O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar suas próprias receitas, criar planos de refeições semanais e explorar novas culinárias através da integração com a API externa *TheMealDB*.
 
 ## 2. Stack Tecnológica
-- **Back-end:** Java 17 + Spring Boot 3.5.14 + PostgreSQL
+- **Back-end:** Java 21 LTS + Spring Boot 3.5.14 + PostgreSQL
 - **Front-end:** Angular 21 + TypeScript com SSR (Server-Side Rendering)
 - **Autenticação:** JWT (JSON Web Tokens) + Spring Security
 - **API Externa:** TheMealDB (integração para busca de receitas)
 - **Testes:** JUnit 5, Mockito, Jasmine/Karma
+- **Containerização:** Docker + Docker Compose para subir o stack completo
 
 ## 3. Funcionalidades Implementadas ✅
 
@@ -129,28 +130,40 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 ## 6. Como Executar
 
 ### Pré-requisitos
-- Java 17+
+- Java 21+
 - Node.js 18+
 - PostgreSQL 13+
-- Maven
+- Docker e Docker Compose
+- Maven Wrapper incluído no projeto (`mvnw`/`mvnw.cmd`)
 
-### Backend (API)
-```bash
-cd api
-mvn clean install
-mvn spring-boot:run
-# API rodando em http://localhost:8080
-```
-
-### Database (PostgreSQL)
+### Execução com Docker Compose
 ```bash
 cd db
-docker-compose up -d
+docker compose up --build
+```
+
+Essa opção sobe automaticamente:
+- PostgreSQL na porta `5432`
+- API Spring Boot na porta `8080`
+- Frontend Angular servido por Nginx na porta `4200`
+
+### Backend (API) sem Docker
+```bash
+cd api
+./mvnw clean install
+./mvnw spring-boot:run
+# No Windows, use mvnw.cmd
+```
+
+### Database (PostgreSQL) separadamente
+```bash
+cd db
+docker compose up -d
 # Execute o script de inicialização se necessário
 # ./reset_db.sh
 ```
 
-### Frontend (Angular)
+### Frontend (Angular) sem Docker
 ```bash
 cd gourmethub-ui
 npm install
@@ -162,7 +175,7 @@ ng serve --open
 ```bash
 cd gourmethub-ui
 npm run build
-npm run serve:ssr
+npm run serve:ssr:gourmethub-frontend
 ```
 
 ## 7. Testes
@@ -170,7 +183,8 @@ npm run serve:ssr
 ### Back-end
 ```bash
 cd api
-mvn test
+./mvnw test
+# No Windows, use mvnw.cmd test
 ```
 
 ### Front-end
