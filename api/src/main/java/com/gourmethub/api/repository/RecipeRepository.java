@@ -1,12 +1,8 @@
 package com.gourmethub.api.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.gourmethub.api.model.Recipe;
 
-public class RecipeRepository {
-
-    public Object save(Recipe any) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
+public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 }
