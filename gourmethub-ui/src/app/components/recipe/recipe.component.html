@@ -1,45 +1,31 @@
-<div class="container" style="max-width:900px;margin:1.5rem auto;">
-  <h3>Buscar receitas (TheMealDB)</h3>
-  <form (ngSubmit)="search()" [formGroup]="searchForm" class="d-flex gap-2 mb-3">
-    <input class="form-control" formControlName="q" placeholder="Nome da receita" />
-    <button class="btn btn-outline-primary" type="submit">Buscar</button>
+<div class="container" style="max-width:900px;margin:2rem auto;">
+  <h1 class="mb-4">🍳 Buscar Receitas</h1>
+  
+  <form (ngSubmit)="search()" [formGroup]="searchForm" class="d-flex gap-2 mb-4">
+    <input class="form-control" formControlName="q" placeholder="Digite o nome da receita..." />
+    <button class="btn btn-primary" type="submit">Buscar</button>
   </form>
 
   <div class="row">
     @for (meal of results; track trackByMeal($index, meal)) {
       <div class="col-md-4 mb-3">
-        <div class="card">
-          <img [src]="meal.strMealThumb || meal.thumbnail" class="card-img-top" />
+        <div class="card h-100 shadow-sm">
+          <img [src]="meal.strMealThumb || meal.thumbnail" class="card-img-top" alt="{{ meal.strMeal }}" />
           <div class="card-body">
             <h5 class="card-title">{{ meal.strMeal || meal.name }}</h5>
-            <p class="card-text">{{ (meal.strInstructions || meal.instructions)?.slice(0,200) }}...</p>
-            <p class="card-text text-muted small">ID: {{ meal.idMeal || meal.id || (meal.external_api_id || '—') }}</p>
+            <p class="card-text text-muted small">{{ (meal.strInstructions || meal.instructions)?.slice(0,150) }}...</p>
+            <p class="card-text small">
+              <strong>ID:</strong> {{ meal.idMeal || meal.id || (meal.external_api_id || '—') }}
+            </p>
           </div>
         </div>
       </div>
     } @empty {
       <div class="col-12">
-        <div class="alert alert-light text-muted">Nenhum resultado. Faça uma busca para ver receitas.</div>
+        <div class="alert alert-light text-muted text-center py-5">
+          Nenhum resultado. Faça uma busca para ver receitas.
+        </div>
       </div>
     }
   </div>
-
-  <hr />
-  <h4>Criar minha receita</h4>
-  <form (ngSubmit)="create()" [formGroup]="createForm">
-    <div class="mb-2">
-      <input class="form-control" formControlName="title" placeholder="Título" />
-    </div>
-    <div class="mb-2">
-      <textarea class="form-control" formControlName="ingredients" placeholder="Ingredientes"></textarea>
-    </div>
-    <div class="mb-2">
-      <textarea class="form-control" formControlName="instructions" placeholder="Instruções"></textarea>
-    </div>
-    <div class="mb-2">
-      <input type="number" class="form-control" formControlName="prep_time" placeholder="Tempo de Preparo (minutos)" />
-    </div>
-    <button class="btn btn-success" type="submit">Criar</button>
-    <div *ngIf="message" class="mt-2 alert alert-info">{{ message }}</div>
-  </form>
 </div>

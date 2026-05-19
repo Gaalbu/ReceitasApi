@@ -12,20 +12,12 @@ import { CommonModule } from '@angular/common';
 })
 export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
-  createForm!: FormGroup;
   results: any[] = [];
-  message = '';
 
   constructor(private fb: FormBuilder, private recipeService: RecipeService) {}
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({ q: ['', Validators.required] });
-    this.createForm = this.fb.group({
-      title: ['', Validators.required],
-      ingredients: ['', Validators.required],
-      instructions: ['', Validators.required],
-      prep_time: [0, Validators.required]
-    });
   }
 
   search() {
@@ -53,14 +45,6 @@ export class RecipeComponent implements OnInit {
       complete: () => {
         console.log('✓ Busca completada');
       }
-    });
-  }
-
-  create() {
-    if (this.createForm.invalid) return;
-    this.recipeService.createMyRecipe(this.createForm.value).subscribe({
-      next: (r) => (this.message = 'Receita criada'),
-      error: () => (this.message = 'Erro ao criar')
     });
   }
 

@@ -1,0 +1,31 @@
+<div class="container" style="max-width:600px;margin:2rem auto;">
+  <h2>Criar minha receita</h2>
+  
+  <form (ngSubmit)="create()" [formGroup]="createForm">
+    <div class="mb-3">
+      <label for="title" class="form-label">Título</label>
+      <input type="text" class="form-control" id="title" formControlName="title" placeholder="Nome da receita" />
+    </div>
+    
+    <div class="mb-3">
+      <label for="ingredients" class="form-label">Ingredientes</label>
+      <textarea class="form-control" id="ingredients" formControlName="ingredients" rows="4" placeholder="Liste os ingredientes..."></textarea>
+    </div>
+    
+    <div class="mb-3">
+      <label for="instructions" class="form-label">Instruções</label>
+      <textarea class="form-control" id="instructions" formControlName="instructions" rows="4" placeholder="Descreva o modo de preparo..."></textarea>
+    </div>
+    
+    <div class="mb-3">
+      <label for="prep_time" class="form-label">Tempo de Preparo (minutos)</label>
+      <input type="number" class="form-control" id="prep_time" formControlName="prep_time" placeholder="Ex: 30" />
+    </div>
+    
+    <button class="btn btn-success" type="submit">Criar Receita</button>
+    
+    @if (message) {
+      <div class="mt-3 alert alert-info">{{ message }}</div>
+    }
+  </form>
+</div>

@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/">🍽️ GourmetHub</a>
+    
+    <button class="navbar-toggler" type="button" (click)="toggleNavbar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" [class.show]="navbarOpen">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" (click)="closeNavbar()" [routerLinkActiveOptions]="{ exact: true }">
+            🔍 Buscar Receitas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/create-recipe" routerLinkActive="active" (click)="closeNavbar()">
+            ➕ Criar Receita
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/meal-plans" routerLinkActive="active" (click)="closeNavbar()">
+            📋 Planos de Refeição
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/feedback" routerLinkActive="active" (click)="closeNavbar()">
+            💬 Feedback
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
