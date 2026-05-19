@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MealPlanRequest {
-    private String name;
+    // campos usam snake case pq vem assim do json
+    private String plan_name;
+
+    private String start_date;
 
     @NotEmpty
     @Valid

@@ -19,5 +19,25 @@ public class RecipeCreateRequest {
 
     @Size(max = 4000)
     private String instructions;
+
+    // use snake_case so incoming JSON like { "prep_time": 30 } maps to this field
+    private Integer prep_time;
+
+    public String getTitle() {
+        return name;
+    }
+
+    public String getIngredients() {
+        return description;
+    }
+
+    // keep backward-compatible constructor used in tests (name, description, instructions)
+    public RecipeCreateRequest(String name, String description, String instructions) {
+        this.name = name;
+        this.description = description;
+        this.instructions = instructions;
+    }
+
+
 }
 

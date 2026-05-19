@@ -26,19 +26,29 @@ public class RecipeService {
 
     public MealDbResponse searchExternalRecipe(String name) {
         String url = "https://www.themealdb.com/api/json/v1/1/search.php?s=" + name;
-        return restTemplate.getForObject(url, MealDbResponse.class);
+        try {
+            MealDbResponse resp = restTemplate.getForObject(url, MealDbResponse.class);
+            if (resp == null) {
+                // return an empty response rather than NPE
+                return new MealDbResponse();
+            }
+            return resp;
+        } catch (org.springframework.web.client.RestClientException ex) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_GATEWAY,
+                    "Failed to fetch external recipes", ex);
+        }
     }
 
     public Recipe createRecipe(RecipeCreateRequest request, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado"));
 
-        Recipe recipe = Recipe.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .instructions(request.getInstructions())
-                .user(user)
-                .build();
+        Recipe recipe = new Recipe();
+        recipe.setName(request.getTitle());
+        recipe.setDescription(request.getIngredients());
+        recipe.setInstructions(request.getInstructions());
+        recipe.setPrepTime(request.getPrep_time());
+        recipe.setUser(user);
 
         return recipeRepository.save(recipe);
     }

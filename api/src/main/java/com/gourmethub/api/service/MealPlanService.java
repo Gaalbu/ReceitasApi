@@ -36,22 +36,26 @@ public class MealPlanService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado"));
 
-        MealPlan mealPlan = MealPlan.builder()
-                .name(request.getName())
-                .user(user)
-                .build();
+        MealPlan mealPlan = new MealPlan();
+        mealPlan.setPlanName(request.getPlan_name());
+        try {
+            // expect ISO date string: yyyy-MM-dd
+            mealPlan.setStartDate(java.time.LocalDate.parse(request.getStart_date()));
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "start_date must be in yyyy-MM-dd format");
+        }
+        mealPlan.setUser(user);
 
         List<MealItem> items = new ArrayList<>();
         for (MealItemRequest itemRequest : request.getItems()) {
-            Recipe recipe = recipeRepository.findById(itemRequest.getRecipeId())
+            Recipe recipe = recipeRepository.findById(itemRequest.getRecipe_id())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
 
-            MealItem item = MealItem.builder()
-                    .dayOfWeek(DayOfWeek.valueOf(itemRequest.getDayOfWeek().toUpperCase()))
-                    .mealType(MealType.valueOf(itemRequest.getMealType().toUpperCase()))
-                    .recipe(recipe)
-                    .mealPlan(mealPlan)
-                    .build();
+            MealItem item = new MealItem();
+            item.setDayOfWeek(DayOfWeek.valueOf(itemRequest.getDay_of_week().toUpperCase()));
+            item.setMealType(MealType.valueOf(itemRequest.getMeal_type().toUpperCase()));
+            item.setRecipe(recipe);
+            item.setMealPlan(mealPlan);
             items.add(item);
         }
         mealPlan.setItems(items);

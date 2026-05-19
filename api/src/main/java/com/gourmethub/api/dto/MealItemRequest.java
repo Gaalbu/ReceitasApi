@@ -3,20 +3,23 @@ package com.gourmethub.api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MealItemRequest {
-    @NotBlank
-    private String dayOfWeek;
 
-    @NotBlank
-    private String mealType;
+    @NotNull(message = "O ID da receita não pode ser nulo")
+    private Long recipe_id;
 
-    @NotNull
-    private Long recipeId;
+    @NotBlank(message = "O dia da semana não pode estar em branco")
+    private String day_of_week;
+
+    @NotBlank(message = "O tipo de refeição não pode estar em branco")
+    private String meal_type;
 }
 
