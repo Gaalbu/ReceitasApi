@@ -8,26 +8,48 @@
     
     <div class="collapse navbar-collapse" [class.show]="navbarOpen">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" (click)="closeNavbar()" [routerLinkActiveOptions]="{ exact: true }">
-            🔍 Buscar Receitas
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/create-recipe" routerLinkActive="active" (click)="closeNavbar()">
-            ➕ Criar Receita
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/meal-plans" routerLinkActive="active" (click)="closeNavbar()">
-            📋 Planos de Refeição
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/feedback" routerLinkActive="active" (click)="closeNavbar()">
-            💬 Feedback
-          </a>
-        </li>
+        <!-- Links quando LOGADO -->
+        <ng-container *ngIf="isLoggedIn">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" (click)="closeNavbar()" [routerLinkActiveOptions]="{ exact: true }">
+              🔍 Buscar Receitas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/create-recipe" routerLinkActive="active" (click)="closeNavbar()">
+              ➕ Criar Receita
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/meal-plans" routerLinkActive="active" (click)="closeNavbar()">
+              📋 Planos de Refeição
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/feedback" routerLinkActive="active" (click)="closeNavbar()">
+              💬 Feedback
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" (click)="logout(); $event.preventDefault()" class="text-danger">
+              🚪 Logout
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Links quando NÃO LOGADO -->
+        <ng-container *ngIf="!isLoggedIn">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="closeNavbar()">
+              🔑 Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register" routerLinkActive="active" (click)="closeNavbar()">
+              ✍️ Cadastro
+            </a>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>

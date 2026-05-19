@@ -6,14 +6,19 @@ import { RecipeComponent } from './components/recipe/recipe.component';
 import { CreateRecipeComponent } from './components/create-recipe/create-recipe.component';
 import { MealPlanComponent } from './components/meal-plan/meal-plan.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
+import { AuthGuard } from './guards/auth.guard';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
 const routes: Routes = [
-  { path: '', component: RecipeComponent },
-  { path: 'create-recipe', component: CreateRecipeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'meal-plans', component: MealPlanComponent },
-  { path: 'feedback', component: FeedbackComponent }
+  // Rotas públicas (não requerem autenticação)
+  { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [NoAuthGuard] },
+  
+  // Rotas protegidas (requerem autenticação)
+  { path: '', component: RecipeComponent, canActivate: [AuthGuard] },
+  { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [AuthGuard] },
+  { path: 'meal-plans', component: MealPlanComponent, canActivate: [AuthGuard] },
+  { path: 'feedback', component: FeedbackComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

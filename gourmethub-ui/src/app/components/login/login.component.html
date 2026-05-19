@@ -1,15 +1,45 @@
 <div class="container" style="max-width:420px;margin:2rem auto;">
-  <h3>Login</h3>
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h1 style="font-size: 2rem;">🍽️</h1>
+    <h3>GourmetHub</h3>
+    <p style="color: #666;">Faça login para continuar</p>
+  </div>
+
   <form (ngSubmit)="submit()" [formGroup]="form">
     <div class="mb-3">
       <label class="form-label">Usuário</label>
-      <input class="form-control" formControlName="username" />
+      <input 
+        class="form-control" 
+        formControlName="username"
+        [disabled]="loading"
+        placeholder="Digite seu usuário" />
     </div>
+
     <div class="mb-3">
       <label class="form-label">Senha</label>
-      <input type="password" class="form-control" formControlName="password" />
+      <input 
+        type="password" 
+        class="form-control" 
+        formControlName="password"
+        [disabled]="loading"
+        placeholder="Digite sua senha" />
     </div>
-    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-    <button class="btn btn-primary" type="submit">Entrar</button>
+
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      <strong>❌ Erro:</strong> {{ error }}
+    </div>
+
+    <button 
+      class="btn btn-primary w-100" 
+      type="submit"
+      [disabled]="form.invalid || loading">
+      {{ loading ? '⏳ Entrando...' : '🔐 Entrar' }}
+    </button>
   </form>
+
+  <hr />
+
+  <div style="text-align: center;">
+    <p>Não tem conta? <a routerLink="/register" style="text-decoration: none; color: #007bff; font-weight: bold;">Cadastre-se aqui</a></p>
+  </div>
 </div>
