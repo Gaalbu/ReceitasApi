@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
-  private base = 'http://localhost:8080';
+  private base = '/api';
   constructor(private http: HttpClient) {}
 
   searchExternal(name: string): Observable<any> {

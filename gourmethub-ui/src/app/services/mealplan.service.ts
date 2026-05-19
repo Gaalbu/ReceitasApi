@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class MealPlanService {
-  private base = 'http://localhost:8080';
+  private base = '/api';
   constructor(private http: HttpClient) {}
 
   createMealPlan(payload: any): Observable<any> {

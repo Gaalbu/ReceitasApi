@@ -4,7 +4,7 @@ import { tap, BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private base = 'http://localhost:8080';
+  private base = '/api';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();

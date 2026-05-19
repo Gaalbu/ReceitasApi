@@ -26,7 +26,7 @@ export class RecipeComponent implements OnInit {
       return;
     }
     const term = this.searchForm.value.q;
-    const url = `http://localhost:8080/recipes/search?name=${encodeURIComponent(term)}`;
+    const url = `/api/recipes/search?name=${encodeURIComponent(term)}`;
     console.log('Buscando por:', term);
     console.log('URL:', url);
     

@@ -147,6 +147,10 @@ Essa opção sobe automaticamente:
 - API Spring Boot na porta `8080`
 - Frontend Angular servido por Nginx na porta `4200`
 
+O frontend envia as requisições para `/api`, e o Nginx faz o proxy para a API.
+
+Se aparecer erro de conexão recusada no navegador, confirme que os containers foram recriados com `docker compose up --build`.
+
 ### Backend (API) sem Docker
 ```bash
 cd api

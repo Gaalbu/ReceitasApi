@@ -14,7 +14,7 @@ export class FeedbackComponent {
   reviewForm!: FormGroup;
   systemForm!: FormGroup;
 
-  base = 'http://localhost:8080';
+  base = '/api';
 
   message = '';
 
