@@ -1,0 +1,26 @@
+<div class="container" style="max-width:680px;margin:1.5rem auto;">
+  <div *ngIf="recipeId">
+    <h4>Avaliar Receita</h4>
+    <form (ngSubmit)="submitRating()" [formGroup]="reviewForm">
+      <div class="mb-2">
+        <label>Nota (1-5)</label>
+        <input type="number" class="form-control" formControlName="rating" />
+      </div>
+      <div class="mb-2">
+        <textarea class="form-control" formControlName="comment" placeholder="Comentário"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Enviar Avaliação</button>
+    </form>
+  </div>
+
+  <hr />
+  <h4>Feedback do Sistema</h4>
+  <form (ngSubmit)="submitSystemReview()" [formGroup]="systemForm">
+    <div class="mb-2">
+      <textarea class="form-control" formControlName="comment" placeholder="Seu feedback"></textarea>
+    </div>
+    <button class="btn btn-secondary" type="submit">Enviar Feedback</button>
+  </form>
+
+  <div *ngIf="message" class="mt-2 alert alert-info">{{ message }}</div>
+</div>
