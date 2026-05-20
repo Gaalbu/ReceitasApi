@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: gourmethub_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gourmethub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gourmethub}
+      POSTGRES_DB: ${POSTGRES_DB:-gourmethub}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: gourmethub_api
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-gourmethub}
+      DB_USERNAME: ${POSTGRES_USER:-gourmethub}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-gourmethub}
+      SERVER_PORT: 8080
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-changeme-changeme-changeme-changeme}
+      APP_JWT_EXPIRATION_MS: ${APP_JWT_EXPIRATION_MS:-86400000}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./gourmethub-ui
+      dockerfile: Dockerfile
+    container_name: gourmethub_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

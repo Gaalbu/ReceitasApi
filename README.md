@@ -136,9 +136,8 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 - Docker e Docker Compose
 - Maven Wrapper incluído no projeto (`mvnw`/`mvnw.cmd`)
 
-### Execução com Docker Compose
+### Execução com Docker Compose (stack completo)
 ```bash
-cd db
 docker compose up --build
 ```
 
@@ -148,6 +147,10 @@ Essa opção sobe automaticamente:
 - Frontend Angular servido por Nginx na porta `80`
 
 O frontend envia as requisições para `/api`, e o Nginx faz o proxy para a API.
+
+Variáveis opcionais (com valores padrão):
+- `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+- `APP_JWT_SECRET`, `APP_JWT_EXPIRATION_MS`
 
 Se aparecer erro de conexão recusada no navegador, confirme que os containers foram recriados com `docker compose up --build`.
 Depois, abra o frontend em `http://localhost/` ou `http://localhost/login`.

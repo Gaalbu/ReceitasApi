@@ -18,7 +18,8 @@ const routes: Routes = [
   { path: '', component: RecipeComponent, canActivate: [AuthGuard] },
   { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [AuthGuard] },
   { path: 'meal-plans', component: MealPlanComponent, canActivate: [AuthGuard] },
-  { path: 'feedback', component: FeedbackComponent, canActivate: [AuthGuard] }
+  { path: 'feedback', component: FeedbackComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
