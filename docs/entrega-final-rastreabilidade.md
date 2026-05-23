@@ -132,3 +132,8 @@
 1. Testes Unitários (JUnit 5): Validar os cálculos de lista de compras e regras de validação de campos.
 2. Testes de Integração (Spring): Garantir que a integração com a API TheMealDB e as transações no PostgreSQL funcionem corretamente.
 3. Testes End-to-End (Cypress): Simular o fluxo completo desde o login até a criação de um plano de refeição no navegador.
+
+# RESULTADOS DE TESTES E COBERTURA
+
+- Backend (Maven): 15 testes executados, 0 falhas, 0 erros. JaCoCo: instruções cobrindo 86.73%, branch coverage 68.18% (relatório em `api/target/site/jacoco/index.html`).
+- Frontend (Angular): 25 testes unitários executados, 0 falhas. v8 coverage: statements 57.25%, branches 68.49%, functions 58.33%, lines 58.71% (relatório em `gourmethub-ui/coverage` gerado pelo `ng test`).
