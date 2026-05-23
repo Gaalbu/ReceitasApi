@@ -78,7 +78,8 @@
               "buildTarget": "gourmethub-frontend:build:production"
             },
             "development": {
-              "buildTarget": "gourmethub-frontend:build:development"
+              "buildTarget": "gourmethub-frontend:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
