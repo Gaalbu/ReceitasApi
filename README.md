@@ -192,7 +192,7 @@ npm run serve:ssr:gourmethub-frontend
 ```bash
 cd api
 ./mvnw test
-# No Windows, use mvnw.cmd test
+# No Windows, use .\mvnw.cmd test
 ```
 
 ### Front-end
