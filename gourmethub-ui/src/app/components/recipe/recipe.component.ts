@@ -3,16 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RecipeService } from '../../services/recipe.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FeedbackComponent } from '../feedback/feedback.component';
 
 @Component({
   selector: 'app-recipe',
   standalone: true,
   templateUrl: './recipe.component.html',
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule, FeedbackComponent]
 })
 export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
   results: any[] = [];
+  selectedRecipeId: number | null = null;
 
   constructor(private fb: FormBuilder, private recipeService: RecipeService) {}
 
@@ -50,5 +52,19 @@ export class RecipeComponent implements OnInit {
 
   trackByMeal(index: number, item: any) {
     return item?.idMeal || item?.id || item?.external_api_id || index;
+  }
+
+  extractRecipeId(item: any): number | null {
+    const rawId = item?.id || item?.idMeal || item?.external_api_id;
+    const id = Number(rawId);
+    return Number.isNaN(id) || id <= 0 ? null : id;
+  }
+
+  openRatingFor(item: any) {
+    this.selectedRecipeId = this.extractRecipeId(item);
+  }
+
+  clearRatingSelection() {
+    this.selectedRecipeId = null;
   }
 }
