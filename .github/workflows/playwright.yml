@@ -1,0 +1,56 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        uses: docker/setup-buildx-action@v3
+
+      - name: Bring up services with Docker Compose
+        run: |
+          docker compose up -d --build
+
+      - name: Wait for backend (8080)
+        run: |
+          for i in {1..60}; do
+            if curl -sSf http://localhost:8080/ >/dev/null 2>&1; then
+              echo "backend up"; exit 0
+            fi
+            sleep 2
+          done
+          docker-compose logs api || true
+          exit 1
+
+      - name: Wait for frontend (80)
+        run: |
+          for i in {1..60}; do
+            if curl -sSf http://localhost/ >/dev/null 2>&1; then
+              echo "frontend up"; exit 0
+            fi
+            sleep 2
+          done
+          docker-compose logs frontend || true
+          exit 1
+
+      - name: Install Playwright and browsers
+        working-directory: ./gourmethub-ui
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: ./gourmethub-ui
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost
+        run: |
+          npx playwright test --reporter=github
