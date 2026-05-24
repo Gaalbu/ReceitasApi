@@ -15,6 +15,7 @@ export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
   results: any[] = [];
   selectedRecipeId: number | null = null;
+  selectedRecipeName = '';
 
   constructor(private fb: FormBuilder, private recipeService: RecipeService) {}
 
@@ -62,9 +63,11 @@ export class RecipeComponent implements OnInit {
 
   openRatingFor(item: any) {
     this.selectedRecipeId = this.extractRecipeId(item);
+    this.selectedRecipeName = item?.strMeal || item?.name || `Receita #${this.selectedRecipeId ?? ''}`;
   }
 
   clearRatingSelection() {
     this.selectedRecipeId = null;
+    this.selectedRecipeName = '';
   }
 }
