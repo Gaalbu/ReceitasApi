@@ -1,19 +1,42 @@
 describe('UC02-UC11 E2E smoke', () => {
-  // Prereq: start frontend (ng serve) and backend (./mvnw.cmd spring-boot:run)
+  // Prereq: start frontend (ng serve or docker frontend) and backend (./mvnw.cmd spring-boot:run)
+
+  // Create test user once and login via API before each test, injecting token into localStorage
+  const username = `e2euser${Date.now()}`
+  const email = `${username}@example.com`
+  const password = 'Pass123!'
+
+  before(() => {
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:8080/auth/register',
+      headers: { Origin: 'http://localhost' },
+      body: { username, email, password }
+    })
+  })
+
+  beforeEach(() => {
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:8080/auth/login',
+      headers: { Origin: 'http://localhost' },
+      body: { username, password }
+    }).then((resp) => {
+      const token = resp.body.token
+      cy.visit('http://localhost/dashboard', {
+        onBeforeLoad(win) {
+          win.localStorage.setItem('token', token)
+        }
+      })
+    })
+  })
 
   it('UC02 - Efetuar login and navigate to dashboard', () => {
-    // Create test user via API
-    cy.request('POST', 'http://localhost:8080/auth/register', { username: 'e2euser', email: 'e2e@example.com', password: 'Pass123!' })
-    cy.visit('/')
-    cy.contains('Login').click()
-    cy.get('input[name="email"]').type('e2e@example.com')
-    cy.get('input[name="password"]').type('Pass123!')
-    cy.get('button[type="submit"]').click()
     cy.contains('Dashboard')
   })
 
   it('UC03-UC06 - Create, list, edit and delete my recipe', () => {
-    cy.visit('/')
+    cy.visit('http://localhost/')
     cy.contains('Criar Receita').click()
     cy.get('input[name="title"]').type('E2E Receita')
     cy.get('textarea[name="ingredients"]').type('ovo, farinha')
@@ -32,7 +55,7 @@ describe('UC02-UC11 E2E smoke', () => {
   })
 
   it('UC07-UC09 - Search external recipes and favorite', () => {
-    cy.visit('/')
+    cy.visit('http://localhost/')
     cy.contains('Buscar Receitas').click()
     cy.get('input[placeholder="Buscar"]').type('chicken')
     cy.get('button[type="submit"]').click()
@@ -41,7 +64,7 @@ describe('UC02-UC11 E2E smoke', () => {
   })
 
   it('UC10-UC11 - Create meal plan and add recipe', () => {
-    cy.visit('/')
+    cy.visit('http://localhost/')
     cy.contains('Planos').click()
     cy.contains('Criar Plano').click()
     cy.get('input[name="plan_name"]').type('Plano E2E')

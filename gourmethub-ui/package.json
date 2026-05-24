@@ -9,7 +9,7 @@
     "test": "ng test",
     "serve:ssr:gourmethub-frontend": "node dist/gourmethub-frontend/server/server.mjs",
     "e2e": "cypress open",
-    "e2e:run": "cypress run"
+    "e2e:run": "cypress run --config baseUrl=http://localhost"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
