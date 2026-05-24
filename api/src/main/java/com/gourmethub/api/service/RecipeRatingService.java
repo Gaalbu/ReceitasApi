@@ -1,9 +1,12 @@
 package com.gourmethub.api.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.gourmethub.api.dto.MyRecipeReviewResponse;
 import com.gourmethub.api.dto.RecipeRatingRequest;
 import com.gourmethub.api.model.Recipe;
 import com.gourmethub.api.model.RecipeRating;
@@ -40,5 +43,18 @@ public class RecipeRatingService {
 
         return recipeRatingRepository.save(rating);
     }
+
+        public List<MyRecipeReviewResponse> listMyRatings(String username) {
+                return recipeRatingRepository.findByUserUsernameOrderByIdDesc(username)
+                                .stream()
+                                .map(rating -> MyRecipeReviewResponse.builder()
+                                                .id(rating.getId())
+                                                .recipeId(rating.getRecipe().getId())
+                                                .recipeName(rating.getRecipe().getName())
+                                                .rating(rating.getRating())
+                                                .comment(rating.getComment())
+                                                .build())
+                                .toList();
+        }
 }
 
