@@ -70,7 +70,7 @@ export class MealPlanComponent implements OnInit {
   }
 
   private buildItemsFromGrid() {
-    const items: Array<{ dayOfWeek: string; mealType: string; recipeId: number }> = [];
+    const items: Array<{ day_of_week: string; meal_type: string; recipe_id: number }> = [];
 
     for (const day of this.weekdays) {
       for (const mealType of this.mealTypes) {
@@ -79,9 +79,9 @@ export class MealPlanComponent implements OnInit {
 
         if (recipeId !== null) {
           items.push({
-            dayOfWeek: day.value,
-            mealType: mealType.value,
-            recipeId
+            day_of_week: day.value,
+            meal_type: mealType.value,
+            recipe_id: recipeId
           });
         }
       }
@@ -135,7 +135,7 @@ export class MealPlanComponent implements OnInit {
     const payload = {
       plan_name: this.form.value.plan_name,
       start_date: this.form.value.start_date,
-      items: items
+      items
     };
 
     this.mealPlanService.createMealPlan(payload).subscribe({

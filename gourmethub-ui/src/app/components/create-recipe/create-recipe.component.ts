@@ -30,7 +30,16 @@ export class CreateRecipeComponent implements OnInit {
       this.message = 'Preencha todos os campos corretamente';
       return;
     }
-    this.recipeService.createMyRecipe(this.createForm.value).subscribe({
+
+    const formValue = this.createForm.value;
+    const payload = {
+      name: formValue.title,
+      description: formValue.ingredients,
+      instructions: formValue.instructions,
+      prep_time: Number(formValue.prep_time || 0)
+    };
+
+    this.recipeService.createMyRecipe(payload).subscribe({
       next: (r) => {
         this.message = 'Receita criada com sucesso!';
         this.createForm.reset();

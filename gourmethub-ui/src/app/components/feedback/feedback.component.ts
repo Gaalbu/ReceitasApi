@@ -2,25 +2,55 @@ import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { OnInit } from '@angular/core';
+import { resolveApiBase } from '../../services/api-base';
+
+type MyRecipeReview = {
+  id: number;
+  recipeId: number;
+  recipeName: string;
+  rating: number;
+  comment: string;
+};
 
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
   imports: [CommonModule, ReactiveFormsModule]
 })
-export class FeedbackComponent {
+export class FeedbackComponent implements OnInit {
   @Input() recipeId?: number;
 
   reviewForm!: FormGroup;
-  systemForm!: FormGroup;
+  base = resolveApiBase();
 
-  base = '/api';
+  myReviews: MyRecipeReview[] = [];
+  loadingReviews = false;
 
   message = '';
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.reviewForm = this.fb.group({ rating: [5, [Validators.min(1), Validators.max(5)]], comment: [''] });
-    this.systemForm = this.fb.group({ comment: ['', Validators.required] });
+  }
+
+  ngOnInit() {
+    if (!this.recipeId) {
+      this.loadMyRecipeReviews();
+    }
+  }
+
+  loadMyRecipeReviews() {
+    this.loadingReviews = true;
+    this.http.get<MyRecipeReview[]>(`${this.base}/recipes/ratings/me`).subscribe({
+      next: (reviews) => {
+        this.myReviews = reviews || [];
+        this.loadingReviews = false;
+      },
+      error: () => {
+        this.message = 'Erro ao carregar suas reviews';
+        this.loadingReviews = false;
+      }
+    });
   }
 
   submitRating() {
@@ -32,11 +62,4 @@ export class FeedbackComponent {
     });
   }
 
-  submitSystemReview() {
-    if (this.systemForm.invalid) return;
-    this.http.post(`${this.base}/system-reviews`, this.systemForm.value).subscribe({
-      next: () => (this.message = 'Feedback enviado'),
-      error: () => (this.message = 'Erro ao enviar')
-    });
-  }
 }
