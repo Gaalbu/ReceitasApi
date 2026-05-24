@@ -23,11 +23,11 @@
               ☰ Menu
             </a>
             <ul class="dropdown-menu dropdown-menu-end" [class.show]="dropdownOpen" style="right:0; left:auto;">
-              <li><a class="dropdown-item" routerLink="/meal-plans" (click)="closeDropdown(); closeNavbar()">criar receita semanal, em que eu posso adicionar itens da api em cada dia da semana</a></li>
-              <li><a class="dropdown-item" routerLink="/create-recipe" (click)="closeDropdown(); closeNavbar()">criar uma receita</a></li>
-              <li><a class="dropdown-item" routerLink="/feedback" (click)="closeDropdown(); closeNavbar()">acessar as minhas reviews</a></li>
+              <li><a class="dropdown-item" routerLink="/meal-plans" (click)="closeDropdown(); closeNavbar()">Criar receita semanal</a></li>
+              <li><a class="dropdown-item" routerLink="/create-recipe" (click)="closeDropdown(); closeNavbar()">Criar uma receita</a></li>
+              <li><a class="dropdown-item" routerLink="/feedback" (click)="closeDropdown(); closeNavbar()">Acessar os meus reviews</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="#" (click)="logout(); closeDropdown(); $event.preventDefault()">sair do sistema</a></li>
+              <li><a class="dropdown-item text-danger" href="#" (click)="logout(); closeDropdown(); $event.preventDefault()">Sair do sistema</a></li>
             </ul>
           </li>
         </ng-container>
