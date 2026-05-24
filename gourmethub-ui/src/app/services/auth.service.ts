@@ -10,6 +10,14 @@ export class AuthService {
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient) {
+    // Ajusta base para desenvolvimento local com SSR (porta 4000)
+    try {
+      if (typeof window !== 'undefined' && window.location && window.location.port === '4000') {
+        this.base = 'http://localhost:8080';
+      }
+    } catch {
+      // ignore when running on server-side during SSR
+    }
     // Inicializa apenas se localStorage estiver disponível
     if (this.isLocalStorageAvailable()) {
       this.isAuthenticatedSubject.next(this.hasToken());
