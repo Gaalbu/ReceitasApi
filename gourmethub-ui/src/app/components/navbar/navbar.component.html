@@ -15,25 +15,20 @@
               🔍 Buscar Receitas
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/create-recipe" routerLinkActive="active" (click)="closeNavbar()">
-              ➕ Criar Receita
+          <!-- Top-right dropdown menu -->
+          <li class="nav-item dropdown" [class.show]="dropdownOpen" style="position:relative">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               (click)="toggleDropdown(); $event.preventDefault()"
+               [attr.aria-expanded]="dropdownOpen">
+              ☰ Menu
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/meal-plans" routerLinkActive="active" (click)="closeNavbar()">
-              📋 Planos de Refeição
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/feedback" routerLinkActive="active" (click)="closeNavbar()">
-              💬 Feedback
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" (click)="logout(); $event.preventDefault()" class="text-danger">
-              🚪 Logout
-            </a>
+            <ul class="dropdown-menu dropdown-menu-end" [class.show]="dropdownOpen" style="right:0; left:auto;">
+              <li><a class="dropdown-item" routerLink="/meal-plans" (click)="closeDropdown(); closeNavbar()">Criar Receita Semanal</a></li>
+              <li><a class="dropdown-item" routerLink="/create-recipe" (click)="closeDropdown(); closeNavbar()">Criar Receita</a></li>
+              <li><a class="dropdown-item" routerLink="/feedback" (click)="closeDropdown(); closeNavbar()">Minhas Reviews</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#" (click)="logout(); closeDropdown(); $event.preventDefault()">Sair do sistema</a></li>
+            </ul>
           </li>
         </ng-container>
 

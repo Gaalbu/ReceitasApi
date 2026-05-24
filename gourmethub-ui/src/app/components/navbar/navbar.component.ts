@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 export class NavbarComponent implements OnInit {
   navbarOpen = false;
   isLoggedIn = false;
+  dropdownOpen = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -31,6 +32,14 @@ export class NavbarComponent implements OnInit {
 
   closeNavbar() {
     this.navbarOpen = false;
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  closeDropdown() {
+    this.dropdownOpen = false;
   }
 
   logout() {
