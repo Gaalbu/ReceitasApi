@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { resolveApiBase } from '../../services/api-base';
+import { timeout } from 'rxjs';
 
 type MyRecipeReview = {
   id: number;
@@ -26,6 +27,7 @@ export class FeedbackComponent implements OnInit {
   myReviews: MyRecipeReview[] = [];
   loadingReviews = false;
   private readonly localReviewsKey = 'gourmethub.recipe-reviews';
+  private loadingFallbackTimer?: number;
 
   message = '';
 
@@ -50,48 +52,58 @@ export class FeedbackComponent implements OnInit {
 
   loadMyRecipeReviews() {
     this.loadingReviews = true;
-    // show local reviews immediately as a fallback while we try to fetch server-side ones
     const local = this.loadLocalReviews();
-    if (local.length) {
-      this.myReviews = local;
-      this.message = 'Mostrando reviews locais salvas no navegador.';
-      // show them right away while we attempt server sync
-      this.loadingReviews = false;
+    this.myReviews = local;
+    this.message = local.length ? 'Mostrando reviews locais salvas no navegador.' : '';
+    this.loadingReviews = false;
+
+    if (typeof window !== 'undefined') {
+      this.loadingFallbackTimer = window.setTimeout(() => {
+        if (this.loadingReviews) {
+          this.myReviews = local;
+          this.message = this.myReviews.length
+            ? 'Mostrando reviews locais salvas no navegador.'
+            : 'Ainda nao ha reviews salvas para este usuario.';
+          this.loadingReviews = false;
+        }
+      }, 3000);
     }
 
-    this.http.get<any[]>(this.endpoint('/recipes/ratings/me')).subscribe({
+    this.http.get<any[]>(this.endpoint('/recipes/ratings/me')).pipe(timeout(5000)).subscribe({
       next: (reviews) => {
-        const normalized = (reviews || []).map(r => {
-          const recipeName = r.recipeName || r.recipe?.title || r.recipe?.name || r.recipe?.title || `Receita #${r.recipeId ?? r.recipe?.id ?? '??'}`;
-          return {
-            id: r.id,
-            recipeId: r.recipeId ?? r.recipe?.id,
-            recipeName,
-            rating: r.rating,
-            comment: r.comment
-          } as MyRecipeReview;
-        });
-        this.myReviews = normalized;
-        // clear local message when server provides authoritative data
-        this.message = '';
-        // if server returned no reviews, try local fallback
-        if (!this.myReviews || this.myReviews.length === 0) {
-          const local = this.loadLocalReviews();
-          if (local.length) {
-            this.myReviews = local;
-            this.message = 'Mostrando reviews locais salvas no navegador.';
-          }
+        try {
+          const serverReviews = Array.isArray(reviews) ? reviews : [];
+          const normalized = serverReviews.map((review) => this.normalizeReview(review));
+          this.myReviews = this.mergeReviews(local, normalized);
+          this.message = this.myReviews.length && local.length && normalized.length
+            ? 'Mostrando reviews locais e do servidor.'
+            : (local.length ? 'Mostrando reviews locais salvas no navegador.' : '');
+        } catch {
+          this.myReviews = local;
+          this.message = this.myReviews.length
+            ? 'Mostrando reviews locais salvas no navegador.'
+            : 'Ainda nao ha reviews salvas para este usuario.';
+        } finally {
+          this.clearLoadingFallback();
+          this.loadingReviews = false;
         }
-        this.loadingReviews = false;
       },
       error: () => {
-        this.myReviews = this.loadLocalReviews();
+        this.clearLoadingFallback();
+        this.myReviews = local;
         this.message = this.myReviews.length
           ? 'Mostrando reviews locais salvas no navegador.'
           : 'Ainda nao ha reviews salvas para este usuario.';
         this.loadingReviews = false;
       }
     });
+  }
+
+  private clearLoadingFallback() {
+    if (this.loadingFallbackTimer !== undefined && typeof window !== 'undefined') {
+      window.clearTimeout(this.loadingFallbackTimer);
+      this.loadingFallbackTimer = undefined;
+    }
   }
 
   submitRating() {
@@ -108,7 +120,7 @@ export class FeedbackComponent implements OnInit {
           rating: payload.rating,
           comment: payload.comment || ''
         };
-        this.myReviews = [entry, ...this.myReviews];
+        this.myReviews = this.upsertReview(entry, this.myReviews);
         this.message = 'Avaliação enviada';
       },
       error: () => {
@@ -121,10 +133,46 @@ export class FeedbackComponent implements OnInit {
           rating: payload.rating,
           comment: payload.comment || ''
         };
-        this.myReviews = [entry, ...this.myReviews];
+        this.myReviews = this.upsertReview(entry, this.myReviews);
         this.message = 'Não foi possível enviar ao servidor — review salva localmente.';
       }
     });
+  }
+
+  private normalizeReview(review: any): MyRecipeReview {
+    const recipeId = review.recipeId ?? review.recipe?.id ?? review.recipe_id ?? 0;
+    const recipeName = review.recipeName
+      || review.recipe?.title
+      || review.recipe?.name
+      || review.recipe_name
+      || review.recipeTitle
+      || review.name
+      || `Receita #${recipeId || '??'}`;
+
+    return {
+      id: review.id ?? Date.now(),
+      recipeId,
+      recipeName,
+      rating: review.rating,
+      comment: review.comment
+    };
+  }
+
+  private mergeReviews(primary: MyRecipeReview[], secondary: MyRecipeReview[]): MyRecipeReview[] {
+    const merged = new Map<string, MyRecipeReview>();
+    [...secondary, ...primary].forEach((review) => {
+      merged.set(this.reviewKey(review), review);
+    });
+    return Array.from(merged.values()).sort((left, right) => right.id - left.id);
+  }
+
+  private upsertReview(review: MyRecipeReview, reviews: MyRecipeReview[]): MyRecipeReview[] {
+    const merged = this.mergeReviews([review], reviews);
+    return merged;
+  }
+
+  private reviewKey(review: MyRecipeReview): string {
+    return [review.recipeId, review.rating, (review.comment || '').trim().toLowerCase()].join('|');
   }
 
   private loadLocalReviews(): MyRecipeReview[] {
