@@ -31,12 +31,12 @@ describe('AuthInterceptor', () => {
   });
 
   it('should add Authorization header when token exists', () => {
-    authServiceMock.getToken.mockReturnValue('jwt-token');
+    authServiceMock.getToken.mockReturnValue('header.payload.signature');
 
     http.get('/api/recipes/search?name=chicken').subscribe();
 
     const req = httpMock.expectOne('/api/recipes/search?name=chicken');
-    expect(req.request.headers.get('Authorization')).toBe('Bearer jwt-token');
+    expect(req.request.headers.get('Authorization')).toBe('Bearer header.payload.signature');
     req.flush({});
   });
 

@@ -53,8 +53,19 @@ describe('RecipeComponent', () => {
   it('should open and clear rating selection', () => {
     component.openRatingFor({ idMeal: '12' });
     expect(component.selectedRecipeId).toBe(12);
+    expect(component.selectedRecipeName).toBe('Receita #12');
+
+    expect(component.extractRecipeId({ external_api_id: '8' })).toBe(8);
+    expect(component.extractRecipeId({ idMeal: '0' })).toBeNull();
+    expect(component.trackByMeal(0, { idMeal: '99' })).toBe('99');
 
     component.clearRatingSelection();
     expect(component.selectedRecipeId).toBeNull();
+  });
+
+  it('should keep selection name when meal has display name', () => {
+    component.openRatingFor({ idMeal: '12', strMeal: 'Chicken Soup' });
+
+    expect(component.selectedRecipeName).toBe('Chicken Soup');
   });
 });

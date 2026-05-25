@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { MealPlanComponent } from './meal-plan.component';
 import { MealPlanService } from '../../services/mealplan.service';
 
@@ -75,5 +75,63 @@ describe('MealPlanComponent', () => {
 
     expect(component.form.value.plan_name).toBe('Draft');
     expect(component.form.value.MONDAY_LUNCH).toBe(7);
+  });
+
+  it('should expose control names and ignore invalid numeric slots', () => {
+    expect(component.controlName('MONDAY', 'LUNCH')).toBe('MONDAY_LUNCH');
+
+    component.form.patchValue({
+      plan_name: 'Semana 1',
+      start_date: '2026-05-23',
+      MONDAY_LUNCH: 0,
+      TUESDAY_DINNER: 'abc',
+      WEDNESDAY_LUNCH: 3
+    });
+    const items = (component as any).buildItemsFromGrid();
+    expect(items).toEqual([
+      { day_of_week: 'WEDNESDAY', meal_type: 'LUNCH', recipe_id: 3 }
+    ]);
+  });
+
+  it('should handle service errors and draft storage failures gracefully', () => {
+    const storageSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota');
+    });
+    const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('broken');
+    });
+    const removeSpy = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('broken');
+    });
+
+    mealPlanServiceMock.createMealPlan.mockReturnValue(throwError(() => new Error('boom')));
+    component.form.patchValue({
+      plan_name: 'Semana 2',
+      start_date: '2026-05-23',
+      MONDAY_LUNCH: 1
+    });
+
+    component.saveDraft();
+    component.loadDraft();
+    component.submit();
+    component.clearDraft();
+
+    expect(component.message).toContain('Erro ao criar o plano de refeicao');
+
+    storageSpy.mockRestore();
+    getSpy.mockRestore();
+    removeSpy.mockRestore();
+  });
+
+  it('should report draft load failures without crashing', () => {
+    const getSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('broken');
+    });
+
+    component.loadDraft();
+
+    expect(component.message).toContain('Nao foi possivel carregar o rascunho.');
+
+    getSpy.mockRestore();
   });
 });

@@ -14,6 +14,7 @@ describe('FeedbackComponent', () => {
     const fixture = TestBed.createComponent(FeedbackComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
+    component.recipeId = 1;
     fixture.detectChanges();
   });
 
@@ -42,14 +43,49 @@ describe('FeedbackComponent', () => {
   });
 
   it('should submit system review when valid', () => {
-    component.systemForm.setValue({ comment: 'Excelente app' });
+    component.recipeId = undefined;
+    component.loadMyRecipeReviews();
 
-    component.submitSystemReview();
+    const req = httpMock.expectOne('/api/recipes/ratings/me');
+    expect(req.request.method).toBe('GET');
+    req.flush([{ id: 1, recipeId: 7, recipeName: 'Bolo', rating: 4, comment: 'Bom' }]);
 
-    const req = httpMock.expectOne('/api/system-reviews');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ comment: 'Excelente app' });
-    req.flush({ ok: true });
-    expect(component.message).toBe('Feedback enviado');
+    expect(component.myReviews.length).toBe(2);
+    expect(component.message).toContain('reviews');
+  });
+
+  it('should save local reviews and merge them with server results', () => {
+    component.recipeId = 12;
+    component.recipeName = 'Bolo';
+    component.reviewForm.setValue({ rating: 4, comment: 'Bom' });
+
+    component.submitRating();
+
+    const postReq = httpMock.expectOne('/api/recipes/12/ratings');
+    postReq.flush({ ok: true });
+
+    component.recipeId = undefined;
+    component.loadMyRecipeReviews();
+
+    const getReq = httpMock.expectOne('/api/recipes/ratings/me');
+    getReq.flush([{ id: 99, recipeId: 12, recipeName: 'Bolo', rating: 4, comment: 'Bom' }]);
+
+    expect(component.myReviews.length).toBe(2);
+    expect(component.message).toContain('servidor');
+  });
+
+  it('should preserve local reviews when server call fails', () => {
+    component.recipeId = undefined;
+    localStorage.setItem('gourmethub.recipe-reviews', JSON.stringify([
+      { id: 1, recipeId: 2, recipeName: 'Pao', rating: 5, comment: 'Top' }
+    ]));
+
+    component.loadMyRecipeReviews();
+
+    const req = httpMock.expectOne('/api/recipes/ratings/me');
+    req.flush('fail', { status: 500, statusText: 'Server Error' });
+
+    expect(component.myReviews.length).toBe(1);
+    expect(component.message).toContain('salvas no navegador');
   });
 });
