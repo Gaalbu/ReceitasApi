@@ -16,6 +16,26 @@
 - UC14: Atualizar Perfil de Usuário
 - UC15: Excluir Conta e Dados Relacionados
 
+## MATRIZ DE RASTREABILIDADE 1:1
+
+| UC | Implementação no backend |
+| --- | --- |
+| UC01 | `POST /auth/register` em `AuthController` |
+| UC02 | `POST /auth/login` em `AuthController` |
+| UC03 | `POST /recipes` em `RecipeController` |
+| UC04 | `GET /recipes/me` em `RecipeController` |
+| UC05 | `PUT /recipes/{recipeId}` em `RecipeController` |
+| UC06 | `DELETE /recipes/{recipeId}` em `RecipeController` |
+| UC07 | `GET /recipes/search?name=` em `RecipeController` |
+| UC08 | `GET /recipes/external/{externalId}` em `RecipeController` |
+| UC09 | `POST /favorites` em `FavoriteController` |
+| UC10 | `POST /meal-plans` em `MealPlanController` |
+| UC11 | `POST /meal-plans` com `items[]` em `MealPlanController` |
+| UC12 | `DELETE /meal-plans/{mealPlanId}/items/{itemId}` em `MealPlanController` |
+| UC13 | `GET /meal-plans/{mealPlanId}/shopping-list` em `MealPlanController` |
+| UC14 | `PUT /users/me` em `UserController` |
+| UC15 | `DELETE /users/me` em `UserController` |
+
 # DETALHAMENTO DOS CASOS DE USO
 
 ## UC01: Cadastrar Usuário

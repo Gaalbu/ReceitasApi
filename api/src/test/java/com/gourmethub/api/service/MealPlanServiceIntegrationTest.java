@@ -49,6 +49,8 @@ public class MealPlanServiceIntegrationTest {
 
         Recipe recipe = new Recipe();
         recipe.setName("Arroz");
+        recipe.setDescription("Arroz, agua, sal");
+        recipe.setInstructions("Cozinhar e servir");
         recipe.setUser(user);
         recipe = recipeRepository.save(recipe);
 

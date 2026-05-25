@@ -2,14 +2,18 @@ package com.gourmethub.api.service;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.gourmethub.api.dto.MealItemRequest;
 import com.gourmethub.api.dto.MealPlanRequest;
+import com.gourmethub.api.dto.ShoppingListResponse;
 import com.gourmethub.api.model.MealItem;
 import com.gourmethub.api.model.MealPlan;
 import com.gourmethub.api.model.MealType;

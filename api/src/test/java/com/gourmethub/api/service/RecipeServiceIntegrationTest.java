@@ -15,6 +15,8 @@ import com.gourmethub.api.dto.MealDbResponse;
 import com.gourmethub.api.dto.RecipeCreateRequest;
 import com.gourmethub.api.model.Recipe;
 import com.gourmethub.api.model.User;
+import com.gourmethub.api.repository.MealItemRepository;
+import com.gourmethub.api.repository.MealPlanRepository;
 import com.gourmethub.api.repository.RecipeRepository;
 import com.gourmethub.api.repository.UserRepository;
 
@@ -36,6 +38,12 @@ public class RecipeServiceIntegrationTest {
     private RecipeRepository recipeRepository;
 
     @Autowired
+    private MealPlanRepository mealPlanRepository;
+
+    @Autowired
+    private MealItemRepository mealItemRepository;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     private MockRestServiceServer mockServer;
@@ -43,6 +51,8 @@ public class RecipeServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
+        mealItemRepository.deleteAll();
+        mealPlanRepository.deleteAll();
         recipeRepository.deleteAll();
         userRepository.deleteAll();
     }
