@@ -62,5 +62,43 @@ public class MealPlanService {
 
         return mealPlanRepository.save(mealPlan);
     }
+
+    @Transactional
+    public void removeMealItem(Long mealPlanId, Long itemId, String username) {
+        MealPlan mealPlan = mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+
+        boolean removed = mealPlan.getItems().removeIf(item -> item.getId() != null && item.getId().equals(itemId));
+        if (!removed) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do plano nao encontrado");
+        }
+
+        mealPlanRepository.save(mealPlan);
+    }
+
+    @Transactional(readOnly = true)
+    public ShoppingListResponse buildShoppingList(Long mealPlanId, String username) {
+        MealPlan mealPlan = mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+
+        Set<String> ingredients = new LinkedHashSet<>();
+        for (MealItem item : mealPlan.getItems()) {
+            if (item.getRecipe() == null || item.getRecipe().getDescription() == null) {
+                continue;
+            }
+            for (String rawIngredient : item.getRecipe().getDescription().split("[\\n,;]+")) {
+                String ingredient = rawIngredient.trim();
+                if (!ingredient.isBlank()) {
+                    ingredients.add(ingredient);
+                }
+            }
+        }
+
+        return ShoppingListResponse.builder()
+                .mealPlanId(mealPlan.getId())
+                .mealPlanName(mealPlan.getPlanName())
+                .ingredients(new java.util.ArrayList<>(ingredients))
+                .build();
+    }
 }
 

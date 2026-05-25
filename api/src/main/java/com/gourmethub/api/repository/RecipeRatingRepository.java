@@ -8,5 +8,7 @@ import com.gourmethub.api.model.RecipeRating;
 
 public interface RecipeRatingRepository extends JpaRepository<RecipeRating, Long> {
 	List<RecipeRating> findByUserUsernameOrderByIdDesc(String username);
+
+	void deleteByUserUsername(String username);
 }
 

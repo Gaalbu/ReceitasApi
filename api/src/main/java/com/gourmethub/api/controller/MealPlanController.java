@@ -29,5 +29,19 @@ public class MealPlanController {
                                                    Authentication authentication) {
         return ResponseEntity.ok(mealPlanService.createMealPlan(request, authentication.getName()));
     }
+
+    @DeleteMapping("/{mealPlanId}/items/{itemId}")
+    public ResponseEntity<Void> deleteMealItem(@PathVariable Long mealPlanId,
+                                               @PathVariable Long itemId,
+                                               Authentication authentication) {
+        mealPlanService.removeMealItem(mealPlanId, itemId, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{mealPlanId}/shopping-list")
+    public ResponseEntity<ShoppingListResponse> shoppingList(@PathVariable Long mealPlanId,
+                                                             Authentication authentication) {
+        return ResponseEntity.ok(mealPlanService.buildShoppingList(mealPlanId, authentication.getName()));
+    }
 }
 

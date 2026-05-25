@@ -1,10 +1,13 @@
 package com.gourmethub.api.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.gourmethub.api.dto.MealDbMeal;
 import com.gourmethub.api.dto.MealDbResponse;
 import com.gourmethub.api.dto.RecipeCreateRequest;
 import com.gourmethub.api.model.Recipe;
@@ -37,6 +40,44 @@ public class RecipeService {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_GATEWAY,
                     "Failed to fetch external recipes", ex);
         }
+    }
+
+    public MealDbMeal getExternalRecipeDetails(String id) {
+        String url = "https://www.themealdb.com/api/json/v1/1/lookup.php?i=" + id;
+        try {
+            MealDbResponse resp = restTemplate.getForObject(url, MealDbResponse.class);
+            if (resp == null || resp.getMeals() == null || resp.getMeals().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita externa nao encontrada");
+            }
+            return resp.getMeals().get(0);
+        } catch (org.springframework.web.client.RestClientException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                    "Failed to fetch external recipe details", ex);
+        }
+    }
+
+    public List<Recipe> listMyRecipes(String username) {
+        return recipeRepository.findByUserUsernameOrderByIdDesc(username);
+    }
+
+    public Recipe updateRecipe(Long recipeId, RecipeCreateRequest request, String username) {
+        Recipe recipe = recipeRepository.findByIdAndUserUsername(recipeId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+
+        recipe.setName(request.getTitle());
+        recipe.setDescription(request.getIngredients());
+        recipe.setInstructions(request.getInstructions());
+        recipe.setPrepTime(request.getPrep_time());
+        recipe.setExternal(false);
+        recipe.setExternalApiId(null);
+
+        return recipeRepository.save(recipe);
+    }
+
+    public void deleteRecipe(Long recipeId, String username) {
+        Recipe recipe = recipeRepository.findByIdAndUserUsername(recipeId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+        recipeRepository.delete(recipe);
     }
 
     public Recipe createRecipe(RecipeCreateRequest request, String username) {
