@@ -50,9 +50,38 @@ export class FeedbackComponent implements OnInit {
 
   loadMyRecipeReviews() {
     this.loadingReviews = true;
-    this.http.get<MyRecipeReview[]>(this.endpoint('/recipes/ratings/me')).subscribe({
+    // show local reviews immediately as a fallback while we try to fetch server-side ones
+    const local = this.loadLocalReviews();
+    if (local.length) {
+      this.myReviews = local;
+      this.message = 'Mostrando reviews locais salvas no navegador.';
+      // show them right away while we attempt server sync
+      this.loadingReviews = false;
+    }
+
+    this.http.get<any[]>(this.endpoint('/recipes/ratings/me')).subscribe({
       next: (reviews) => {
-        this.myReviews = reviews || [];
+        const normalized = (reviews || []).map(r => {
+          const recipeName = r.recipeName || r.recipe?.title || r.recipe?.name || r.recipe?.title || `Receita #${r.recipeId ?? r.recipe?.id ?? '??'}`;
+          return {
+            id: r.id,
+            recipeId: r.recipeId ?? r.recipe?.id,
+            recipeName,
+            rating: r.rating,
+            comment: r.comment
+          } as MyRecipeReview;
+        });
+        this.myReviews = normalized;
+        // clear local message when server provides authoritative data
+        this.message = '';
+        // if server returned no reviews, try local fallback
+        if (!this.myReviews || this.myReviews.length === 0) {
+          const local = this.loadLocalReviews();
+          if (local.length) {
+            this.myReviews = local;
+            this.message = 'Mostrando reviews locais salvas no navegador.';
+          }
+        }
         this.loadingReviews = false;
       },
       error: () => {
@@ -71,9 +100,30 @@ export class FeedbackComponent implements OnInit {
     this.http.post(this.endpoint(`/recipes/${this.recipeId}/ratings`), payload).subscribe({
       next: () => {
         this.saveLocalReview(payload.rating, payload.comment || '');
+        // Update visible list immediately
+        const entry: MyRecipeReview = {
+          id: Date.now(),
+          recipeId: this.recipeId!,
+          recipeName: this.recipeName || `Receita #${this.recipeId}`,
+          rating: payload.rating,
+          comment: payload.comment || ''
+        };
+        this.myReviews = [entry, ...this.myReviews];
         this.message = 'Avaliação enviada';
       },
-      error: () => (this.message = 'Erro ao enviar')
+      error: () => {
+        // Persist locally so the user still sees their review even if server rejects
+        this.saveLocalReview(payload.rating, payload.comment || '');
+        const entry: MyRecipeReview = {
+          id: Date.now(),
+          recipeId: this.recipeId!,
+          recipeName: this.recipeName || `Receita #${this.recipeId}`,
+          rating: payload.rating,
+          comment: payload.comment || ''
+        };
+        this.myReviews = [entry, ...this.myReviews];
+        this.message = 'Não foi possível enviar ao servidor — review salva localmente.';
+      }
     });
   }
 

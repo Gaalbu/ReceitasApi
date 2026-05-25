@@ -17,6 +17,26 @@
     <h4>Minhas Reviews em Receitas</h4>
     <p class="text-muted">Aqui aparecem as reviews que voce ja fez em receitas.</p>
 
+    <!-- Show any loaded reviews immediately, even while attempting to sync -->
+    <div *ngIf="myReviews.length > 0" class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Receita</th>
+            <th>Nota</th>
+            <th>Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let review of myReviews">
+            <td>{{ review.recipeName }} (#{{ review.recipeId }})</td>
+            <td>{{ review.rating }}/5</td>
+            <td>{{ review.comment || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div *ngIf="loadingReviews" class="alert alert-light">Carregando reviews...</div>
 
     <div *ngIf="!loadingReviews && myReviews.length === 0" class="alert alert-light">
