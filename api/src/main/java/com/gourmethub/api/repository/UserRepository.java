@@ -1,10 +1,10 @@
-package com.gourmethub.api.repository;
+package com.receitasapi.api.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gourmethub.api.model.User;
+import com.receitasapi.api.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);

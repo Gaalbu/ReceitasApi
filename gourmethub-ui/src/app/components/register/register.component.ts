@@ -13,7 +13,22 @@ import { CommonModule } from '@angular/common';
 export class RegisterComponent {
   form!: FormGroup;
   error = '';
-  loading = false;
+  private _loading = false;
+
+  get loading() {
+    return this._loading;
+  }
+
+  set loading(value: boolean) {
+    this._loading = value;
+    if (this.form) {
+      if (value) {
+        this.form.disable({ emitEvent: false });
+      } else {
+        this.form.enable({ emitEvent: false });
+      }
+    }
+  }
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({

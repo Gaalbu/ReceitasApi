@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, BehaviorSubject, Observable } from 'rxjs';
+import { resolveApiBase } from './api-base';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private base = '/api';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -24,12 +24,16 @@ export class AuthService {
     }
   }
 
+  private endpoint(path: string): string {
+    return `${resolveApiBase()}${path}`;
+  }
+
   register(payload: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.base}/auth/register`, payload);
+    return this.http.post(this.endpoint('/auth/register'), payload);
   }
 
   login(payload: { username: string; password: string }): Observable<any> {
-    return this.http.post(`${this.base}/auth/login`, payload).pipe(
+    return this.http.post(this.endpoint('/auth/login'), payload).pipe(
       tap((res: any) => {
         if (res && res.token && this.isLocalStorageAvailable()) {
           localStorage.setItem('token', res.token);

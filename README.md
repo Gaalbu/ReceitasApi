@@ -1,7 +1,7 @@
-# GourmetHub - Plataforma de Gestão Gastronômica
+# ReceitasApi - Plataforma de Gestão Gastronômica
 
 ## 1. Descrição do Projeto
-O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar suas próprias receitas, criar planos de refeições semanais e explorar novas culinárias através da integração com a API externa *TheMealDB*.
+ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar suas próprias receitas, criar planos de refeições semanais e explorar novas culinárias através da integração com a API externa *TheMealDB*.
 
 ## 2. Stack Tecnológica
 - **Back-end:** Java 21 LTS + Spring Boot 3.5.14 + PostgreSQL
@@ -48,9 +48,9 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 
 ## 4. Estrutura do Projeto
 ```text
-/gourmethub
+/receitasapi
 ├── api/
-│   ├── src/main/java/com/gourmethub/api/
+│   ├── src/main/java/com/receitasapi/api/
 │   │   ├── controller/          (Endpoints REST)
 │   │   │   ├── AuthController
 │   │   │   ├── RecipeController
@@ -67,7 +67,7 @@ O GourmetHub é uma aplicação web completa que permite aos usuários gerenciar
 │   │   ├── model/               (Entidades)
 │   │   ├── config/              (Security, CORS, RestTemplate)
 │   │   └── security/            (JWT, CustomUserDetails)
-│   └── src/test/java/           (Testes JUnit 5)
+│   └── src/test/java/com/receitasapi/api/           (Testes JUnit 5)
 │
 ├── gourmethub-ui/
 │   ├── src/app/
@@ -183,7 +183,7 @@ ng serve --open
 ```bash
 cd gourmethub-ui
 npm run build
-npm run serve:ssr:gourmethub-frontend
+npm run serve:ssr:receitasapi-frontend
 ```
 
 ## 7. Testes
@@ -192,7 +192,7 @@ npm run serve:ssr:gourmethub-frontend
 ```bash
 cd api
 ./mvnw test
-# No Windows, use mvnw.cmd test
+# No Windows, use .\mvnw.cmd test
 ```
 
 ### Front-end

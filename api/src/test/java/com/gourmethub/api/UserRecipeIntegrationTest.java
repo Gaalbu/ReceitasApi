@@ -1,4 +1,4 @@
-package com.gourmethub.api;
+package com.receitasapi.api;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,10 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")

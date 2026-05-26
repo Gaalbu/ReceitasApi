@@ -17,6 +17,9 @@
             <p class="card-text small">
               <strong>ID:</strong> {{ meal.idMeal || meal.id || (meal.external_api_id || '—') }}
             </p>
+            <button class="btn btn-sm btn-outline-primary" type="button" (click)="openRatingFor(meal)">
+              Avaliar esta receita
+            </button>
           </div>
         </div>
       </div>
@@ -28,4 +31,14 @@
       </div>
     }
   </div>
+
+  @if (selectedRecipeId) {
+    <div class="mt-4 p-3 border rounded bg-light">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Avaliar receita #{{ selectedRecipeId }}</h4>
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="clearRatingSelection()">Fechar</button>
+      </div>
+      <app-feedback [recipeId]="selectedRecipeId" [recipeName]="selectedRecipeName"></app-feedback>
+    </div>
+  }
 </div>

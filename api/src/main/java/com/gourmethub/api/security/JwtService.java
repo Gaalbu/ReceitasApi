@@ -1,4 +1,4 @@
-package com.gourmethub.api.security;
+package com.receitasapi.api.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -36,16 +37,27 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return getClaims(token).getSubject();
+        try {
+            Claims claims = getClaims(token);
+            return claims != null ? claims.getSubject() : null;
+        } catch (JwtException e) {
+            return null;
+        }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        try {
+            String username = extractUsername(token);
+            if (username == null) return false;
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {
-        return getClaims(token).getExpiration().before(new Date());
+        Claims claims = getClaims(token);
+        return claims.getExpiration().before(new Date());
     }
 
     private Claims getClaims(String token) {

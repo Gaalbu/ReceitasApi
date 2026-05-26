@@ -1,23 +1,27 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.MealItemRequest;
-import com.gourmethub.api.dto.MealPlanRequest;
-import com.gourmethub.api.model.MealItem;
-import com.gourmethub.api.model.MealPlan;
-import com.gourmethub.api.model.MealType;
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.MealPlanRepository;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.MealItemRequest;
+import com.receitasapi.api.dto.MealPlanRequest;
+import com.receitasapi.api.dto.ShoppingListResponse;
+import com.receitasapi.api.model.MealItem;
+import com.receitasapi.api.model.MealPlan;
+import com.receitasapi.api.model.MealType;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.MealPlanRepository;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class MealPlanService {
@@ -61,6 +65,44 @@ public class MealPlanService {
         mealPlan.setItems(items);
 
         return mealPlanRepository.save(mealPlan);
+    }
+
+    @Transactional
+    public void removeMealItem(Long mealPlanId, Long itemId, String username) {
+        MealPlan mealPlan = mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+
+        boolean removed = mealPlan.getItems().removeIf(item -> item.getId() != null && item.getId().equals(itemId));
+        if (!removed) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item do plano nao encontrado");
+        }
+
+        mealPlanRepository.save(mealPlan);
+    }
+
+    @Transactional(readOnly = true)
+    public ShoppingListResponse buildShoppingList(Long mealPlanId, String username) {
+        MealPlan mealPlan = mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+
+        Set<String> ingredients = new LinkedHashSet<>();
+        for (MealItem item : mealPlan.getItems()) {
+            if (item.getRecipe() == null || item.getRecipe().getDescription() == null) {
+                continue;
+            }
+            for (String rawIngredient : item.getRecipe().getDescription().split("[\\n,;]+")) {
+                String ingredient = rawIngredient.trim();
+                if (!ingredient.isBlank()) {
+                    ingredients.add(ingredient);
+                }
+            }
+        }
+
+        return ShoppingListResponse.builder()
+                .mealPlanId(mealPlan.getId())
+                .mealPlanName(mealPlan.getPlanName())
+                .ingredients(new java.util.ArrayList<>(ingredients))
+                .build();
     }
 }
 
