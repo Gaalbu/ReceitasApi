@@ -36,26 +36,6 @@
 | UC14 | `PUT /users/me` em `UserController` |
 | UC15 | `DELETE /users/me` em `UserController` |
 
-## RASTREABILIDADE DO FRONTEND ATUAL
-
-| UC | Tela / rota | Situação |
-| --- | --- | --- |
-| UC01 | `/register` | Implementado |
-| UC02 | `/login` | Implementado |
-| UC03 | `/create-recipe` | Implementado |
-| UC04 | `/` | Parcial: sem tela dedicada de listagem |
-| UC05 | `/` ou `/create-recipe` | Parcial: sem edição visual dedicada |
-| UC06 | `/` | Parcial: sem exclusão visual dedicada |
-| UC07 | `/` | Implementado |
-| UC08 | `/` | Implementado na busca de receitas |
-| UC09 | `/` | Implementado na busca de receitas |
-| UC10 | `/meal-plans` | Implementado |
-| UC11 | `/meal-plans` | Implementado |
-| UC12 | `/meal-plans` | Parcial: sem ação dedicada de remoção |
-| UC13 | `/meal-plans` | Parcial: sem tela de lista de compras dedicada |
-| UC14 | `/feedback` | Parcial: sem tela própria de perfil |
-| UC15 | backend apenas | Não implementado no frontend |
-
 # DETALHAMENTO DOS CASOS DE USO
 
 ## UC01: Cadastrar Usuário
@@ -169,9 +149,9 @@
 
 # ESTRATÉGIA DE TESTES PARA OS CASOS DE USO
 
-1. Testes Unitários: `api/src/test/java/**/*.java` e `receitasapi-ui/src/**/*.spec.ts` validam regras locais, forms e serviços.
-2. Testes de Integração: `api/src/test/java/com/receitasapi/api/service/*IntegrationTest.java` e testes Spring de controller cobrem persistência, segurança e integrações.
-3. Testes End-to-End: Cypress em `receitasapi-ui/cypress/e2e/*.cy.js` cobre registro, login, busca, criação de receita, criação de plano e reviews.
+1. Testes Unitários (JUnit 5): Validar os cálculos de lista de compras e regras de validação de campos.
+2. Testes de Integração (Spring): Garantir que a integração com a API TheMealDB e as transações no PostgreSQL funcionem corretamente.
+3. Testes End-to-End (Cypress): Simular o fluxo completo desde o login até a criação de um plano de refeição no navegador.
 
 # RESULTADOS DE TESTES E COBERTURA
 

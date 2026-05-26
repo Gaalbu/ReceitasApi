@@ -54,12 +54,12 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
 
 ### P1 - Fechar qualidade com pouco esforço de código
-- [x] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
-- [x] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
-- [x] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
+- [ ] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
+- [ ] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
+- [ ] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
 
 ### P2 - Melhorar a leitura da entrega
-- [x] Padronizar a descrição dos testes para separar unitários, integração e E2E com os artefatos reais de cada camada.
+- [ ] Padronizar a descrição dos testes para separar unitários, integração e E2E com os artefatos reais de cada camada.
 - [x] Incluir o passo oficial de execução do SonarQube no README ou pipeline.
 
 ## 5. Estrutura do Projeto
@@ -217,22 +217,9 @@ cd receitasapi-ui
 ng test
 ```
 
-### Front-end com cobertura
-```bash
-cd receitasapi-ui
-npm run test:coverage
-```
-Esse comando funciona depois de `npm install`. No fluxo automatizado do Sonar via Docker Compose, a instalação e a cobertura já acontecem dentro do container.
-
-### E2E
-```bash
-cd receitasapi-ui
-npm run e2e:run
-```
-
 ## 9. SonarQube
 
-O repositório já traz o fluxo automático de Sonar no Docker Compose. Não precisa instalar scanner, Maven ou Node no host.
+O repositório já traz o fluxo automático de Sonar no Docker Compose. Não precisa instalar scanner nem Maven no host.
 
 1. Subir o stack com o perfil do Sonar.
 ```bash
@@ -246,9 +233,8 @@ http://localhost:9000
 
 Observações rápidas:
 - O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
-- O backend entra com JaCoCo antes da análise.
-- O frontend gera `lcov.info` antes do scan e esse arquivo já está apontado no [sonar-project.properties](sonar-project.properties).
-- Se quiser rodar a cobertura do frontend isoladamente, use `npm run test:coverage`.
+- O backend já entra com JaCoCo antes da análise.
+- O frontend entra como código analisado; a cobertura dele ainda não está automatizada.
 
 ## 10. Modelos de Dados Principais
 
@@ -297,29 +283,3 @@ Observações rápidas:
 - `recipeId` (FK → Recipe)
 - `userId` (FK → User)
 - `createdAt` (Timestamp)
-
-## 11. Rastreabilidade das Telas e Fluxos do Frontend
-
-### Cobertura de UI atual
-| UC | Rota / Tela | Situação |
-| --- | --- | --- |
-| UC01 | `/register` | Implementado |
-| UC02 | `/login` | Implementado |
-| UC03 | `/create-recipe` | Implementado |
-| UC04 | `/` | Parcial: leitura da lista ainda depende do backend e não há tela dedicada |
-| UC05 | `/` ou `/create-recipe` | Parcial: não há fluxo visual de edição dedicado |
-| UC06 | `/` | Parcial: não há ação visual de exclusão dedicada |
-| UC07 | `/` | Implementado |
-| UC08 | `/` | Implementado de forma integrada no card da busca |
-| UC09 | `/` | Implementado de forma integrada no card da busca |
-| UC10 | `/meal-plans` | Implementado |
-| UC11 | `/meal-plans` | Implementado |
-| UC12 | `/meal-plans` | Parcial: a remoção de item ainda não tem ação dedicada no frontend |
-| UC13 | `/meal-plans` | Parcial: não há tela de lista de compras dedicada |
-| UC14 | `/feedback` | Parcial: a edição de perfil não tem tela própria no frontend atual |
-| UC15 | `/feedback` | Não implementado no frontend; existe apenas no backend |
-
-### Camadas de teste
-- Unitários: `receitasapi-ui/src/**/*.spec.ts` e `api/src/test/java/**/*.java`.
-- Integração: testes Spring no backend em `api/src/test/java/com/receitasapi/api/service/` e `api/src/test/java/com/receitasapi/api/*IntegrationTest.java`.
-- E2E: Cypress em `receitasapi-ui/cypress/e2e/*.cy.js`.

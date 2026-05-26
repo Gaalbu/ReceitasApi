@@ -7,7 +7,6 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:coverage": "ng test --watch=false --code-coverage",
     "serve:ssr:receitasapi-frontend": "node dist/receitasapi-frontend/server/server.mjs",
     "e2e": "cypress open",
     "e2e:run": "cypress run --config baseUrl=http://localhost:4200",
