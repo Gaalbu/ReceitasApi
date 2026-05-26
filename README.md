@@ -8,7 +8,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - **Front-end:** Angular 21 + TypeScript com SSR (Server-Side Rendering)
 - **Autenticação:** JWT (JSON Web Tokens) + Spring Security
 - **API Externa:** TheMealDB (integração para busca de receitas)
-- **Testes:** JUnit 5, Mockito, Angular/Vitest, Cypress
+- **Testes:** JUnit 5, Mockito, Jasmine/Karma
 - **Containerização:** Docker + Docker Compose para subir o stack completo
 
 ## 3. Funcionalidades Implementadas ✅
@@ -16,8 +16,6 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 ### 3.1. Autenticação e Usuários
 - ✅ **Registro de Usuários** → `POST /auth/register`
 - ✅ **Login com JWT** → `POST /auth/login`
-- ✅ **Atualização de perfil** → `PUT /users/me`
-- ✅ **Exclusão de conta** → `DELETE /users/me`
 - ✅ **Armazenamento seguro de tokens** (localStorage)
 - ✅ **Proteção de rotas com interceptor JWT**
 - ✅ **Logout e limpeza de sessão**
@@ -25,8 +23,6 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 ### 3.2. Gerenciamento de Receitas
 - ✅ **Busca de receitas na TheMealDB** → `GET /recipes/search?name={termo}`
 - ✅ **Criação de receitas customizadas** → `POST /recipes`
-- ✅ **Listagem, edição e exclusão das minhas receitas** → `GET /recipes/me`, `PUT /recipes/{recipeId}`, `DELETE /recipes/{recipeId}`
-- ✅ **Favoritar receitas externas** → `POST /favorites` e `GET /favorites/me`
 - ✅ **Visualização de receitas externas**
 - ✅ **Integração com API externa para enriquecimento de dados**
 
@@ -46,8 +42,6 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - ✅ **Navbar responsivo** com navegação entre páginas
 - ✅ **Página de Busca de Receitas** com integração em tempo real
 - ✅ **Formulário de Criação de Receitas**
-- ✅ **Página de Perfil** para atualizar dados e excluir conta
-- ✅ **Lista de favoritos** dentro da tela principal de receitas
 - ✅ **Dashboard de Planos de Refeição**
 - ✅ **Página de Feedback/Reviews**
 - ✅ **Renderização no lado do servidor (SSR)**
@@ -56,8 +50,8 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 
 ### P0 - Corrigir para sustentar a entrega
 - [x] Alinhar a versão do Java no build com a documentação. O `pom.xml` agora usa Java 21, igual ao README.
-- [x] Ajustar a narrativa da entrega para refletir as telas e CRUDs reais do front.
-- [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar gera a cobertura antes da análise.
+- [ ] Ajustar a narrativa de "5 telas". Hoje o roteamento do front expõe 6 telas: login, register, recipe, create-recipe, meal-plans e feedback.
+- [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
 
 ### P1 - Fechar qualidade com pouco esforço de código
 - [x] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.

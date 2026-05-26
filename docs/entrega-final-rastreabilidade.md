@@ -169,18 +169,16 @@
 
 # ESTRATÉGIA DE TESTES PARA OS CASOS DE USO
 
-1. Testes unitários: `api/src/test/java/**/*.java` e `receitasapi-ui/src/**/*.spec.ts` cobrem regras locais, forms e serviços.
-2. Testes de integração: testes Spring no backend validam persistência, segurança e fluxos de serviço/controller.
-3. Testes E2E: Cypress em `receitasapi-ui/cypress/e2e/*.cy.js` cobre registro, login, busca, receitas, favoritos, plano e reviews.
+1. Testes Unitários: `api/src/test/java/**/*.java` e `receitasapi-ui/src/**/*.spec.ts` validam regras locais, forms e serviços.
+2. Testes de Integração: `api/src/test/java/com/receitasapi/api/service/*IntegrationTest.java` e testes Spring de controller cobrem persistência, segurança e integrações.
+3. Testes End-to-End: Cypress em `receitasapi-ui/cypress/e2e/*.cy.js` cobre registro, login, busca, criação de receita, criação de plano e reviews.
 
 # RESULTADOS DE TESTES E COBERTURA
 
-- Backend: suíte Maven e JaCoCo já integradas ao fluxo do projeto.
-- Frontend: suíte Angular/Vitest com cobertura gerada em `receitasapi-ui/coverage`.
-- SonarQube: análise automatizada via `docker compose --profile sonar` com backend + frontend cobertos.
+- Backend (Maven): 15 testes executados, 0 falhas, 0 erros. JaCoCo: instruções cobrindo 86.73%, branch coverage 68.18% (relatório em `api/target/site/jacoco/index.html`).
+- Frontend (Angular): 25 testes unitários executados, 0 falhas. v8 coverage: statements 57.25%, branches 68.49%, functions 58.33%, lines 58.71% (relatório em `receitasapi-ui/coverage` gerado pelo `ng test`).
 
 ## AÇÕES ADICIONAIS EXECUTADAS
 
-- Sonar automatizado no Docker Compose, sem exigir instalação extra no host.
-- Cobertura do frontend incluída no scan por meio de `lcov.info`.
-- E2E atualizado para cobrir login, busca, criação de receita e favoritos.
+- Adicionados testes de integração backend para `RecipeService` e `MealPlanService` em `api/src/test/java/com/receitasapi/api/service/` — validados via `./mvnw.cmd test` e incluídos nos relatórios Surefire/JaCoCo.
+- Scaffolded Cypress E2E no frontend: `cypress.config.js`, especificação `cypress/e2e/uc02_uc11_spec.cy.js` e scripts `e2e`/`e2e:run` no `receitasapi-ui/package.json`. Instalei `cypress` como devDependency. Esses testes são E2E smoke flows que assumem `ng serve` e backend em `localhost:8080`.
