@@ -305,10 +305,10 @@ Observações rápidas:
 | --- | --- | --- |
 | UC01 | `/register` | Implementado |
 | UC02 | `/login` | Implementado |
-| UC03 | `/create-recipe` | Implementado |
-| UC04 | `/` | Parcial: leitura da lista ainda depende do backend e não há tela dedicada |
-| UC05 | `/` ou `/create-recipe` | Parcial: não há fluxo visual de edição dedicado |
-| UC06 | `/` | Parcial: não há ação visual de exclusão dedicada |
+| UC03 | `/` e `/create-recipe` | Implementado |
+| UC04 | `/` | Implementado |
+| UC05 | `/` | Implementado |
+| UC06 | `/` | Implementado |
 | UC07 | `/` | Implementado |
 | UC08 | `/` | Implementado de forma integrada no card da busca |
 | UC09 | `/` | Implementado de forma integrada no card da busca |
@@ -316,8 +316,8 @@ Observações rápidas:
 | UC11 | `/meal-plans` | Implementado |
 | UC12 | `/meal-plans` | Parcial: a remoção de item ainda não tem ação dedicada no frontend |
 | UC13 | `/meal-plans` | Parcial: não há tela de lista de compras dedicada |
-| UC14 | `/feedback` | Parcial: a edição de perfil não tem tela própria no frontend atual |
-| UC15 | `/feedback` | Não implementado no frontend; existe apenas no backend |
+| UC14 | `/profile` | Implementado |
+| UC15 | `/profile` | Implementado via exclusão de conta |
 
 ### Camadas de teste
 - Unitários: `receitasapi-ui/src/**/*.spec.ts` e `api/src/test/java/**/*.java`.

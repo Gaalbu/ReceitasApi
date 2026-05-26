@@ -43,6 +43,23 @@ export class AuthService {
     );
   }
 
+  updateProfile(payload: { username?: string; email?: string; password?: string }): Observable<any> {
+    return this.http.put(this.endpoint('/users/me'), payload).pipe(
+      tap((res: any) => {
+        if (res && res.token && this.isLocalStorageAvailable()) {
+          localStorage.setItem('token', res.token);
+          this.isAuthenticatedSubject.next(true);
+        }
+      })
+    );
+  }
+
+  deleteAccount(): Observable<void> {
+    return this.http.delete<void>(this.endpoint('/users/me')).pipe(
+      tap(() => this.logout())
+    );
+  }
+
   getToken(): string | null {
     if (!this.isLocalStorageAvailable()) {
       return null;

@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { NavbarComponent } from './navbar.component';
 import { AuthService } from '../../services/auth.service';
+import { vi } from 'vitest';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -26,6 +27,7 @@ describe('NavbarComponent', () => {
 
     authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture = TestBed.createComponent(NavbarComponent);
     component = fixture.componentInstance;

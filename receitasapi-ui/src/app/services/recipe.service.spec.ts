@@ -110,8 +110,56 @@ describe('RecipeService', () => {
     req.flush(mockResponse);
   });
 
+  it('should get my recipes with GET request', () => {
+    const mockResponse = [
+      { id: 1, name: 'Omelete' },
+      { id: 2, name: 'Salada' }
+    ];
+
+    service.getMyRecipes().subscribe(result => {
+      expect(result).toEqual(mockResponse);
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/me`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should update a recipe with PUT request', () => {
+    const payload = {
+      name: 'Updated Recipe',
+      description: 'Updated description',
+      instructions: 'Updated instructions',
+      prep_time: 20
+    };
+
+    service.updateMyRecipe(10, payload).subscribe(result => {
+      expect(result).toEqual({ id: 10, ...payload });
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/10`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 10, ...payload });
+  });
+
+  it('should delete a recipe with DELETE request', () => {
+    service.deleteMyRecipe(7).subscribe(result => {
+      expect(result).toBeNull();
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/7`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
   it('should handle error on create recipe', () => {
-    const payload = { name: 'Invalid Recipe' };
+    const payload = {
+      name: 'Invalid Recipe',
+      description: 'Invalid description',
+      instructions: 'Invalid instructions',
+      prep_time: 0
+    };
     const errorMessage = 'Recipe validation failed';
     let errorReceived = false;
 
@@ -128,7 +176,12 @@ describe('RecipeService', () => {
   });
 
   it('should pass correct content-type header on create recipe', () => {
-    const payload = { name: 'Test Recipe' };
+    const payload = {
+      name: 'Test Recipe',
+      description: 'Test description',
+      instructions: 'Test instructions',
+      prep_time: 15
+    };
 
     service.createMyRecipe(payload).subscribe();
 
