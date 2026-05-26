@@ -1,7 +1,8 @@
-describe('UC02-UC11 E2E smoke', () => {
-  // Prereq: start frontend (ng serve or docker frontend) and backend (./mvnw.cmd spring-boot:run)
+// URL base da API: em Docker, o Nginx faz proxy de /api/ -> api:8080
+// Em dev local (ng serve), a API fica direto em localhost:8080
+const API_URL = Cypress.env('API_URL') || 'http://localhost:8080'
 
-  // Create test user once and login via API before each test, injecting token into localStorage
+describe('UC02-UC11 E2E smoke', () => {
   let token = ''
   const username = `e2euser${Date.now()}`
   const email = `${username}@example.com`
@@ -10,8 +11,8 @@ describe('UC02-UC11 E2E smoke', () => {
   before(() => {
     cy.request({
       method: 'POST',
-      url: 'http://localhost:8080/auth/register',
-      headers: { Origin: 'http://localhost' },
+      url: `${API_URL}/auth/register`,
+      headers: { Origin: Cypress.config('baseUrl') },
       body: { username, email, password }
     })
   })
@@ -19,8 +20,8 @@ describe('UC02-UC11 E2E smoke', () => {
   beforeEach(() => {
     cy.request({
       method: 'POST',
-      url: 'http://localhost:8080/auth/login',
-      headers: { Origin: 'http://localhost' },
+      url: `${API_URL}/auth/login`,
+      headers: { Origin: Cypress.config('baseUrl') },
       body: { username, password }
     }).then((resp) => {
       token = resp.body.token
