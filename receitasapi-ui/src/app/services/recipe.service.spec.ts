@@ -125,20 +125,6 @@ describe('RecipeService', () => {
     req.flush(mockResponse);
   });
 
-  it('should get my favorites with GET request', () => {
-    const mockResponse = [
-      { id: 11, recipeName: 'Lasanha', externalRecipeId: '200', imageUrl: 'img' }
-    ];
-
-    service.getMyFavorites().subscribe(result => {
-      expect(result).toEqual(mockResponse);
-    });
-
-    const req = httpMock.expectOne(`${apiBase}/favorites/me`);
-    expect(req.request.method).toBe('GET');
-    req.flush(mockResponse);
-  });
-
   it('should update a recipe with PUT request', () => {
     const payload = {
       name: 'Updated Recipe',
@@ -163,34 +149,6 @@ describe('RecipeService', () => {
     });
 
     const req = httpMock.expectOne(`${apiBase}/recipes/7`);
-    expect(req.request.method).toBe('DELETE');
-    req.flush(null);
-  });
-
-  it('should add a favorite with POST request', () => {
-    const payload = {
-      external_recipe_id: '321',
-      recipe_name: 'Pizza',
-      image_url: 'https://img'
-    };
-
-    service.addFavorite(payload).subscribe(result => {
-      expect(result).toEqual({ id: 1, ...payload });
-    });
-
-    const req = httpMock.expectOne(`${apiBase}/favorites`);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(payload);
-    expect(req.request.headers.get('Content-Type')).toBe('application/json');
-    req.flush({ id: 1, ...payload });
-  });
-
-  it('should delete a favorite with DELETE request', () => {
-    service.deleteFavorite(9).subscribe(result => {
-      expect(result).toBeNull();
-    });
-
-    const req = httpMock.expectOne(`${apiBase}/favorites/9`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });

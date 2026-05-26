@@ -9,24 +9,18 @@ describe('RecipeComponent', () => {
   let recipeServiceMock: {
     searchExternal: ReturnType<typeof vi.fn>;
     getMyRecipes: ReturnType<typeof vi.fn>;
-    getMyFavorites: ReturnType<typeof vi.fn>;
     createMyRecipe: ReturnType<typeof vi.fn>;
     updateMyRecipe: ReturnType<typeof vi.fn>;
     deleteMyRecipe: ReturnType<typeof vi.fn>;
-    addFavorite: ReturnType<typeof vi.fn>;
-    deleteFavorite: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
     recipeServiceMock = {
       searchExternal: vi.fn(),
       getMyRecipes: vi.fn(),
-      getMyFavorites: vi.fn(),
       createMyRecipe: vi.fn(),
       updateMyRecipe: vi.fn(),
-      deleteMyRecipe: vi.fn(),
-      addFavorite: vi.fn(),
-      deleteFavorite: vi.fn()
+      deleteMyRecipe: vi.fn()
     };
 
     await TestBed.configureTestingModule({
@@ -37,7 +31,6 @@ describe('RecipeComponent', () => {
     const fixture = TestBed.createComponent(RecipeComponent);
     component = fixture.componentInstance;
     recipeServiceMock.getMyRecipes.mockReturnValue(of([]));
-    recipeServiceMock.getMyFavorites.mockReturnValue(of([]));
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     fixture.detectChanges();
   });
@@ -118,27 +111,5 @@ describe('RecipeComponent', () => {
     recipeServiceMock.deleteMyRecipe.mockReturnValue(of(void 0));
     component.deleteMyRecipe({ id: 1, name: 'Omelete', description: 'Ovos', instructions: 'Misturar', prepTime: 10 });
     expect(recipeServiceMock.deleteMyRecipe).toHaveBeenCalledWith(1);
-  });
-
-  it('should load my favorites and allow adding and deleting', () => {
-    recipeServiceMock.getMyFavorites.mockReturnValue(of([
-      { id: 3, recipeName: 'Pizza', externalRecipeId: '22', imageUrl: 'img' }
-    ]));
-
-    component.loadMyFavorites();
-
-    expect(component.myFavorites.length).toBe(1);
-
-    recipeServiceMock.addFavorite.mockReturnValue(of({}));
-    component.addFavorite({ idMeal: '22', strMeal: 'Pizza', strMealThumb: 'img' });
-    expect(recipeServiceMock.addFavorite).toHaveBeenCalledWith({
-      external_recipe_id: '22',
-      recipe_name: 'Pizza',
-      image_url: 'img'
-    });
-
-    recipeServiceMock.deleteFavorite.mockReturnValue(of(void 0));
-    component.deleteFavorite({ id: 3, externalRecipeId: '22', recipeName: 'Pizza', imageUrl: 'img' });
-    expect(recipeServiceMock.deleteFavorite).toHaveBeenCalledWith(3);
   });
 });

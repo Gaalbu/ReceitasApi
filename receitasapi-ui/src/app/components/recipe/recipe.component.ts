@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FavoritePayload, RecipeService, RecipePayload } from '../../services/recipe.service';
+import { RecipeService, RecipePayload } from '../../services/recipe.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FeedbackComponent } from '../feedback/feedback.component';
@@ -11,13 +11,6 @@ type MyRecipe = {
   description: string;
   instructions: string;
   prepTime?: number | null;
-};
-
-type FavoriteItem = {
-  id: number;
-  externalRecipeId: string;
-  recipeName: string;
-  imageUrl?: string | null;
 };
 
 @Component({
@@ -31,7 +24,6 @@ export class RecipeComponent implements OnInit {
   recipeForm!: FormGroup;
   results: any[] = [];
   myRecipes: MyRecipe[] = [];
-  myFavorites: FavoriteItem[] = [];
   selectedRecipeId: number | null = null;
   selectedRecipeName = '';
   editingRecipeId: number | null = null;
@@ -49,7 +41,6 @@ export class RecipeComponent implements OnInit {
     });
 
     this.loadMyRecipes();
-    this.loadMyFavorites();
   }
 
   search() {
@@ -107,65 +98,6 @@ export class RecipeComponent implements OnInit {
       },
       error: () => {
         this.myRecipes = [];
-      }
-    });
-  }
-
-  loadMyFavorites() {
-    this.recipeService.getMyFavorites().subscribe({
-      next: (favorites) => {
-        this.myFavorites = Array.isArray(favorites)
-          ? favorites.map((favorite: any) => ({
-              id: Number(favorite?.id ?? 0),
-              externalRecipeId: String(favorite?.externalRecipeId ?? favorite?.external_recipe_id ?? ''),
-              recipeName: String(favorite?.recipeName ?? favorite?.recipe_name ?? 'Receita favorita'),
-              imageUrl: favorite?.imageUrl ?? favorite?.image_url ?? null
-            }))
-          : [];
-      },
-      error: () => {
-        this.myFavorites = [];
-      }
-    });
-  }
-
-  addFavorite(item: any) {
-    const recipeId = this.extractRecipeId(item);
-    if (!recipeId) {
-      this.message = 'Não foi possível salvar sem um ID válido.';
-      return;
-    }
-
-    const payload: FavoritePayload = {
-      external_recipe_id: String(recipeId),
-      recipe_name: item?.strMeal || item?.name || `Receita #${recipeId}`,
-      image_url: item?.strMealThumb || item?.thumbnail || ''
-    };
-
-    this.recipeService.addFavorite(payload).subscribe({
-      next: () => {
-        this.message = 'Favorito salvo com sucesso!';
-        this.loadMyFavorites();
-      },
-      error: () => {
-        this.message = 'Erro ao salvar favorito.';
-      }
-    });
-  }
-
-  deleteFavorite(favorite: FavoriteItem) {
-    const shouldDelete = typeof window === 'undefined' ? true : window.confirm(`Remover "${favorite.recipeName}" dos favoritos?`);
-    if (!shouldDelete) {
-      return;
-    }
-
-    this.recipeService.deleteFavorite(favorite.id).subscribe({
-      next: () => {
-        this.message = 'Favorito removido com sucesso!';
-        this.loadMyFavorites();
-      },
-      error: () => {
-        this.message = 'Erro ao remover favorito.';
       }
     });
   }
@@ -243,10 +175,6 @@ export class RecipeComponent implements OnInit {
   }
 
   trackByMyRecipe(index: number, item: MyRecipe) {
-    return item.id || index;
-  }
-
-  trackByFavorite(index: number, item: FavoriteItem) {
     return item.id || index;
   }
 }
