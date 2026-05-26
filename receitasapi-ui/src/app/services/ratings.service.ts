@@ -14,6 +14,9 @@ export class RatingsService {
   }
 
   myRatings(): Observable<any[]> {
+    if (this.local.isDemoMode()) {
+      return of(this.local.get<any[]>('ratings') || []);
+    }
     return this.http.get<any[]>(this.endpoint('/recipes/ratings/me')).pipe(
       catchError(() => {
         const local = this.local.get<any[]>('ratings') || [];
@@ -24,6 +27,13 @@ export class RatingsService {
 
   addRating(recipeId: number, payload: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (this.local.isDemoMode()) {
+      const local = this.local.get<any[]>('ratings') || [];
+      const entry = { ...payload, id: this.local.generateId(), recipeId };
+      local.push(entry);
+      this.local.set('ratings', local);
+      return of(entry);
+    }
     return this.http.post(this.endpoint(`/recipes/${recipeId}/ratings`), payload, { headers }).pipe(
       catchError(() => {
         const local = this.local.get<any[]>('ratings') || [];

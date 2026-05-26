@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private http: HttpClient) {
     // Inicializa apenas se localStorage estiver disponível
     if (this.isLocalStorageAvailable()) {
-      this.isAuthenticatedSubject.next(this.hasToken());
+      this.isAuthenticatedSubject.next(this.hasToken() || this.isDemoMode());
     }
   }
 
@@ -49,12 +49,19 @@ export class AuthService {
     }
     return localStorage.getItem('token');
   }
+  
+  private isDemoMode(): boolean {
+    if (!this.isLocalStorageAvailable()) {
+      return false;
+    }
+    return localStorage.getItem('receitasapi_demo_mode') === '1';
+  }
 
   isLoggedIn(): boolean {
     if (!this.isLocalStorageAvailable()) {
       return false;
     }
-    return this.hasToken();
+    return this.hasToken() || this.isDemoMode();
   }
 
   private hasToken(): boolean {

@@ -34,6 +34,10 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  deleteUserById(id: number): void {
+    this.usersService.deleteUser(id).subscribe({ next: () => { this.users = this.users.filter(u => u.id !== id); }, error: () => this.error = 'Falha ao excluir usuário' });
+  }
+
   create(): void {
     if (!this.formName || !this.formEmail) { this.error = 'Preencha nome e email'; return; }
     const payload = { name: this.formName, email: this.formEmail };

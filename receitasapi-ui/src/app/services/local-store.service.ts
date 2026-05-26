@@ -4,6 +4,14 @@ import { Injectable } from '@angular/core';
 export class LocalStoreService {
   private prefix = 'receitasapi_';
 
+  isDemoMode(): boolean {
+    try {
+      return localStorage.getItem(this.prefix + 'demo_mode') === '1';
+    } catch {
+      return false;
+    }
+  }
+
   get<T>(key: string): T | null {
     try {
       const raw = localStorage.getItem(this.prefix + key);

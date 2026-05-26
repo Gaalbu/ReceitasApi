@@ -8,12 +8,12 @@
 
   <div *ngIf="showCreate" class="card mb-3 p-3">
     <div class="mb-2">
-      <label class="form-label">ID da receita</label>
-      <input class="form-control" type="number" [(ngModel)]="newRecipeId">
+      <label class="form-label" for="favorite-recipe-id">ID da receita</label>
+      <input id="favorite-recipe-id" class="form-control" type="number" [(ngModel)]="newRecipeId">
     </div>
     <div class="mb-2">
-      <label class="form-label">Título</label>
-      <input class="form-control" [(ngModel)]="newRecipeTitle">
+      <label class="form-label" for="favorite-title">Título</label>
+      <input id="favorite-title" class="form-control" [(ngModel)]="newRecipeTitle">
     </div>
     <div>
       <button class="btn btn-success" (click)="create()">Salvar</button>
@@ -34,8 +34,8 @@
       </div>
     </li>
     <li *ngIf="editing" class="list-group-item">
-      <div class="mb-2"><label class="form-label">Título</label>
-        <input class="form-control" [(ngModel)]="editing.recipeTitle"></div>
+        <div class="mb-2"><label class="form-label" for="favorite-edit-title">Título</label>
+          <input id="favorite-edit-title" class="form-control" [(ngModel)]="editing.recipeTitle"></div>
       <div>
         <button class="btn btn-success" (click)="saveEdit()">Salvar</button>
         <button class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancelar</button>

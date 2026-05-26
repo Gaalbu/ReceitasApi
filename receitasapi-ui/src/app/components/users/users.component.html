@@ -21,8 +21,8 @@
         <td>{{ u.name }}</td>
         <td>{{ u.email }}</td>
         <td>
-          <a class="btn btn-sm btn-outline-secondary me-2">Editar</a>
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteAccount()">Remover minha conta</button>
+          <a class="btn btn-sm btn-outline-secondary me-2" (click)="edit(u)">Editar</a>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteUserById(u.id)">Remover</button>
         </td>
       </tr>
     </tbody>
@@ -33,8 +33,8 @@
 <div class="container mt-3">
   <div class="card p-3 mb-3">
     <h5>Criar usuário (demo)</h5>
-    <div class="mb-2"><label class="form-label">Nome</label><input class="form-control" [(ngModel)]="formName"></div>
-    <div class="mb-2"><label class="form-label">Email</label><input class="form-control" [(ngModel)]="formEmail"></div>
+    <div class="mb-2"><label class="form-label" for="user-name">Nome</label><input id="user-name" class="form-control" [(ngModel)]="formName"></div>
+    <div class="mb-2"><label class="form-label" for="user-email">Email</label><input id="user-email" class="form-control" [(ngModel)]="formEmail"></div>
     <div>
       <button class="btn btn-primary" (click)="create()">Criar</button>
     </div>
@@ -42,8 +42,8 @@
 
   <div *ngIf="editingId" class="card p-3">
     <h5>Editar usuário</h5>
-    <div class="mb-2"><label class="form-label">Nome</label><input class="form-control" [(ngModel)]="formName"></div>
-    <div class="mb-2"><label class="form-label">Email</label><input class="form-control" [(ngModel)]="formEmail"></div>
+    <div class="mb-2"><label class="form-label" for="user-edit-name">Nome</label><input id="user-edit-name" class="form-control" [(ngModel)]="formName"></div>
+    <div class="mb-2"><label class="form-label" for="user-edit-email">Email</label><input id="user-edit-email" class="form-control" [(ngModel)]="formEmail"></div>
     <div>
       <button class="btn btn-success" (click)="saveEdit()">Salvar</button>
       <button class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancelar</button>

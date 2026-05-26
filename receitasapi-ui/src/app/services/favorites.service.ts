@@ -14,6 +14,9 @@ export class FavoritesService {
   }
 
   listMyFavorites(): Observable<any[]> {
+    if (this.local.isDemoMode()) {
+      return of(this.local.get<any[]>('favorites') || []);
+    }
     return this.http.get<any[]>(this.endpoint('/favorites/me')).pipe(
       catchError(() => {
         const local = this.local.get<any[]>('favorites') || [];
@@ -24,6 +27,13 @@ export class FavoritesService {
 
   addFavorite(payload: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (this.local.isDemoMode()) {
+      const local = this.local.get<any[]>('favorites') || [];
+      const entry = { ...payload, id: this.local.generateId() };
+      local.push(entry);
+      this.local.set('favorites', local);
+      return of(entry);
+    }
     return this.http.post(this.endpoint('/favorites'), payload, { headers }).pipe(
       catchError(() => {
         const local = this.local.get<any[]>('favorites') || [];
@@ -36,6 +46,11 @@ export class FavoritesService {
   }
 
   deleteFavorite(id: number) {
+    if (this.local.isDemoMode()) {
+      const local = this.local.get<any[]>('favorites') || [];
+      this.local.set('favorites', local.filter(f => f.id !== id));
+      return of(null);
+    }
     return this.http.delete(this.endpoint(`/favorites/${id}`)).pipe(
       catchError(() => {
         const local = this.local.get<any[]>('favorites') || [];
