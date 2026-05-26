@@ -1,11 +1,11 @@
-package com.gourmethub.api.repository;
+package com.receitasapi.api.repository;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gourmethub.api.model.Favorite;
+import com.receitasapi.api.model.Favorite;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByUserUsernameOrderByIdDesc(String username);

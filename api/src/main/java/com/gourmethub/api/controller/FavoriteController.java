@@ -1,4 +1,4 @@
-package com.gourmethub.api.controller;
+package com.receitasapi.api.controller;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gourmethub.api.dto.FavoriteRequest;
-import com.gourmethub.api.model.Favorite;
-import com.gourmethub.api.service.FavoriteService;
+import com.receitasapi.api.dto.FavoriteRequest;
+import com.receitasapi.api.model.Favorite;
+import com.receitasapi.api.service.FavoriteService;
 
 import jakarta.validation.Valid;
 

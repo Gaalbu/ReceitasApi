@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.MealItemRequest;
-import com.gourmethub.api.dto.MealPlanRequest;
-import com.gourmethub.api.dto.ShoppingListResponse;
-import com.gourmethub.api.model.MealItem;
-import com.gourmethub.api.model.MealPlan;
-import com.gourmethub.api.model.MealType;
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.MealPlanRepository;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.MealItemRequest;
+import com.receitasapi.api.dto.MealPlanRequest;
+import com.receitasapi.api.dto.ShoppingListResponse;
+import com.receitasapi.api.model.MealItem;
+import com.receitasapi.api.model.MealPlan;
+import com.receitasapi.api.model.MealType;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.MealPlanRepository;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class MealPlanService {

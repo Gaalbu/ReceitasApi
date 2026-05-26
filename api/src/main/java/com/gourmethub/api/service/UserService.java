@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.AuthResponse;
-import com.gourmethub.api.dto.UpdateProfileRequest;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.FavoriteRepository;
-import com.gourmethub.api.repository.MealPlanRepository;
-import com.gourmethub.api.repository.RecipeRatingRepository;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.SystemReviewRepository;
-import com.gourmethub.api.repository.UserRepository;
-import com.gourmethub.api.security.JwtService;
+import com.receitasapi.api.dto.AuthResponse;
+import com.receitasapi.api.dto.UpdateProfileRequest;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.FavoriteRepository;
+import com.receitasapi.api.repository.MealPlanRepository;
+import com.receitasapi.api.repository.RecipeRatingRepository;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.SystemReviewRepository;
+import com.receitasapi.api.repository.UserRepository;
+import com.receitasapi.api.security.JwtService;
 
 @Service
 public class UserService {

@@ -1,4 +1,4 @@
-package com.gourmethub.api.dto;
+package com.receitasapi.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

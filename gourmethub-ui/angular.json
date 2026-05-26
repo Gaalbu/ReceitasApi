@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "gourmethub-frontend": {
+    "receitasapi-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -75,10 +75,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gourmethub-frontend:build:production"
+              "buildTarget": "receitasapi-frontend:build:production"
             },
             "development": {
-              "buildTarget": "gourmethub-frontend:build:development",
+              "buildTarget": "receitasapi-frontend:build:development",
               "proxyConfig": "proxy.conf.json"
             }
           },

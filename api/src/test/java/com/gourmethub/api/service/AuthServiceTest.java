@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,12 +22,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.AuthResponse;
-import com.gourmethub.api.dto.LoginRequest;
-import com.gourmethub.api.dto.RegisterRequest;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.UserRepository;
-import com.gourmethub.api.security.JwtService;
+import com.receitasapi.api.dto.AuthResponse;
+import com.receitasapi.api.dto.LoginRequest;
+import com.receitasapi.api.dto.RegisterRequest;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.UserRepository;
+import com.receitasapi.api.security.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {

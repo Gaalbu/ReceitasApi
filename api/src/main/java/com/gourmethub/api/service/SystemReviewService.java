@@ -1,14 +1,14 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.SystemReviewRequest;
-import com.gourmethub.api.model.SystemReview;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.SystemReviewRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.SystemReviewRequest;
+import com.receitasapi.api.model.SystemReview;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.SystemReviewRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class SystemReviewService {

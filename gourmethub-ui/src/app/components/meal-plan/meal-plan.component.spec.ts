@@ -67,7 +67,7 @@ describe('MealPlanComponent', () => {
 
   it('should save and load draft from localStorage', () => {
     localStorage.setItem(
-      'gourmethub.mealplan.draft',
+      'receitasapi.mealplan.draft',
       JSON.stringify({ plan_name: 'Draft', start_date: '2026-05-23', MONDAY_LUNCH: 7 })
     );
 

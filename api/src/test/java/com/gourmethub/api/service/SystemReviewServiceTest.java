@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,11 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.SystemReviewRequest;
-import com.gourmethub.api.model.SystemReview;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.SystemReviewRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.SystemReviewRequest;
+import com.receitasapi.api.model.SystemReview;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.SystemReviewRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class SystemReviewServiceTest {

@@ -1,11 +1,11 @@
-package com.gourmethub.api.repository;
+package com.receitasapi.api.repository;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gourmethub.api.model.Recipe;
+import com.receitasapi.api.model.Recipe;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	List<Recipe> findByUserUsernameOrderByIdDesc(String username);

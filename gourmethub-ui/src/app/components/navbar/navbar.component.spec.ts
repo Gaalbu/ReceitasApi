@@ -90,7 +90,7 @@ describe('NavbarComponent', () => {
     fixture.detectChanges();
     const brand = fixture.nativeElement.querySelector('.navbar-brand');
     expect(brand).toBeTruthy();
-    expect(brand.textContent).toContain('GourmetHub');
+    expect(brand.textContent).toContain('ReceitasApi');
   });
 
   it('should render hamburger menu button', () => {

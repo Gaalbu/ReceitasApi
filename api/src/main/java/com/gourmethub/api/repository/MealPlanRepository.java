@@ -1,4 +1,4 @@
-package com.gourmethub.api.repository;
+package com.receitasapi.api.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.gourmethub.api.model.MealPlan;
+import com.receitasapi.api.model.MealPlan;
 
 public interface MealPlanRepository extends JpaRepository<MealPlan, Long> {
 	Optional<MealPlan> findByIdAndUserUsername(Long id, String username);

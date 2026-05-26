@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class MealPlanComponent implements OnInit {
-  private readonly draftKey = 'gourmethub.mealplan.draft';
+  private readonly draftKey = 'receitasapi.mealplan.draft';
 
   readonly weekdays = [
     { value: 'MONDAY', label: 'Segunda' },

@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import java.util.List;
 
@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.MealDbMeal;
-import com.gourmethub.api.dto.MealDbResponse;
-import com.gourmethub.api.dto.RecipeCreateRequest;
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.MealDbMeal;
+import com.receitasapi.api.dto.MealDbResponse;
+import com.receitasapi.api.dto.RecipeCreateRequest;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class RecipeService {

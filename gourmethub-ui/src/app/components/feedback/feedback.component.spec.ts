@@ -76,7 +76,7 @@ describe('FeedbackComponent', () => {
 
   it('should preserve local reviews when server call fails', () => {
     component.recipeId = undefined;
-    localStorage.setItem('gourmethub.recipe-reviews', JSON.stringify([
+    localStorage.setItem('receitasapi.recipe-reviews', JSON.stringify([
       { id: 1, recipeId: 2, recipeName: 'Pao', rating: 5, comment: 'Top' }
     ]));
 

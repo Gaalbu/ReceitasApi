@@ -1,4 +1,4 @@
-package com.gourmethub.api.dto;
+package com.receitasapi.api.dto;
 
 import java.util.List;
 

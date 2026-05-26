@@ -1,4 +1,4 @@
-package com.gourmethub.api;
+package com.receitasapi.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,8 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gourmethub.api.dto.LoginRequest;
-import com.gourmethub.api.dto.RegisterRequest;
+import com.receitasapi.api.dto.LoginRequest;
+import com.receitasapi.api.dto.RegisterRequest;
 
 @SpringBootTest
 @AutoConfigureMockMvc

@@ -1,4 +1,4 @@
-package com.gourmethub.api.model;
+package com.receitasapi.api.model;
 
 import java.time.LocalDateTime;
 

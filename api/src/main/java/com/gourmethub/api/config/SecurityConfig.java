@@ -1,4 +1,4 @@
-package com.gourmethub.api.config;
+package com.receitasapi.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.gourmethub.api.security.JwtAuthenticationFilter;
+import com.receitasapi.api.security.JwtAuthenticationFilter;
 import java.util.Arrays;
 
 @Configuration

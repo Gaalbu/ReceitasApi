@@ -1,4 +1,4 @@
-package com.gourmethub.api.model;
+package com.receitasapi.api.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

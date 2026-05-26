@@ -1,4 +1,4 @@
-package com.gourmethub.api.model;
+package com.receitasapi.api.model;
 
 public enum MealType {
     BREAKFAST,

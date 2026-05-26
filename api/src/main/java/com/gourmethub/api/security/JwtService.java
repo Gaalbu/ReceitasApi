@@ -1,4 +1,4 @@
-package com.gourmethub.api.security;
+package com.receitasapi.api.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;

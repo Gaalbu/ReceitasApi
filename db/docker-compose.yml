@@ -2,18 +2,18 @@ version: '3.8'
 services:
   postgres:
     image: postgres:13
-    container_name: gourmethub_db
+    container_name: receitasapi_db
     environment:
-      POSTGRES_USER: gourmethub
-      POSTGRES_PASSWORD: gourmethub
-      POSTGRES_DB: gourmethub
+      POSTGRES_USER: receitasapi
+      POSTGRES_PASSWORD: receitasapi
+      POSTGRES_DB: receitasapi
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gourmethub -d gourmethub"]
+      test: ["CMD-SHELL", "pg_isready -U receitasapi -d receitasapi"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,13 +23,13 @@ services:
     build:
       context: ../api
       dockerfile: Dockerfile
-    container_name: gourmethub_api
+    container_name: receitasapi_api
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: gourmethub
-      DB_USERNAME: gourmethub
-      DB_PASSWORD: gourmethub
+      DB_NAME: receitasapi
+      DB_USERNAME: receitasapi
+      DB_PASSWORD: receitasapi
       SERVER_PORT: 8080
       APP_JWT_SECRET: changeme-changeme-changeme-changeme
       APP_JWT_EXPIRATION_MS: 86400000
@@ -44,7 +44,7 @@ services:
     build:
       context: ../gourmethub-ui
       dockerfile: Dockerfile
-    container_name: gourmethub_frontend
+    container_name: receitasapi_frontend
     ports:
       - "80:80"
     depends_on:

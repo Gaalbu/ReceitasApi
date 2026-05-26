@@ -26,7 +26,7 @@ export class FeedbackComponent implements OnInit {
   reviewForm!: FormGroup;
   myReviews: MyRecipeReview[] = [];
   loadingReviews = false;
-  private readonly localReviewsKey = 'gourmethub.recipe-reviews';
+  private readonly localReviewsKey = 'receitasapi.recipe-reviews';
   private loadingFallbackTimer?: number;
 
   message = '';

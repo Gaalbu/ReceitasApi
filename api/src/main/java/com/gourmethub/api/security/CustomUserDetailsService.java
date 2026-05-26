@@ -1,10 +1,10 @@
-package com.gourmethub.api.security;
+package com.receitasapi.api.security;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

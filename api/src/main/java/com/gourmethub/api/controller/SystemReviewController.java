@@ -1,4 +1,4 @@
-package com.gourmethub.api.controller;
+package com.receitasapi.api.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gourmethub.api.dto.SystemReviewRequest;
-import com.gourmethub.api.model.SystemReview;
-import com.gourmethub.api.service.SystemReviewService;
+import com.receitasapi.api.dto.SystemReviewRequest;
+import com.receitasapi.api.model.SystemReview;
+import com.receitasapi.api.service.SystemReviewService;
 
 import jakarta.validation.Valid;
 

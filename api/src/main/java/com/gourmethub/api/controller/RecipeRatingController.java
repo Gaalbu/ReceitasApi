@@ -1,4 +1,4 @@
-package com.gourmethub.api.controller;
+package com.receitasapi.api.controller;
 
 import java.util.List;
 
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gourmethub.api.dto.MyRecipeReviewResponse;
-import com.gourmethub.api.dto.RecipeRatingRequest;
-import com.gourmethub.api.model.RecipeRating;
-import com.gourmethub.api.service.RecipeRatingService;
+import com.receitasapi.api.dto.MyRecipeReviewResponse;
+import com.receitasapi.api.dto.RecipeRatingRequest;
+import com.receitasapi.api.model.RecipeRating;
+import com.receitasapi.api.service.RecipeRatingService;
 
 import jakarta.validation.Valid;
 

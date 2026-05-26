@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,14 +11,14 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.MealDbResponse;
-import com.gourmethub.api.dto.RecipeCreateRequest;
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.MealItemRepository;
-import com.gourmethub.api.repository.MealPlanRepository;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.MealDbResponse;
+import com.receitasapi.api.dto.RecipeCreateRequest;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.MealItemRepository;
+import com.receitasapi.api.repository.MealPlanRepository;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;

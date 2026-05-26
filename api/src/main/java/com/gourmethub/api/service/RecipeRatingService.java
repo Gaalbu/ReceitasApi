@@ -1,4 +1,4 @@
-package com.gourmethub.api.service;
+package com.receitasapi.api.service;
 
 import java.util.List;
 
@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.gourmethub.api.dto.MyRecipeReviewResponse;
-import com.gourmethub.api.dto.RecipeRatingRequest;
-import com.gourmethub.api.model.Recipe;
-import com.gourmethub.api.model.RecipeRating;
-import com.gourmethub.api.model.User;
-import com.gourmethub.api.repository.RecipeRatingRepository;
-import com.gourmethub.api.repository.RecipeRepository;
-import com.gourmethub.api.repository.UserRepository;
+import com.receitasapi.api.dto.MyRecipeReviewResponse;
+import com.receitasapi.api.dto.RecipeRatingRequest;
+import com.receitasapi.api.model.Recipe;
+import com.receitasapi.api.model.RecipeRating;
+import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.RecipeRatingRepository;
+import com.receitasapi.api.repository.RecipeRepository;
+import com.receitasapi.api.repository.UserRepository;
 
 @Service
 public class RecipeRatingService {

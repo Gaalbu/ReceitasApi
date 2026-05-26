@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:13
-    container_name: gourmethub_db
+    container_name: receitasapi_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-gourmethub}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gourmethub}
-      POSTGRES_DB: ${POSTGRES_DB:-gourmethub}
+      POSTGRES_USER: ${POSTGRES_USER:-receitasapi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-receitasapi}
+      POSTGRES_DB: ${POSTGRES_DB:-receitasapi}
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - postgres_data:/var/lib/postgresql/data
@@ -22,13 +22,13 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    container_name: gourmethub_api
+    container_name: receitasapi_api
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: ${POSTGRES_DB:-gourmethub}
-      DB_USERNAME: ${POSTGRES_USER:-gourmethub}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-gourmethub}
+      DB_NAME: ${POSTGRES_DB:-receitasapi}
+      DB_USERNAME: ${POSTGRES_USER:-receitasapi}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-receitasapi}
       SERVER_PORT: 8080
       APP_JWT_SECRET: ${APP_JWT_SECRET:-changeme-changeme-changeme-changeme}
       APP_JWT_EXPIRATION_MS: ${APP_JWT_EXPIRATION_MS:-86400000}
@@ -43,7 +43,7 @@ services:
     build:
       context: ./gourmethub-ui
       dockerfile: Dockerfile
-    container_name: gourmethub_frontend
+    container_name: receitasapi_frontend
     ports:
       - "80:80"
     depends_on:

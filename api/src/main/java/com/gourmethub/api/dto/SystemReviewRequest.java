@@ -1,4 +1,4 @@
-package com.gourmethub.api.dto;
+package com.receitasapi.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
