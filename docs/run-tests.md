@@ -68,4 +68,4 @@ npm run e2e:run
 
 - Reports de backend: `api/target/surefire-reports/` e `api/target/site/jacoco/`.
 - Reports de frontend unitário: saída do `ng test`/Vitest (coverage no console). Para resultados detalhados, verifique a pasta de coverage gerada pelo builder (quando aplicável).
-- Logs E2E: saída do `npm run e2e:run` no terminal; vídeos/screenshots (se configurados) aparecem em `receitasapi-ui/cypress/videos` e `receitasapi-ui/cypress/screenshots`.
+- Logs E2E: saída do `npm run e2e:docker` no terminal; vídeos/screenshots (se configurados) aparecem em `receitasapi-ui/cypress/videos` e `receitasapi-ui/cypress/screenshots`.
