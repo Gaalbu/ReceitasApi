@@ -12,6 +12,9 @@ import { MealPlanComponent } from './components/meal-plan/meal-plan.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { UsersComponent } from './components/users/users.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { RatingsComponent } from './components/ratings/ratings.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     MealPlanComponent,
     FeedbackComponent,
     NavbarComponent,
+    UsersComponent,
+    FavoritesComponent,
+    RatingsComponent,
   ],
   providers: [
     provideClientHydration(withEventReplay()),

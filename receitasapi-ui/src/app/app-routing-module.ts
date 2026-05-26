@@ -6,6 +6,9 @@ import { RecipeComponent } from './components/recipe/recipe.component';
 import { CreateRecipeComponent } from './components/create-recipe/create-recipe.component';
 import { MealPlanComponent } from './components/meal-plan/meal-plan.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
+import { UsersComponent } from './components/users/users.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { RatingsComponent } from './components/ratings/ratings.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 
@@ -18,6 +21,9 @@ const routes: Routes = [
   { path: '', component: RecipeComponent, canActivate: [AuthGuard] },
   { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [AuthGuard] },
   { path: 'meal-plans', component: MealPlanComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+  { path: 'favorites', component: FavoritesComponent, canActivate: [AuthGuard] },
+  { path: 'ratings', component: RatingsComponent, canActivate: [AuthGuard] },
   { path: 'feedback', component: FeedbackComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];

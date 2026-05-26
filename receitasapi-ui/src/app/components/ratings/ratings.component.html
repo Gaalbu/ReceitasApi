@@ -1,0 +1,22 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Avaliações</h2>
+    <a class="btn btn-primary" routerLink="/ratings/create">+ Nova avaliação</a>
+  </div>
+
+  <p class="text-muted">Lista de avaliações de receitas.</p>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div class="list-group">
+    <div *ngFor="let r of ratings" class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ r.recipeTitle || ('Receita ' + r.recipeId) }}</strong>
+        <div class="text-muted small">Avaliação: {{ r.score || r.rating || '—' }}</div>
+      </div>
+      <div>
+        <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/recipes', r.recipeId]">Abrir</a>
+      </div>
+    </div>
+    <div *ngIf="!ratings?.length && !error" class="list-group-item text-muted">Você não fez avaliações ainda.</div>
+  </div>
+</div>
