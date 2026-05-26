@@ -46,7 +46,23 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - ✅ **Página de Feedback/Reviews**
 - ✅ **Renderização no lado do servidor (SSR)**
 
-## 4. Estrutura do Projeto
+## 4. Checklist final priorizada
+
+### P0 - Corrigir para sustentar a entrega
+- [x] Alinhar a versão do Java no build com a documentação. O `pom.xml` agora usa Java 21, igual ao README.
+- [ ] Ajustar a narrativa de "5 telas". Hoje o roteamento do front expõe 6 telas: login, register, recipe, create-recipe, meal-plans e feedback.
+- [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
+
+### P1 - Fechar qualidade com pouco esforço de código
+- [ ] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
+- [ ] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
+- [ ] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
+
+### P2 - Melhorar a leitura da entrega
+- [ ] Padronizar a descrição dos testes para separar unitários, integração e E2E com os artefatos reais de cada camada.
+- [x] Incluir o passo oficial de execução do SonarQube no README ou pipeline.
+
+## 5. Estrutura do Projeto
 ```text
 /receitasapi
 ├── api/
@@ -98,7 +114,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 └── README.md
 ```
 
-## 5. Endpoints da API
+## 6. Endpoints da API
 
 ### Autenticação
 | Método | Endpoint | Descrição |
@@ -127,7 +143,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 |--------|----------|-----------|
 | POST | `/system-reviews` | Submeter feedback do sistema (autenticado) |
 
-## 6. Como Executar
+## 7. Como Executar
 
 ### Pré-requisitos
 - Java 21+
@@ -186,7 +202,7 @@ npm run build
 npm run serve:ssr:receitasapi-frontend
 ```
 
-## 7. Testes
+## 8. Testes
 
 ### Back-end
 ```bash
@@ -201,7 +217,26 @@ cd receitasapi-ui
 ng test
 ```
 
-## 8. Modelos de Dados Principais
+## 9. SonarQube
+
+O repositório já traz o fluxo automático de Sonar no Docker Compose. Não precisa instalar scanner nem Maven no host.
+
+1. Subir o stack com o perfil do Sonar.
+```bash
+docker compose --profile sonar up --build --abort-on-container-exit sonar
+```
+
+2. Quando o runner terminar, abrir o painel do SonarQube no navegador.
+```bash
+http://localhost:9000
+```
+
+Observações rápidas:
+- O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
+- O backend já entra com JaCoCo antes da análise.
+- O frontend entra como código analisado; a cobertura dele ainda não está automatizada.
+
+## 10. Modelos de Dados Principais
 
 ### User
 - `id` (Long)
