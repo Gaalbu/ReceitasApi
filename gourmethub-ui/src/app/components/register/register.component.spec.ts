@@ -116,9 +116,11 @@ describe('RegisterComponent', () => {
   });
 
   it('should render error alert when error exists', () => {
-    component.error = 'Test error';
-    fixture.detectChanges();
-    const alert = fixture.nativeElement.querySelector('.alert-danger');
+    const freshFixture = TestBed.createComponent(RegisterComponent);
+    const freshComp = freshFixture.componentInstance;
+    freshComp.error = 'Test error';
+    freshFixture.detectChanges();
+    const alert = freshFixture.nativeElement.querySelector('.alert-danger');
     expect(alert).toBeTruthy();
   });
 
@@ -130,9 +132,11 @@ describe('RegisterComponent', () => {
   });
 
   it('should disable inputs while loading', () => {
-    component.loading = true;
-    fixture.detectChanges();
-    const usernameInput = fixture.nativeElement.querySelector('input[formControlName="username"]');
-    expect(usernameInput.disabled).toBe(true);
+    const freshFixture = TestBed.createComponent(RegisterComponent);
+    const freshComp = freshFixture.componentInstance;
+    freshComp.loading = true;
+    freshFixture.detectChanges();
+    const usernameControl = freshComp.form.get('username');
+    expect(usernameControl?.disabled).toBe(true);
   });
 });
