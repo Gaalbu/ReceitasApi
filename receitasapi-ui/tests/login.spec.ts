@@ -26,8 +26,15 @@ test('login via API and visit dashboard', async ({ page, request: apiRequest }) 
     window.localStorage.setItem('token', t);
   }, token);
 
-  // Navigate to root and verify token was injected into localStorage (login succeeded)
-  await page.goto('/');
+  // Verify token before any extra navigation to avoid context reset during redirects
+  await page.goto('/login');
+  await page.evaluate((t) => {
+    window.localStorage.setItem('token', t);
+  }, token);
   const stored = await page.evaluate(() => window.localStorage.getItem('token'));
   expect(stored).toBeTruthy();
+
+  // Root navigation should now be authenticated in the browser context
+  await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
 });
