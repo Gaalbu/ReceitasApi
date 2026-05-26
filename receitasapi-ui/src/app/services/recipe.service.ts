@@ -11,6 +11,12 @@ export type RecipePayload = {
   prep_time?: number;
 };
 
+export type FavoritePayload = {
+  external_recipe_id: string;
+  recipe_name: string;
+  image_url?: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
   constructor(private http: HttpClient) {}
@@ -27,6 +33,10 @@ export class RecipeService {
     return this.http.get<any[]>(this.endpoint('/recipes/me'));
   }
 
+  getMyFavorites(): Observable<any[]> {
+    return this.http.get<any[]>(this.endpoint('/favorites/me'));
+  }
+
   createMyRecipe(payload: RecipePayload) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post(this.endpoint('/recipes'), payload, { headers });
@@ -39,5 +49,14 @@ export class RecipeService {
 
   deleteMyRecipe(recipeId: number) {
     return this.http.delete<void>(this.endpoint(`/recipes/${recipeId}`));
+  }
+
+  addFavorite(payload: FavoritePayload) {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(this.endpoint('/favorites'), payload, { headers });
+  }
+
+  deleteFavorite(favoriteId: number) {
+    return this.http.delete<void>(this.endpoint(`/favorites/${favoriteId}`));
   }
 }

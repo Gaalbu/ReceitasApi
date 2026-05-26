@@ -17,9 +17,14 @@
             <p class="card-text small">
               <strong>ID:</strong> {{ meal.idMeal || meal.id || (meal.external_api_id || '—') }}
             </p>
-            <button class="btn btn-sm btn-outline-primary" type="button" (click)="openRatingFor(meal)">
-              Avaliar esta receita
-            </button>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-outline-primary" type="button" (click)="openRatingFor(meal)">
+                  Avaliar esta receita
+                </button>
+                <button class="btn btn-sm btn-outline-warning" type="button" (click)="addFavorite(meal)">
+                  Favoritar
+                </button>
+              </div>
           </div>
         </div>
       </div>
@@ -30,6 +35,30 @@
         </div>
       </div>
     }
+  </div>
+
+  <div class="mt-5 p-4 border rounded bg-white shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h4 mb-0">Meus favoritos</h2>
+      <span class="text-muted small">Salvar e remover receitas favoritas</span>
+    </div>
+
+    <div *ngIf="myFavorites.length === 0" class="alert alert-light text-muted mb-0">
+      Nenhum favorito salvo ainda.
+    </div>
+
+    <div *ngIf="myFavorites.length > 0" class="list-group">
+      <div *ngFor="let favorite of myFavorites; trackBy: trackByFavorite" class="list-group-item d-flex justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <img *ngIf="favorite.imageUrl" [src]="favorite.imageUrl" alt="{{ favorite.recipeName }}" width="56" height="56" class="rounded object-fit-cover" />
+          <div>
+            <h3 class="h6 mb-1">{{ favorite.recipeName }}</h3>
+            <p class="mb-0 text-muted small">ID externo: {{ favorite.externalRecipeId }}</p>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteFavorite(favorite)">Remover</button>
+      </div>
+    </div>
   </div>
 
   <div class="mt-5 p-4 border rounded bg-white shadow-sm">
@@ -82,7 +111,7 @@
             <p class="mb-1 text-muted small">{{ recipe.description }}</p>
             <p class="mb-0 small"><strong>Preparo:</strong> {{ recipe.prepTime ?? 0 }} min</p>
           </div>
-          <div class="d-flex gap-2 flex-shrink-0">
+          <div class="d-flex gap-2 shrink-0">
             <button class="btn btn-sm btn-outline-primary" type="button" (click)="editMyRecipe(recipe)">Editar</button>
             <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteMyRecipe(recipe)">Excluir</button>
           </div>
