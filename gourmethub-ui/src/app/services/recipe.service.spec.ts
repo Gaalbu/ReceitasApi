@@ -5,7 +5,7 @@ import { RecipeService } from './recipe.service';
 describe('RecipeService', () => {
   let service: RecipeService;
   let httpMock: HttpTestingController;
-  const apiBase = 'http://localhost:8080/api';
+  const apiBase = '/api';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

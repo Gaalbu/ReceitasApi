@@ -87,9 +87,12 @@ describe('LoginComponent', () => {
   });
 
   it('should render error alert when error exists', () => {
-    component.error = 'Test error';
-    fixture.detectChanges();
-    const alert = fixture.nativeElement.querySelector('.alert-danger');
+    // create a fresh fixture and set the error before initial change detection
+    const freshFixture = TestBed.createComponent(LoginComponent);
+    const freshComp = freshFixture.componentInstance;
+    freshComp.error = 'Test error';
+    freshFixture.detectChanges();
+    const alert = freshFixture.nativeElement.querySelector('.alert-danger');
     expect(alert).toBeTruthy();
   });
 

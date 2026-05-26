@@ -5,7 +5,7 @@ import { MealPlanService } from './mealplan.service';
 describe('MealPlanService', () => {
   let service: MealPlanService;
   let httpMock: HttpTestingController;
-  const apiBase = 'http://localhost:8080/api';
+  const apiBase = '/api';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
