@@ -10,7 +10,6 @@ import { RecipeComponent } from './components/recipe/recipe.component';
 import { CreateRecipeComponent } from './components/create-recipe/create-recipe.component';
 import { MealPlanComponent } from './components/meal-plan/meal-plan.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
@@ -30,7 +29,6 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     RegisterComponent,
     MealPlanComponent,
     FeedbackComponent,
-    ProfileComponent,
     NavbarComponent,
   ],
   providers: [

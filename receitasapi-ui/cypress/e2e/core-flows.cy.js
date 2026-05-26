@@ -88,67 +88,6 @@ describe('Fluxos principais logados', () => {
     cy.contains('Plano de refeicao criado com sucesso!').should('exist');
   });
 
-  it('UC03-UC06 - lista, edita e exclui uma receita própria', () => {
-    cy.intercept('GET', '**/api/recipes/me', {
-      body: [
-        {
-          id: 55,
-          name: 'Arroz simples',
-          description: 'Arroz, agua e sal',
-          instructions: 'Cozinhar até secar',
-          prepTime: 15
-        }
-      ]
-    }).as('myRecipes');
-
-    cy.intercept('POST', '**/api/recipes', {
-      statusCode: 200,
-      body: { id: 99 }
-    }).as('createRecipeCrud');
-
-    cy.intercept('PUT', '**/api/recipes/55', {
-      statusCode: 200,
-      body: { id: 55 }
-    }).as('updateRecipeCrud');
-
-    cy.intercept('DELETE', '**/api/recipes/55', {
-      statusCode: 204,
-      body: null
-    }).as('deleteRecipeCrud');
-
-    cy.visit('/', {
-      onBeforeLoad(win) {
-        win.localStorage.setItem('token', token);
-        cy.stub(win, 'confirm').returns(true);
-      }
-    });
-
-    cy.wait('@myRecipes');
-    cy.contains('Arroz simples').should('exist');
-
-    cy.get('input[formcontrolname="title"]').clear().type('Bolo simples');
-    cy.get('textarea[formcontrolname="ingredients"]').clear().type('Farinha, ovos, leite');
-    cy.get('textarea[formcontrolname="instructions"]').clear().type('Misturar e assar');
-    cy.get('input[formcontrolname="prep_time"]').clear().type('40');
-    cy.contains('button', 'Criar receita').click();
-    cy.wait('@createRecipeCrud');
-    cy.contains('Receita criada com sucesso!').should('exist');
-
-    cy.contains('button', 'Editar').click();
-    cy.get('input[formcontrolname="title"]').clear().type('Arroz temperado');
-    cy.get('input[formcontrolname="prep_time"]').clear().type('20');
-    cy.contains('button', 'Atualizar receita').click();
-    cy.wait('@updateRecipeCrud').its('request.body').should('include', {
-      name: 'Arroz temperado',
-      prep_time: 20
-    });
-    cy.contains('Receita atualizada com sucesso!').should('exist');
-
-    cy.contains('button', 'Excluir').click();
-    cy.wait('@deleteRecipeCrud');
-    cy.contains('Receita excluída com sucesso!').should('exist');
-  });
-
   it('UC14 - mostra reviews locais salvas no navegador', () => {
     const reviews = [
       {

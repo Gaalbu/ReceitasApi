@@ -32,65 +32,6 @@
     }
   </div>
 
-  <div class="mt-5 p-4 border rounded bg-white shadow-sm">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="h4 mb-0">Minhas receitas</h2>
-      <span class="text-muted small">Criar, editar e excluir</span>
-    </div>
-
-    <form (ngSubmit)="submitMyRecipe()" [formGroup]="recipeForm" class="mb-4">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">Título</label>
-          <input class="form-control" formControlName="title" placeholder="Nome da receita" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Tempo de preparo</label>
-          <input type="number" class="form-control" formControlName="prep_time" min="0" placeholder="30" />
-        </div>
-        <div class="col-12">
-          <label class="form-label">Ingredientes</label>
-          <textarea class="form-control" formControlName="ingredients" rows="3" placeholder="Liste os ingredientes..."></textarea>
-        </div>
-        <div class="col-12">
-          <label class="form-label">Instruções</label>
-          <textarea class="form-control" formControlName="instructions" rows="4" placeholder="Explique o modo de preparo..."></textarea>
-        </div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2 mt-3">
-        <button class="btn btn-primary" type="submit">
-          {{ editingRecipeId ? 'Atualizar receita' : 'Criar receita' }}
-        </button>
-        <button *ngIf="editingRecipeId" class="btn btn-outline-secondary" type="button" (click)="cancelEdit()">
-          Cancelar edição
-        </button>
-      </div>
-    </form>
-
-    <div *ngIf="message" class="alert alert-info">{{ message }}</div>
-
-    <div *ngIf="myRecipes.length === 0" class="alert alert-light text-muted mb-0">
-      Nenhuma receita cadastrada ainda.
-    </div>
-
-    <div *ngIf="myRecipes.length > 0" class="list-group">
-      <div *ngFor="let recipe of myRecipes; trackBy: trackByMyRecipe" class="list-group-item">
-        <div class="d-flex justify-content-between align-items-start gap-3">
-          <div>
-            <h3 class="h6 mb-1">{{ recipe.name }}</h3>
-            <p class="mb-1 text-muted small">{{ recipe.description }}</p>
-            <p class="mb-0 small"><strong>Preparo:</strong> {{ recipe.prepTime ?? 0 }} min</p>
-          </div>
-          <div class="d-flex gap-2 flex-shrink-0">
-            <button class="btn btn-sm btn-outline-primary" type="button" (click)="editMyRecipe(recipe)">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteMyRecipe(recipe)">Excluir</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   @if (selectedRecipeId) {
     <div class="mt-4 p-3 border rounded bg-light">
       <div class="d-flex justify-content-between align-items-center mb-3">

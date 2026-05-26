@@ -42,10 +42,10 @@
 | --- | --- | --- |
 | UC01 | `/register` | Implementado |
 | UC02 | `/login` | Implementado |
-| UC03 | `/` e `/create-recipe` | Implementado |
-| UC04 | `/` | Implementado |
-| UC05 | `/` | Implementado |
-| UC06 | `/` | Implementado |
+| UC03 | `/create-recipe` | Implementado |
+| UC04 | `/` | Parcial: sem tela dedicada de listagem |
+| UC05 | `/` ou `/create-recipe` | Parcial: sem edição visual dedicada |
+| UC06 | `/` | Parcial: sem exclusão visual dedicada |
 | UC07 | `/` | Implementado |
 | UC08 | `/` | Implementado na busca de receitas |
 | UC09 | `/` | Implementado na busca de receitas |
@@ -53,8 +53,8 @@
 | UC11 | `/meal-plans` | Implementado |
 | UC12 | `/meal-plans` | Parcial: sem ação dedicada de remoção |
 | UC13 | `/meal-plans` | Parcial: sem tela de lista de compras dedicada |
-| UC14 | `/profile` | Implementado |
-| UC15 | `/profile` | Implementado via exclusão de conta |
+| UC14 | `/feedback` | Parcial: sem tela própria de perfil |
+| UC15 | backend apenas | Não implementado no frontend |
 
 # DETALHAMENTO DOS CASOS DE USO
 

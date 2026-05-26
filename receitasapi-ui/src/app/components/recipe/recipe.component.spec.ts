@@ -2,25 +2,14 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { RecipeComponent } from './recipe.component';
 import { RecipeService } from '../../services/recipe.service';
-import { vi } from 'vitest';
 
 describe('RecipeComponent', () => {
   let component: RecipeComponent;
-  let recipeServiceMock: {
-    searchExternal: ReturnType<typeof vi.fn>;
-    getMyRecipes: ReturnType<typeof vi.fn>;
-    createMyRecipe: ReturnType<typeof vi.fn>;
-    updateMyRecipe: ReturnType<typeof vi.fn>;
-    deleteMyRecipe: ReturnType<typeof vi.fn>;
-  };
+  let recipeServiceMock: { searchExternal: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     recipeServiceMock = {
-      searchExternal: vi.fn(),
-      getMyRecipes: vi.fn(),
-      createMyRecipe: vi.fn(),
-      updateMyRecipe: vi.fn(),
-      deleteMyRecipe: vi.fn()
+      searchExternal: vi.fn()
     };
 
     await TestBed.configureTestingModule({
@@ -30,8 +19,6 @@ describe('RecipeComponent', () => {
 
     const fixture = TestBed.createComponent(RecipeComponent);
     component = fixture.componentInstance;
-    recipeServiceMock.getMyRecipes.mockReturnValue(of([]));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     fixture.detectChanges();
   });
 
@@ -80,36 +67,5 @@ describe('RecipeComponent', () => {
     component.openRatingFor({ idMeal: '12', strMeal: 'Chicken Soup' });
 
     expect(component.selectedRecipeName).toBe('Chicken Soup');
-  });
-
-  it('should load my recipes and allow editing and deleting', () => {
-    recipeServiceMock.getMyRecipes.mockReturnValue(of([
-      { id: 1, name: 'Omelete', description: 'Ovos', instructions: 'Misturar', prepTime: 10 }
-    ]));
-
-    component.loadMyRecipes();
-
-    expect(component.myRecipes.length).toBe(1);
-    component.editMyRecipe(component.myRecipes[0]);
-    expect(component.editingRecipeId).toBe(1);
-
-    recipeServiceMock.updateMyRecipe.mockReturnValue(of({}));
-    component.recipeForm.setValue({
-      title: 'Omelete 2',
-      ingredients: 'Ovos',
-      instructions: 'Misturar e fritar',
-      prep_time: 12
-    });
-    component.submitMyRecipe();
-    expect(recipeServiceMock.updateMyRecipe).toHaveBeenCalledWith(1, {
-      name: 'Omelete 2',
-      description: 'Ovos',
-      instructions: 'Misturar e fritar',
-      prep_time: 12
-    });
-
-    recipeServiceMock.deleteMyRecipe.mockReturnValue(of(void 0));
-    component.deleteMyRecipe({ id: 1, name: 'Omelete', description: 'Ovos', instructions: 'Misturar', prepTime: 10 });
-    expect(recipeServiceMock.deleteMyRecipe).toHaveBeenCalledWith(1);
   });
 });

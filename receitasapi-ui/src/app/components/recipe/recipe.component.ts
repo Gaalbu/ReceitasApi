@@ -1,17 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RecipeService, RecipePayload } from '../../services/recipe.service';
+import { RecipeService } from '../../services/recipe.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FeedbackComponent } from '../feedback/feedback.component';
-
-type MyRecipe = {
-  id: number;
-  name: string;
-  description: string;
-  instructions: string;
-  prepTime?: number | null;
-};
 
 @Component({
   selector: 'app-recipe',
@@ -21,26 +13,14 @@ type MyRecipe = {
 })
 export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
-  recipeForm!: FormGroup;
   results: any[] = [];
-  myRecipes: MyRecipe[] = [];
   selectedRecipeId: number | null = null;
   selectedRecipeName = '';
-  editingRecipeId: number | null = null;
-  message = '';
 
   constructor(private fb: FormBuilder, private recipeService: RecipeService) {}
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({ q: ['', Validators.required] });
-    this.recipeForm = this.fb.group({
-      title: ['', Validators.required],
-      ingredients: ['', Validators.required],
-      instructions: ['', Validators.required],
-      prep_time: [0, Validators.required]
-    });
-
-    this.loadMyRecipes();
   }
 
   search() {
@@ -89,92 +69,5 @@ export class RecipeComponent implements OnInit {
   clearRatingSelection() {
     this.selectedRecipeId = null;
     this.selectedRecipeName = '';
-  }
-
-  loadMyRecipes() {
-    this.recipeService.getMyRecipes().subscribe({
-      next: (recipes) => {
-        this.myRecipes = Array.isArray(recipes) ? recipes : [];
-      },
-      error: () => {
-        this.myRecipes = [];
-      }
-    });
-  }
-
-  submitMyRecipe() {
-    if (this.recipeForm.invalid) {
-      this.message = 'Preencha todos os campos da receita.';
-      return;
-    }
-
-    const formValue = this.recipeForm.value;
-    const payload: RecipePayload = {
-      name: formValue.title,
-      description: formValue.ingredients,
-      instructions: formValue.instructions,
-      prep_time: Number(formValue.prep_time || 0)
-    };
-
-    const request$ = this.editingRecipeId
-      ? this.recipeService.updateMyRecipe(this.editingRecipeId, payload)
-      : this.recipeService.createMyRecipe(payload);
-
-    request$.subscribe({
-      next: () => {
-        this.message = this.editingRecipeId
-          ? 'Receita atualizada com sucesso!'
-          : 'Receita criada com sucesso!';
-        this.editingRecipeId = null;
-        this.recipeForm.reset({ prep_time: 0 });
-        this.loadMyRecipes();
-      },
-      error: () => {
-        this.message = this.editingRecipeId
-          ? 'Erro ao atualizar a receita.'
-          : 'Erro ao criar a receita.';
-      }
-    });
-  }
-
-  editMyRecipe(recipe: MyRecipe) {
-    this.editingRecipeId = recipe.id;
-    this.recipeForm.setValue({
-      title: recipe.name,
-      ingredients: recipe.description,
-      instructions: recipe.instructions,
-      prep_time: recipe.prepTime ?? 0
-    });
-    this.message = 'Editando receita selecionada.';
-  }
-
-  cancelEdit() {
-    this.editingRecipeId = null;
-    this.recipeForm.reset({ prep_time: 0 });
-    this.message = 'Edição cancelada.';
-  }
-
-  deleteMyRecipe(recipe: MyRecipe) {
-    const shouldDelete = typeof window === 'undefined' ? true : window.confirm(`Excluir a receita "${recipe.name}"?`);
-    if (!shouldDelete) {
-      return;
-    }
-
-    this.recipeService.deleteMyRecipe(recipe.id).subscribe({
-      next: () => {
-        this.message = 'Receita excluída com sucesso!';
-        this.loadMyRecipes();
-        if (this.editingRecipeId === recipe.id) {
-          this.cancelEdit();
-        }
-      },
-      error: () => {
-        this.message = 'Erro ao excluir a receita.';
-      }
-    });
-  }
-
-  trackByMyRecipe(index: number, item: MyRecipe) {
-    return item.id || index;
   }
 }
