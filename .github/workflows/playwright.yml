@@ -43,13 +43,13 @@ jobs:
           exit 1
 
       - name: Install Playwright and browsers
-        working-directory: ./gourmethub-ui
+        working-directory: ./receitasapi-ui
         run: |
           npm ci
           npx playwright install --with-deps
 
       - name: Run Playwright tests
-        working-directory: ./gourmethub-ui
+        working-directory: ./receitasapi-ui
         env:
           PLAYWRIGHT_BASE_URL: http://localhost
         run: |

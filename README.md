@@ -69,7 +69,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 │   │   └── security/            (JWT, CustomUserDetails)
 │   └── src/test/java/com/receitasapi/api/           (Testes JUnit 5)
 │
-├── gourmethub-ui/
+├── receitasapi-ui/
 │   ├── src/app/
 │   │   ├── components/
 │   │   │   ├── login/
@@ -173,7 +173,7 @@ docker compose up -d
 
 ### Frontend (Angular) sem Docker
 ```bash
-cd gourmethub-ui
+cd receitasapi-ui
 npm install
 ng serve --open
 # UI rodando em http://localhost:4200
@@ -181,7 +181,7 @@ ng serve --open
 
 ### Build para Produção (com SSR)
 ```bash
-cd gourmethub-ui
+cd receitasapi-ui
 npm run build
 npm run serve:ssr:receitasapi-frontend
 ```
@@ -197,7 +197,7 @@ cd api
 
 ### Front-end
 ```bash
-cd gourmethub-ui
+cd receitasapi-ui
 ng test
 ```
 

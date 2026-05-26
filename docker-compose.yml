@@ -41,7 +41,7 @@ services:
 
   frontend:
     build:
-      context: ./gourmethub-ui
+      context: ./receitasApi-ui
       dockerfile: Dockerfile
     container_name: receitasapi_frontend
     ports:

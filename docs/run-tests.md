@@ -25,7 +25,7 @@ cd api
 - No terminal, execute:
 
 ```bash
-cd gourmethub-ui
+cd receitasapi-ui
 npm install   # se ainda não instalou dependências
 npm test -- --watch=false --coverage
 ```
@@ -47,7 +47,7 @@ cd api
 .\mvnw.cmd spring-boot:run
 
 # terminal B: start frontend
-cd gourmethub-ui
+cd receitasapi-ui
 npm start
 ```
 
@@ -56,7 +56,7 @@ npm start
 - Com backend e frontend rodando, execute em outro terminal:
 
 ```bash
-cd gourmethub-ui
+cd receitasapi-ui
 npm run e2e:run
 ```
 
@@ -68,4 +68,4 @@ npm run e2e:run
 
 - Reports de backend: `api/target/surefire-reports/` e `api/target/site/jacoco/`.
 - Reports de frontend unitário: saída do `ng test`/Vitest (coverage no console). Para resultados detalhados, verifique a pasta de coverage gerada pelo builder (quando aplicável).
-- Logs E2E: saída do `npm run e2e:run` no terminal; vídeos/screenshots (se configurados) aparecem em `gourmethub-ui/cypress/videos` e `gourmethub-ui/cypress/screenshots`.
+- Logs E2E: saída do `npm run e2e:run` no terminal; vídeos/screenshots (se configurados) aparecem em `receitasapi-ui/cypress/videos` e `receitasapi-ui/cypress/screenshots`.

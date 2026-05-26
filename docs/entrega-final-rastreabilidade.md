@@ -156,9 +156,9 @@
 # RESULTADOS DE TESTES E COBERTURA
 
 - Backend (Maven): 15 testes executados, 0 falhas, 0 erros. JaCoCo: instruções cobrindo 86.73%, branch coverage 68.18% (relatório em `api/target/site/jacoco/index.html`).
-- Frontend (Angular): 25 testes unitários executados, 0 falhas. v8 coverage: statements 57.25%, branches 68.49%, functions 58.33%, lines 58.71% (relatório em `gourmethub-ui/coverage` gerado pelo `ng test`).
+- Frontend (Angular): 25 testes unitários executados, 0 falhas. v8 coverage: statements 57.25%, branches 68.49%, functions 58.33%, lines 58.71% (relatório em `receitasapi-ui/coverage` gerado pelo `ng test`).
 
 ## AÇÕES ADICIONAIS EXECUTADAS
 
-- Adicionados testes de integração backend para `RecipeService` e `MealPlanService` em `api/src/test/java/com/gourmethub/api/service/` — validados via `./mvnw.cmd test` e incluídos nos relatórios Surefire/JaCoCo.
-- Scaffolded Cypress E2E no frontend: `cypress.config.js`, especificação `cypress/e2e/uc02_uc11_spec.cy.js` e scripts `e2e`/`e2e:run` no `gourmethub-ui/package.json`. Instalei `cypress` como devDependency. Esses testes são E2E smoke flows que assumem `ng serve` e backend em `localhost:8080`.
+- Adicionados testes de integração backend para `RecipeService` e `MealPlanService` em `api/src/test/java/com/receitasapi/api/service/` — validados via `./mvnw.cmd test` e incluídos nos relatórios Surefire/JaCoCo.
+- Scaffolded Cypress E2E no frontend: `cypress.config.js`, especificação `cypress/e2e/uc02_uc11_spec.cy.js` e scripts `e2e`/`e2e:run` no `receitasapi-ui/package.json`. Instalei `cypress` como devDependency. Esses testes são E2E smoke flows que assumem `ng serve` e backend em `localhost:8080`.
