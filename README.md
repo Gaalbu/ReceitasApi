@@ -219,7 +219,7 @@ ng test
 
 ## 9. SonarQube
 
-O repositório já traz o fluxo automático de Sonar no Docker Compose. Não precisa instalar scanner nem Maven no host.
+O repositório já traz o fluxo automático de Sonar no Docker Compose. O passo a passo detalhado está em [docs/sonar-runbook.md](docs/sonar-runbook.md).
 
 1. Subir o stack com o perfil do Sonar.
 ```bash

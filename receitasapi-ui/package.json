@@ -13,7 +13,7 @@
     "playwright:install": "npx playwright install --with-deps",
     "test:playwright": "npx playwright test",
     "test:coverage": "ng test --coverage",
-    "e2e:docker": "CYPRESS_BASE_URL=http://localhost CYPRESS_API_URL=http://localhost/api cypress run"
+    "e2e:docker": "cross-env CYPRESS_BASE_URL=http://localhost CYPRESS_API_URL=http://localhost/api cypress run"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -39,6 +39,7 @@
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "@vitest/coverage-v8": "^4.1.7",
+    "cross-env": "^10.1.0",
     "cypress": "^12.0.0",
     "jsdom": "^28.0.0",
     "playwright": "^1.60.0",
