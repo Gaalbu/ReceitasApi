@@ -1,10 +1,25 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Favoritos</h2>
-    <a class="btn btn-primary" routerLink="/favorites/create">+ Adicionar favorito</a>
+    <button class="btn btn-primary" (click)="showCreate = !showCreate">+ Adicionar favorito</button>
   </div>
 
   <p class="text-muted">Receitas marcadas como favoritas.</p>
+
+  <div *ngIf="showCreate" class="card mb-3 p-3">
+    <div class="mb-2">
+      <label class="form-label">ID da receita</label>
+      <input class="form-control" type="number" [(ngModel)]="newRecipeId">
+    </div>
+    <div class="mb-2">
+      <label class="form-label">Título</label>
+      <input class="form-control" [(ngModel)]="newRecipeTitle">
+    </div>
+    <div>
+      <button class="btn btn-success" (click)="create()">Salvar</button>
+      <button class="btn btn-secondary ms-2" (click)="showCreate=false">Cancelar</button>
+    </div>
+  </div>
 
   <ul class="list-group">
     <li *ngIf="error" class="list-group-item text-danger">{{ error }}</li>
@@ -14,7 +29,16 @@
         <div class="text-muted small">ID: {{ f.id }}</div>
       </div>
       <div>
+        <button class="btn btn-sm btn-outline-secondary me-2" (click)="startEdit(f)">Editar</button>
         <button class="btn btn-sm btn-outline-danger" (click)="remove(f.id)">Remover</button>
+      </div>
+    </li>
+    <li *ngIf="editing" class="list-group-item">
+      <div class="mb-2"><label class="form-label">Título</label>
+        <input class="form-control" [(ngModel)]="editing.recipeTitle"></div>
+      <div>
+        <button class="btn btn-success" (click)="saveEdit()">Salvar</button>
+        <button class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancelar</button>
       </div>
     </li>
     <li *ngIf="!favorites?.length && !error" class="list-group-item text-muted">Nenhum favorito encontrado.</li>

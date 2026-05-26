@@ -14,9 +14,25 @@
         <div class="text-muted small">Avaliação: {{ r.score || r.rating || '—' }}</div>
       </div>
       <div>
+        <button class="btn btn-sm btn-outline-secondary me-2" (click)="startEdit(r)">Editar</button>
         <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/recipes', r.recipeId]">Abrir</a>
       </div>
     </div>
     <div *ngIf="!ratings?.length && !error" class="list-group-item text-muted">Você não fez avaliações ainda.</div>
+  </div>
+  <div *ngIf="editing" class="card p-3 mt-3">
+    <label class="form-label">Nota</label>
+    <input class="form-control mb-2" type="number" [(ngModel)]="editing.rating">
+    <div>
+      <button class="btn btn-success" (click)="saveEdit()">Salvar</button>
+      <button class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="card p-3 mt-3">
+    <h5>Adicionar avaliação</h5>
+    <div class="mb-2"><label class="form-label">ID da receita</label><input class="form-control" type="number" [(ngModel)]="newRecipeId"></div>
+    <div class="mb-2"><label class="form-label">Nota</label><input class="form-control" type="number" [(ngModel)]="newScore"></div>
+    <button class="btn btn-primary" (click)="add()">Adicionar</button>
   </div>
 </div>
