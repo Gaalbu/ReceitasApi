@@ -237,6 +237,19 @@ Observações rápidas:
 - O backend já entra com JaCoCo antes da análise.
 - O frontend entra como código analisado; a cobertura dele ainda não está automatizada.
 
+**Análise atual (artefatos gerados)**
+
+- **Backend (JaCoCo)**: Line coverage ~ 74.01% — artefato: [api/target/site/jacoco/jacoco.xml](api/target/site/jacoco/jacoco.xml)
+- **Frontend (Karma/Clover)**: Statements coverage 82.41% — artefato: [receitasapi-ui/coverage/receitasapi-frontend/clover.xml](receitasapi-ui/coverage/receitasapi-frontend/clover.xml)
+
+Esses arquivos já existem no repositório após a execução dos testes locais. Para gerar a análise completa do SonarQube (dashboard, issues e relatório consolidado), rode o runner Docker abaixo — ele executa os testes, coleta as coberturas e envia os resultados ao Sonar:
+
+```bash
+docker compose --profile sonar up --build --abort-on-container-exit sonar
+```
+
+Ao final, abra `http://localhost:9000` e verifique o projeto com chave `receitasapi`.
+
 ## 10. Modelos de Dados Principais
 
 ### User

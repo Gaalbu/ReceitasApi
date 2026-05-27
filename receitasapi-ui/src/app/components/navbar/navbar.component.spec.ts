@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -6,6 +7,8 @@ import { NavbarComponent } from './navbar.component';
 import { AuthService } from '../../services/auth.service';
 
 describe('NavbarComponent', () => {
+  @Component({ template: '', standalone: false })
+  class DummyComponent {}
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
   let authService: any;
@@ -18,7 +21,11 @@ describe('NavbarComponent', () => {
       isAuthenticated$: of(true)
     };
     await TestBed.configureTestingModule({
-      imports: [NavbarComponent, RouterTestingModule],
+      imports: [NavbarComponent, RouterTestingModule.withRoutes([
+        { path: 'login', component: DummyComponent },
+        { path: '', component: DummyComponent }
+      ])],
+      declarations: [DummyComponent],
       providers: [
         { provide: AuthService, useValue: authServiceMock }
       ]
