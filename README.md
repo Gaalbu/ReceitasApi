@@ -37,20 +37,21 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - ✅ **Feedback dos usuários sobre a plataforma**
 
 ### 3.5. Interface de Usuário
-- ✅ **Página de Login** com validação de formulários
-- ✅ **Página de Registro** com criação de conta
-- ✅ **Navbar responsivo** com navegação entre páginas
-- ✅ **Página de Busca de Receitas** com integração em tempo real
-- ✅ **Formulário de Criação de Receitas**
-- ✅ **Dashboard de Planos de Refeição**
-- ✅ **Página de Feedback/Reviews**
-- ✅ **Renderização no lado do servidor (SSR)**
+ - ✅ **Principais telas (6):**
+	 - **login:** Tela de autenticação com validação e redirecionamento após login.
+	 - **register:** Formulário para criação de novas contas de usuário.
+	 - **recipe:** Visualização e busca de receitas (inclui resultados externos).
+	 - **create-recipe:** Formulário para criar/editar receitas do usuário.
+	 - **meal-plan:** Gerenciamento e visualização de planos de refeição do usuário.
+	 - **feedback:** Envio de avaliações e comentários sobre a plataforma.
+ - ✅ **Navbar responsivo** com navegação entre páginas
+ - ✅ **Renderização no lado do servidor (SSR)**
 
 ## 4. Checklist final priorizada
 
 ### P0 - Corrigir para sustentar a entrega
 - [x] Alinhar a versão do Java no build com a documentação. O `pom.xml` agora usa Java 21, igual ao README.
-- [ ] Ajustar a narrativa de "5 telas". Hoje o roteamento do front expõe 6 telas: login, register, recipe, create-recipe, meal-plans e feedback.
+ - [x] Ajustar a narrativa de "5 telas" para "6 telas" e listar todas as telas principais no README.
 - [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
 
 ### P1 - Fechar qualidade com pouco esforço de código
