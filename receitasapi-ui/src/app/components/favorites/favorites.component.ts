@@ -38,9 +38,10 @@ export class FavoritesComponent implements OnInit {
 
   loadRecipeOptions(term = ''): void {
     this.loadingRecipes = true;
+    const preservedSelection = this.preservedSelectedRecipe();
     this.recipeService.getRecipeOptions(term).subscribe({
       next: (options) => {
-        this.availableRecipes = options || [];
+        this.availableRecipes = this.mergeSelectedRecipe(options || [], preservedSelection);
         this.syncSelectedRecipe();
         this.loadingRecipes = false;
       },
@@ -60,6 +61,28 @@ export class FavoritesComponent implements OnInit {
     if (selected) {
       this.newRecipeTitle = selected.label;
     }
+  }
+
+  private preservedSelectedRecipe(): RecipeOption | null {
+    if (this.newRecipeId === null) {
+      return null;
+    }
+
+    return this.availableRecipes.find((recipe) => recipe.id === this.newRecipeId) || {
+      id: this.newRecipeId,
+      label: this.newRecipeTitle || `Receita #${this.newRecipeId}`,
+      source: 'mine'
+    };
+  }
+
+  private mergeSelectedRecipe(options: RecipeOption[], preservedSelection: RecipeOption | null): RecipeOption[] {
+    if (!preservedSelection) {
+      return options;
+    }
+
+    return options.some((option) => option.id === preservedSelection.id)
+      ? options
+      : [preservedSelection, ...options];
   }
 
   remove(id: number): void {

@@ -53,9 +53,10 @@ export class MealPlanComponent implements OnInit {
 
   loadAvailableRecipes(term = ''): void {
     this.loadingRecipes = true;
+    const preservedSelections = this.preservedSelectedRecipes();
     this.recipeService.getRecipeOptions(term).subscribe({
       next: (options) => {
-        this.availableRecipes = options || [];
+        this.availableRecipes = this.mergeSelectedRecipes(options || [], preservedSelections);
         this.loadingRecipes = false;
       },
       error: () => {
@@ -67,6 +68,41 @@ export class MealPlanComponent implements OnInit {
 
   searchRecipes(): void {
     this.loadAvailableRecipes(this.recipeSearch);
+  }
+
+  private preservedSelectedRecipes(): RecipeOption[] {
+    const selectedIds = new Set<number>();
+
+    for (const day of this.weekdays) {
+      for (const mealType of this.mealTypes) {
+        const control = this.form?.get(this.controlName(day.value, mealType.value));
+        const recipeId = this.toPositiveNumber(control?.value);
+        if (recipeId !== null) {
+          selectedIds.add(recipeId);
+        }
+      }
+    }
+
+    return Array.from(selectedIds).map((recipeId) => {
+      return this.availableRecipes.find((recipe) => recipe.id === recipeId) || {
+        id: recipeId,
+        label: `Receita #${recipeId}`,
+        source: 'mine'
+      };
+    });
+  }
+
+  private mergeSelectedRecipes(options: RecipeOption[], preservedSelections: RecipeOption[]): RecipeOption[] {
+    if (!preservedSelections.length) {
+      return options;
+    }
+
+    const merged = new Map<number, RecipeOption>();
+    for (const option of [...preservedSelections, ...options]) {
+      merged.set(option.id, option);
+    }
+
+    return Array.from(merged.values()).sort((left, right) => left.label.localeCompare(right.label));
   }
 
   private buildScheduleControls(): Record<string, unknown> {

@@ -37,9 +37,10 @@ export class RatingsComponent implements OnInit {
 
   loadAvailableRecipes(term = ''): void {
     this.loadingRecipes = true;
+    const preservedSelection = this.preservedSelectedRecipe();
     this.recipeService.getRecipeOptions(term).subscribe({
       next: (options) => {
-        this.availableRecipes = options || [];
+        this.availableRecipes = this.mergeSelectedRecipe(options || [], preservedSelection);
         this.loadingRecipes = false;
       },
       error: () => {
@@ -56,6 +57,28 @@ export class RatingsComponent implements OnInit {
   recipeLabel(recipeId: number | null): string {
     const selected = this.availableRecipes.find((recipe) => recipe.id === recipeId);
     return selected?.label || (recipeId ? `Receita ${recipeId}` : 'Receita inválida');
+  }
+
+  private preservedSelectedRecipe(): RecipeOption | null {
+    if (this.newRecipeId === null) {
+      return null;
+    }
+
+    return this.availableRecipes.find((recipe) => recipe.id === this.newRecipeId) || {
+      id: this.newRecipeId,
+      label: `Receita #${this.newRecipeId}`,
+      source: 'mine'
+    };
+  }
+
+  private mergeSelectedRecipe(options: RecipeOption[], preservedSelection: RecipeOption | null): RecipeOption[] {
+    if (!preservedSelection) {
+      return options;
+    }
+
+    return options.some((option) => option.id === preservedSelection.id)
+      ? options
+      : [preservedSelection, ...options];
   }
 
   add(): void {
