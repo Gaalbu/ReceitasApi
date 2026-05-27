@@ -20,4 +20,21 @@ export class RecipeService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post(this.endpoint('/recipes'), payload, { headers });
   }
+
+  listMyRecipes(): Observable<any[]> {
+    return this.http.get<any[]>(this.endpoint('/recipes/me'));
+  }
+
+  getMyRecipe(recipeId: number): Observable<any> {
+    return this.http.get<any>(this.endpoint(`/recipes/${recipeId}`));
+  }
+
+  updateMyRecipe(recipeId: number, payload: any): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<any>(this.endpoint(`/recipes/${recipeId}`), payload, { headers });
+  }
+
+  deleteMyRecipe(recipeId: number): Observable<void> {
+    return this.http.delete<void>(this.endpoint(`/recipes/${recipeId}`));
+  }
 }

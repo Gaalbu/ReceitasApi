@@ -45,6 +45,11 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.listMyRecipes(authentication.getName()));
     }
 
+    @GetMapping("/{recipeId}")
+    public ResponseEntity<Recipe> myRecipe(@PathVariable Long recipeId, Authentication authentication) {
+        return ResponseEntity.ok(recipeService.getMyRecipe(recipeId, authentication.getName()));
+    }
+
     @PutMapping("/{recipeId}")
     public ResponseEntity<Recipe> updateRecipe(@PathVariable Long recipeId,
                                                @Valid @RequestBody RecipeCreateRequest request,

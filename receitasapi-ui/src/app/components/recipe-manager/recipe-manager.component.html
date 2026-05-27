@@ -1,0 +1,132 @@
+<div class="recipe-manager-page">
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow mb-2">Rota protegida</p>
+      <h1 class="display-6 fw-bold mb-2">Gestão completa de receitas</h1>
+      <p class="lead mb-0">
+        Crie, edite, visualize e remova suas receitas em uma única tela conectada ao backend.
+      </p>
+    </div>
+
+    <a class="btn btn-outline-light btn-lg" routerLink="/">
+      Voltar à busca
+    </a>
+  </section>
+
+  <div class="row g-4 align-items-start mt-1">
+    <div class="col-12 col-xl-5">
+      <section class="panel-card h-100">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker mb-1">Formulário</p>
+            <h2 class="h4 mb-0">{{ editingRecipeId ? 'Editar receita' : 'Nova receita' }}</h2>
+          </div>
+          <span class="badge text-bg-primary-subtle text-primary-emphasis">{{ editingRecipeId ? 'Edição' : 'Criação' }}</span>
+        </div>
+
+        <form class="recipe-form mt-4" [formGroup]="recipeForm" (ngSubmit)="submit()">
+          <div class="mb-3">
+            <label for="recipe-title" class="form-label">Título</label>
+            <input id="recipe-title" class="form-control form-control-lg" type="text" formControlName="title" placeholder="Ex.: Lasanha da casa" />
+          </div>
+
+          <div class="mb-3">
+            <label for="recipe-ingredients" class="form-label">Ingredientes</label>
+            <textarea id="recipe-ingredients" class="form-control" rows="4" formControlName="ingredients" placeholder="Liste os ingredientes principais"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipe-instructions" class="form-label">Instruções</label>
+            <textarea id="recipe-instructions" class="form-control" rows="5" formControlName="instructions" placeholder="Descreva o passo a passo"></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label for="recipe-prep-time" class="form-label">Tempo de preparo</label>
+            <input id="recipe-prep-time" class="form-control" type="number" min="1" formControlName="prep_time" />
+          </div>
+
+          <div class="d-flex flex-wrap gap-2">
+            <button id="recipe-submit" class="btn btn-primary btn-lg" type="submit" [disabled]="saving">
+              {{ saving ? 'Salvando...' : (editingRecipeId ? 'Salvar alterações' : 'Criar receita') }}
+            </button>
+
+            @if (editingRecipeId) {
+              <button id="recipe-cancel" class="btn btn-outline-secondary btn-lg" type="button" (click)="cancelEdit()">
+                Cancelar edição
+              </button>
+            }
+          </div>
+
+          @if (message) {
+            <div class="alert alert-success mt-4 mb-0">{{ message }}</div>
+          }
+
+          @if (error) {
+            <div class="alert alert-danger mt-4 mb-0">{{ error }}</div>
+          }
+        </form>
+      </section>
+    </div>
+
+    <div class="col-12 col-xl-7">
+      <section class="panel-card h-100">
+        <div class="panel-header">
+          <div>
+            <p class="panel-kicker mb-1">Banco de dados</p>
+            <h2 class="h4 mb-0">Minhas receitas</h2>
+          </div>
+          <span class="badge text-bg-dark">{{ recipes.length }} registros</span>
+        </div>
+
+        @if (loading) {
+          <div class="empty-state mt-4">Carregando suas receitas...</div>
+        } @else if (recipes.length === 0) {
+          <div class="empty-state mt-4">
+            Nenhuma receita encontrada. Crie a primeira no formulário ao lado para começar.
+          </div>
+        } @else {
+          <div class="table-responsive mt-4">
+            <table class="table align-middle recipe-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Tempo</th>
+                  <th>Ingredientes</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (recipe of recipes; track trackByRecipeId($index, recipe)) {
+                  <tr [attr.data-recipe-id]="recipe.id">
+                    <td class="text-muted">#{{ recipe.id }}</td>
+                    <td>
+                      <div class="fw-semibold">{{ recipe.name }}</div>
+                      <div class="text-muted small text-truncate recipe-summary">
+                        {{ recipe.instructions || 'Sem instruções cadastradas.' }}
+                      </div>
+                    </td>
+                    <td>{{ recipe.prepTime ?? '—' }} min</td>
+                    <td>
+                      <span class="text-muted small recipe-summary">{{ recipe.description || '—' }}</span>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-end gap-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-primary" type="button" (click)="patchRecipe(recipe)">
+                          Editar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteRecipe(recipe)">
+                          Remover
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  </div>
+</div>

@@ -60,6 +60,11 @@ public class RecipeService {
         return recipeRepository.findByUserUsernameOrderByIdDesc(username);
     }
 
+    public Recipe getMyRecipe(Long recipeId, String username) {
+        return recipeRepository.findByIdAndUserUsername(recipeId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+    }
+
     public Recipe updateRecipe(Long recipeId, RecipeCreateRequest request, String username) {
         Recipe recipe = recipeRepository.findByIdAndUserUsername(recipeId, username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));

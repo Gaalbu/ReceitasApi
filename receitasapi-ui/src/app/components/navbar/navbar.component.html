@@ -23,6 +23,7 @@
               ☰ Menu
             </a>
             <ul class="dropdown-menu dropdown-menu-end" [class.show]="dropdownOpen" style="right:0; left:auto;">
+              <li><a class="dropdown-item" routerLink="/my-recipes" (click)="closeDropdown(); closeNavbar()">Gerenciar minhas receitas</a></li>
               <li><a class="dropdown-item" routerLink="/meal-plans" (click)="closeDropdown(); closeNavbar()">Criar receita semanal</a></li>
               <li><a class="dropdown-item" routerLink="/create-recipe" (click)="closeDropdown(); closeNavbar()">Criar uma receita</a></li>
               <li><a class="dropdown-item" routerLink="/favorites" (click)="closeDropdown(); closeNavbar()">Meus favoritos</a></li>

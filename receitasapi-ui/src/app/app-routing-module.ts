@@ -9,6 +9,7 @@ import { FeedbackComponent } from './components/feedback/feedback.component';
 import { UsersComponent } from './components/users/users.component';
 import { FavoritesComponent } from './components/favorites/favorites.component';
 import { RatingsComponent } from './components/ratings/ratings.component';
+import { RecipeManagerComponent } from './components/recipe-manager/recipe-manager.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 
@@ -19,6 +20,7 @@ const routes: Routes = [
   
   // Rotas protegidas (requerem autenticação)
   { path: '', component: RecipeComponent, canActivate: [AuthGuard] },
+  { path: 'my-recipes', component: RecipeManagerComponent, canActivate: [AuthGuard] },
   { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [AuthGuard] },
   { path: 'meal-plans', component: MealPlanComponent, canActivate: [AuthGuard] },
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
