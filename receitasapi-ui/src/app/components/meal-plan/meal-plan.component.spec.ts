@@ -2,10 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MealPlanComponent } from './meal-plan.component';
 import { MealPlanService } from '../../services/mealplan.service';
+import { RecipeService } from '../../services/recipe.service';
 
 describe('MealPlanComponent', () => {
   let component: MealPlanComponent;
   let mealPlanServiceMock: { createMealPlan: ReturnType<typeof vi.fn> };
+  let recipeServiceMock: { getRecipeOptions: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     localStorage.clear();
@@ -14,9 +16,19 @@ describe('MealPlanComponent', () => {
       createMealPlan: vi.fn()
     };
 
+    recipeServiceMock = {
+      getRecipeOptions: vi.fn().mockReturnValue(of([
+        { id: 1, label: 'Frango grelhado', source: 'mine' },
+        { id: 2, label: 'Salada da API', source: 'api' }
+      ]))
+    };
+
     await TestBed.configureTestingModule({
       imports: [MealPlanComponent],
-      providers: [{ provide: MealPlanService, useValue: mealPlanServiceMock }]
+      providers: [
+        { provide: MealPlanService, useValue: mealPlanServiceMock },
+        { provide: RecipeService, useValue: recipeServiceMock }
+      ]
     }).compileComponents();
 
     const fixture = TestBed.createComponent(MealPlanComponent);
@@ -46,12 +58,25 @@ describe('MealPlanComponent', () => {
     expect(mealPlanServiceMock.createMealPlan).not.toHaveBeenCalled();
   });
 
+  it('should reject recipe ids that are not in the allowed catalog', () => {
+    component.form.patchValue({
+      plan_name: 'Semana 1',
+      start_date: '2026-05-23',
+      MONDAY_LUNCH: 999
+    });
+
+    component.submit();
+
+    expect(component.message).toContain('Selecione apenas receitas válidas');
+    expect(mealPlanServiceMock.createMealPlan).not.toHaveBeenCalled();
+  });
+
   it('should submit valid weekly plan payload', () => {
     component.form.patchValue({
       plan_name: 'Semana 1',
       start_date: '2026-05-23',
-      MONDAY_LUNCH: 10,
-      TUESDAY_DINNER: 20
+      MONDAY_LUNCH: 1,
+      TUESDAY_DINNER: 2
     });
     mealPlanServiceMock.createMealPlan.mockReturnValue(of({ id: 1 }));
 
@@ -85,11 +110,11 @@ describe('MealPlanComponent', () => {
       start_date: '2026-05-23',
       MONDAY_LUNCH: 0,
       TUESDAY_DINNER: 'abc',
-      WEDNESDAY_LUNCH: 3
+      WEDNESDAY_LUNCH: 1
     });
-    const items = (component as any).buildItemsFromGrid();
-    expect(items).toEqual([
-      { day_of_week: 'WEDNESDAY', meal_type: 'LUNCH', recipe_id: 3 }
+    const result = (component as any).buildItemsFromGrid();
+    expect(result.items).toEqual([
+      { day_of_week: 'WEDNESDAY', meal_type: 'LUNCH', recipe_id: 1 }
     ]);
   });
 

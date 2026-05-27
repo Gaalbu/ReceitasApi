@@ -7,7 +7,6 @@ import { App } from './app';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { RecipeComponent } from './components/recipe/recipe.component';
-import { CreateRecipeComponent } from './components/create-recipe/create-recipe.component';
 import { MealPlanComponent } from './components/meal-plan/meal-plan.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -27,7 +26,6 @@ import { RatingsComponent } from './components/ratings/ratings.component';
     ReactiveFormsModule,
     FormsModule,
     RecipeComponent,
-    CreateRecipeComponent,
     LoginComponent,
     RegisterComponent,
     MealPlanComponent,

@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MealPlanService } from '../../services/mealplan.service';
 import { CommonModule } from '@angular/common';
+import { RecipeOption, RecipeService } from '../../services/recipe.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-meal-plan',
   standalone: true,
   templateUrl: './meal-plan.component.html',
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class MealPlanComponent implements OnInit {
   private readonly draftKey = 'receitasapi.mealplan.draft';
@@ -29,8 +31,11 @@ export class MealPlanComponent implements OnInit {
 
   form!: FormGroup;
   message = '';
+  recipeSearch = '';
+  availableRecipes: RecipeOption[] = [];
+  loadingRecipes = false;
 
-  constructor(private fb: FormBuilder, private mealPlanService: MealPlanService) {}
+  constructor(private fb: FormBuilder, private mealPlanService: MealPlanService, private recipeService: RecipeService) {}
 
   ngOnInit(): void {
     this.form = this.fb.group(
@@ -42,7 +47,26 @@ export class MealPlanComponent implements OnInit {
     );
 
     this.loadDraft();
+    this.loadAvailableRecipes();
     this.form.valueChanges.subscribe(() => this.saveDraft());
+  }
+
+  loadAvailableRecipes(term = ''): void {
+    this.loadingRecipes = true;
+    this.recipeService.getRecipeOptions(term).subscribe({
+      next: (options) => {
+        this.availableRecipes = options || [];
+        this.loadingRecipes = false;
+      },
+      error: () => {
+        this.message = 'Não foi possível carregar receitas válidas.';
+        this.loadingRecipes = false;
+      }
+    });
+  }
+
+  searchRecipes(): void {
+    this.loadAvailableRecipes(this.recipeSearch);
   }
 
   private buildScheduleControls(): Record<string, unknown> {
@@ -69,8 +93,13 @@ export class MealPlanComponent implements OnInit {
     return parsed;
   }
 
+  private isAllowedRecipeId(recipeId: number): boolean {
+    return this.availableRecipes.some((recipe) => recipe.id === recipeId);
+  }
+
   private buildItemsFromGrid() {
     const items: Array<{ day_of_week: string; meal_type: string; recipe_id: number }> = [];
+    const invalidIds: number[] = [];
 
     for (const day of this.weekdays) {
       for (const mealType of this.mealTypes) {
@@ -78,16 +107,20 @@ export class MealPlanComponent implements OnInit {
         const recipeId = this.toPositiveNumber(control?.value);
 
         if (recipeId !== null) {
-          items.push({
-            day_of_week: day.value,
-            meal_type: mealType.value,
-            recipe_id: recipeId
-          });
+          if (this.isAllowedRecipeId(recipeId)) {
+            items.push({
+              day_of_week: day.value,
+              meal_type: mealType.value,
+              recipe_id: recipeId
+            });
+          } else {
+            invalidIds.push(recipeId);
+          }
         }
       }
     }
 
-    return items;
+    return { items, invalidIds };
   }
 
   saveDraft() {
@@ -126,7 +159,12 @@ export class MealPlanComponent implements OnInit {
       return;
     }
 
-    const items = this.buildItemsFromGrid();
+    const { items, invalidIds } = this.buildItemsFromGrid();
+    if (invalidIds.length > 0) {
+      this.message = 'Selecione apenas receitas válidas da API ou das suas receitas.';
+      return;
+    }
+
     if (items.length === 0) {
       this.message = 'Informe ao menos um recipeId para o calendario semanal.';
       return;

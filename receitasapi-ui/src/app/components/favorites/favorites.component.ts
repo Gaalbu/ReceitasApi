@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FavoritesService } from '../../services/favorites.service';
+import { RecipeOption, RecipeService } from '../../services/recipe.service';
 
 @Component({
   selector: 'app-favorites',
@@ -13,16 +14,19 @@ import { FavoritesService } from '../../services/favorites.service';
 export class FavoritesComponent implements OnInit {
   favorites: any[] = [];
   error: string | null = null;
-  // create form
   newRecipeTitle = '';
   newRecipeId: number | null = null;
   showCreate = false;
   editing: any = null;
+  recipeSearch = '';
+  availableRecipes: RecipeOption[] = [];
+  loadingRecipes = false;
 
-  constructor(private favoritesService: FavoritesService) {}
+  constructor(private favoritesService: FavoritesService, private recipeService: RecipeService) {}
 
   ngOnInit(): void {
     this.loadFavorites();
+    this.loadRecipeOptions();
   }
 
   loadFavorites(): void {
@@ -30,6 +34,32 @@ export class FavoritesComponent implements OnInit {
       next: data => this.favorites = data || [],
       error: err => this.error = 'Não foi possível carregar favoritos'
     });
+  }
+
+  loadRecipeOptions(term = ''): void {
+    this.loadingRecipes = true;
+    this.recipeService.getRecipeOptions(term).subscribe({
+      next: (options) => {
+        this.availableRecipes = options || [];
+        this.syncSelectedRecipe();
+        this.loadingRecipes = false;
+      },
+      error: () => {
+        this.error = 'Não foi possível carregar receitas válidas.';
+        this.loadingRecipes = false;
+      }
+    });
+  }
+
+  searchRecipes(): void {
+    this.loadRecipeOptions(this.recipeSearch);
+  }
+
+  syncSelectedRecipe(): void {
+    const selected = this.availableRecipes.find((recipe) => recipe.id === this.newRecipeId);
+    if (selected) {
+      this.newRecipeTitle = selected.label;
+    }
   }
 
   remove(id: number): void {
@@ -40,6 +70,12 @@ export class FavoritesComponent implements OnInit {
   }
 
   create(): void {
+    const selected = this.availableRecipes.find((recipe) => recipe.id === this.newRecipeId);
+    if (!selected) {
+      this.error = 'Selecione uma receita válida da API ou das suas receitas.';
+      return;
+    }
+
     const payload = { recipeId: this.newRecipeId || 0, recipeTitle: this.newRecipeTitle };
     this.favoritesService.addFavorite(payload).subscribe({ next: () => { this.newRecipeTitle = ''; this.newRecipeId = null; this.loadFavorites(); }, error: () => this.error = 'Falha ao adicionar favorito' });
   }
