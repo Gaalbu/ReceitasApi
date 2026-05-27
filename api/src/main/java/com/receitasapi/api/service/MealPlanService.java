@@ -104,5 +104,51 @@ public class MealPlanService {
                 .ingredients(new java.util.ArrayList<>(ingredients))
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public java.util.List<MealPlan> listMyMealPlans(String username) {
+        return mealPlanRepository.findByUserUsernameOrderByIdDesc(username);
+    }
+
+    @Transactional(readOnly = true)
+    public MealPlan getMyMealPlan(Long mealPlanId, String username) {
+        return mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+    }
+
+    public MealPlan updateMealPlan(Long mealPlanId, MealPlanRequest request, String username) {
+        MealPlan mealPlan = mealPlanRepository.findWithItemsByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+
+        mealPlan.setPlanName(request.getPlan_name());
+        try {
+            mealPlan.setStartDate(java.time.LocalDate.parse(request.getStart_date()));
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "start_date must be in yyyy-MM-dd format");
+        }
+
+        // rebuild items
+        java.util.List<MealItem> items = new java.util.ArrayList<>();
+        for (MealItemRequest itemRequest : request.getItems()) {
+            Recipe recipe = recipeRepository.findById(itemRequest.getRecipe_id())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+
+            MealItem item = new MealItem();
+            item.setDayOfWeek(java.time.DayOfWeek.valueOf(itemRequest.getDay_of_week().toUpperCase()));
+            item.setMealType(MealType.valueOf(itemRequest.getMeal_type().toUpperCase()));
+            item.setRecipe(recipe);
+            item.setMealPlan(mealPlan);
+            items.add(item);
+        }
+        mealPlan.setItems(items);
+
+        return mealPlanRepository.save(mealPlan);
+    }
+
+    public void deleteMealPlan(Long mealPlanId, String username) {
+        MealPlan mealPlan = mealPlanRepository.findByIdAndUserUsername(mealPlanId, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano nao encontrado"));
+        mealPlanRepository.delete(mealPlan);
+    }
 }
 
