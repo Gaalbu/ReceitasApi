@@ -222,10 +222,11 @@ ng test
 
 ## 9. SonarQube
 
-O repositório já traz o fluxo automático de Sonar no Docker Compose. O passo a passo detalhado está em [docs/sonar-runbook.md](docs/sonar-runbook.md).
+O repositório já traz o fluxo automático de Sonar no Docker Compose. O passo a passo detalhado está em [docs/roteiro-sonar.md](docs/roteiro-sonar.md).
 
 1. Subir o stack com o perfil do Sonar.
 ```bash
+export SONAR_TOKEN=seu_token_aqui
 docker compose --profile sonar up --build --abort-on-container-exit sonar
 ```
 
@@ -238,6 +239,7 @@ Observações rápidas:
 - O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
 - O backend já entra com JaCoCo antes da análise.
 - O frontend entra como código analisado com cobertura automatizada via `npm run test:coverage`.
+- O scanner usa o token exportado em `SONAR_TOKEN`.
 
 **Análise atual (artefatos gerados)**
 

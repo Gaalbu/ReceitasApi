@@ -6,11 +6,13 @@ Pré-requisitos
 - Docker e Docker Compose instalados.
 - Portas livres: `9000` para o SonarQube e `5432` para o banco do Sonar, se o ambiente já não estiver usando esses serviços.
 - O repositório clonado com os artefatos de backend e frontend disponíveis.
+- Um token do SonarQube exportado em `SONAR_TOKEN` antes de subir o runner.
 
 Fluxo recomendado
 1. Suba o runner do Sonar junto com o banco e o servidor SonarQube.
 
 ```bash
+export SONAR_TOKEN=seu_token_aqui
 docker compose --profile sonar up --build --abort-on-container-exit sonar
 ```
 
@@ -18,7 +20,7 @@ docker compose --profile sonar up --build --abort-on-container-exit sonar
 - valida o SonarQube em `http://localhost:9000`
 - executa `mvn test` no backend para gerar JaCoCo
 - executa a cobertura do frontend via `npm run test:coverage`
-- roda o `sonar-scanner` com `sonar-project.properties`
+- roda o `sonar-scanner` com `sonar-project.properties` e `SONAR_TOKEN`
 
 3. Abra o painel do SonarQube no navegador.
 
@@ -26,7 +28,7 @@ docker compose --profile sonar up --build --abort-on-container-exit sonar
 http://localhost:9000
 ```
 
-4. Entre com as credenciais padrão do ambiente local.
+4. Entre com as credenciais padrão do ambiente local, se necessário.
 - Usuário: `admin`
 - Senha: `admin`
 

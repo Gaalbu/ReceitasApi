@@ -28,9 +28,9 @@ CMD ["sh", "-c", "\
   cd receitasapi-ui && npm ci && npm run test:coverage && \
   NODE_PATH=/workspace/receitasapi-ui/node_modules node /workspace/sonar/generate-lcov.js && cd /workspace && \
   echo '>>> Rodando SonarQube scanner...' && \
+  : \"${SONAR_TOKEN:?Defina SONAR_TOKEN com um token do SonarQube antes de rodar o runner.}\" && \
   sonar-scanner \
     -Dproject.settings=sonar-project.properties \
     -Dsonar.host.url=http://sonarqube:9000 \
-    -Dsonar.login=admin \
-    -Dsonar.password=admin \
+    -Dsonar.token=$SONAR_TOKEN \
 "]
