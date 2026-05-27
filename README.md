@@ -55,9 +55,11 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
 
 ### P1 - Fechar qualidade com pouco esforço de código
-- [ ] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
+- [x] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
 - [ ] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
 - [ ] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
+
+Na última execução do runner, o SonarQube concluiu com `ANALYSIS SUCCESSFUL` e importou a cobertura do frontend a partir de `receitasapi-ui/coverage/lcov.info`.
 
 ### P2 - Melhorar a leitura da entrega
 - [ ] Padronizar a descrição dos testes para separar unitários, integração e E2E com os artefatos reais de cada camada.
@@ -235,12 +237,12 @@ http://localhost:9000
 Observações rápidas:
 - O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
 - O backend já entra com JaCoCo antes da análise.
-- O frontend entra como código analisado; a cobertura dele ainda não está automatizada.
+- O frontend entra como código analisado com cobertura automatizada via `npm run test:coverage`.
 
 **Análise atual (artefatos gerados)**
 
 - **Backend (JaCoCo)**: Line coverage ~ 74.01% — artefato: [api/target/site/jacoco/jacoco.xml](api/target/site/jacoco/jacoco.xml)
-- **Frontend (Karma/Clover)**: Statements coverage 82.41% — artefato: [receitasapi-ui/coverage/receitasapi-frontend/clover.xml](receitasapi-ui/coverage/receitasapi-frontend/clover.xml)
+- **Frontend (Vitest/LCOV)**: Statements coverage 82.41% — artefato: [receitasapi-ui/coverage/lcov.info](receitasapi-ui/coverage/lcov.info)
 
 Esses arquivos já existem no repositório após a execução dos testes locais. Para gerar a análise completa do SonarQube (dashboard, issues e relatório consolidado), rode o runner Docker abaixo — ele executa os testes, coleta as coberturas e envia os resultados ao Sonar:
 

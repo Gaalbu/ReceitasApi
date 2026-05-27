@@ -25,7 +25,8 @@ CMD ["sh", "-c", "\
   echo '>>> Gerando cobertura do backend...' && \
   cd api && mvn test && cd /workspace && \
   echo '>>> Gerando cobertura do frontend...' && \
-  cd receitasapi-ui && npm ci && npm run test:coverage -- --run || true && cd /workspace && \
+  cd receitasapi-ui && npm ci && npm run test:coverage && \
+  NODE_PATH=/workspace/receitasapi-ui/node_modules node /workspace/sonar/generate-lcov.js && cd /workspace && \
   echo '>>> Rodando SonarQube scanner...' && \
   sonar-scanner \
     -Dproject.settings=sonar-project.properties \

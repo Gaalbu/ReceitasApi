@@ -17,7 +17,7 @@ docker compose --profile sonar up --build --abort-on-container-exit sonar
 2. Aguarde o container `sonar` terminar. Ele faz, nesta ordem:
 - valida o SonarQube em `http://localhost:9000`
 - executa `mvn test` no backend para gerar JaCoCo
-- executa a cobertura do frontend via `npm run test:coverage --run`
+- executa a cobertura do frontend via `npm run test:coverage`
 - roda o `sonar-scanner` com `sonar-project.properties`
 
 3. Abra o painel do SonarQube no navegador.
