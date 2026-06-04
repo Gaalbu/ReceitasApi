@@ -1,6 +1,6 @@
 # Casos de Uso — ReceitasApi
 
-Este documento lista 15 casos de uso essenciais no formato: nome, ator, pré-condição, fluxo principal e pós-condição. Baseado nos controllers: `Auth`, `Recipe`, `MealPlan`, `RecipeRating`, `SystemReview`.
+Este documento lista 15 casos de uso essenciais no formato: nome, ator, pré-condição, fluxo principal e pós-condição. Baseado nos controllers: `Auth`, `Recipe`, `MealPlan`, `RecipeRating`, `Favorite`, `SystemReview` e `User`.
 
 ---
 
@@ -121,38 +121,38 @@ Este documento lista 15 casos de uso essenciais no formato: nome, ator, pré-con
     - Pré-condição: Receita existe; usuário autenticado.
     - Fluxo principal:
       1. Usuário fornece nota e comentário na UI.
-      2. Cliente envia `POST /recipes/rating` com payload e token.
+      2. Cliente envia `POST /recipes/{recipeId}/ratings` com payload e token.
       3. Backend persiste `RecipeRating` associado ao usuário e receita.
       4. Retorna confirmação/objeto criado.
     - Pós-condição: Avaliação gravada e visível nas métricas da receita.
 
-13) Nome: Remover/Ajustar Avaliação
-    - Ator: Autor da avaliação
-    - Pré-condição: Avaliação existe e pertence ao usuário.
-    - Fluxo principal:
-      1. Usuário seleciona avaliação para editar/remover.
-      2. Cliente chama endpoint apropriado (PUT/DELETE conforme implementado).
-      3. Backend verifica posse e atualiza/remove a avaliação.
-      4. Retorna confirmação.
-    - Pós-condição: Avaliação atualizada ou removida.
-
-14) Nome: Submeter Feedback do Sistema
+13) Nome: Consultar Minhas Avaliações
     - Ator: Usuário autenticado
-    - Pré-condição: Usuário autenticado; texto de feedback disponível.
+    - Pré-condição: Usuário autenticado com ao menos zero avaliações cadastradas.
     - Fluxo principal:
-      1. Usuário preenche formulário de feedback.
-      2. Envia para `POST /system-reviews` com token.
-      3. Backend persiste o `SystemReview` e retorna confirmação.
-    - Pós-condição: Feedback salvo para análise.
+      1. Usuário acessa a seção de avaliações.
+      2. Cliente chama `GET /recipes/ratings/me`.
+      3. Backend retorna as avaliações do usuário autenticado.
+      4. UI exibe a lista para consulta.
+    - Pós-condição: Avaliações do usuário disponíveis para visualização.
 
-15) Nome: Listar Feedbacks (Admin/Relatório)
-    - Ator: Administrador (ou processo de análise)
-    - Pré-condição: Usuário com permissão de leitura dos reviews.
+14) Nome: Gerenciar Favoritos
+    - Ator: Usuário autenticado
+    - Pré-condição: Usuário autenticado; receita válida para favoritar.
     - Fluxo principal:
-      1. Administrador acessa endpoint de listagem de reviews.
-      2. Backend retorna listagem paginada/filtrada de `SystemReview`.
-      3. UI ou processo exibe/analisa os feedbacks.
-    - Pós-condição: Feedbacks disponíveis para análise.
+      1. Usuário adiciona favorito via `POST /favorites`.
+      2. Usuário consulta a lista via `GET /favorites/me`.
+      3. Usuário remove favorito via `DELETE /favorites/{favoriteId}`.
+    - Pós-condição: Coleção de favoritos do usuário atualizada.
+
+15) Nome: Enviar Feedback e Gerenciar Perfil
+    - Ator: Usuário autenticado
+    - Pré-condição: Usuário autenticado e dados válidos de perfil/feedback.
+    - Fluxo principal:
+      1. Usuário envia feedback para `POST /system-reviews`.
+      2. Usuário pode atualizar dados da conta via `PUT /users/me`.
+      3. Usuário pode encerrar a conta via `DELETE /users/me`.
+    - Pós-condição: Feedback persistido e perfil do usuário atualizado/removido conforme ação.
 
 ---
 

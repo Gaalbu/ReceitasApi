@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -101,7 +102,7 @@ public class RecipeServiceTest {
         Recipe recipe = Recipe.builder().id(10L).name("Antiga").description("old").instructions("old").isExternal(true).externalApiId("123").user(user).build();
         RecipeCreateRequest request = new RecipeCreateRequest("Nova", "ing", "passos");
 
-        when(recipeRepository.findByIdAndUserUsername(10L, "maria")).thenReturn(Optional.of(recipe));
+        when(recipeRepository.findById(10L)).thenReturn(Optional.of(recipe));
         when(recipeRepository.save(any(Recipe.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Recipe result = recipeService.updateRecipe(10L, request, "maria");
@@ -115,7 +116,7 @@ public class RecipeServiceTest {
 
     @Test
     void deveLancarErroAoAtualizarReceitaInexistente() {
-        when(recipeRepository.findByIdAndUserUsername(10L, "maria")).thenReturn(Optional.empty());
+        when(recipeRepository.findById(10L)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class,
                 () -> recipeService.updateRecipe(10L, new RecipeCreateRequest("Nova", "ing", "passos"), "maria"));
@@ -123,10 +124,23 @@ public class RecipeServiceTest {
     }
 
     @Test
+    void deveRetornarForbiddenAoAtualizarReceitaDeOutroUsuario() {
+        User user = User.builder().id(1L).username("joao").build();
+        Recipe recipe = Recipe.builder().id(10L).name("Antiga").user(user).build();
+        when(recipeRepository.findById(10L)).thenReturn(Optional.of(recipe));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> recipeService.updateRecipe(10L, new RecipeCreateRequest("Nova", "ing", "passos"), "maria"));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+        verify(recipeRepository, never()).save(any());
+    }
+
+    @Test
     void deveExcluirReceitaDoUsuario() {
         User user = User.builder().id(1L).username("maria").build();
         Recipe recipe = Recipe.builder().id(10L).name("Antiga").user(user).build();
-        when(recipeRepository.findByIdAndUserUsername(10L, "maria")).thenReturn(Optional.of(recipe));
+        when(recipeRepository.findById(10L)).thenReturn(Optional.of(recipe));
 
         recipeService.deleteRecipe(10L, "maria");
 
@@ -135,8 +149,21 @@ public class RecipeServiceTest {
 
     @Test
     void deveLancarErroAoExcluirReceitaInexistente() {
-        when(recipeRepository.findByIdAndUserUsername(10L, "maria")).thenReturn(Optional.empty());
+        when(recipeRepository.findById(10L)).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class, () -> recipeService.deleteRecipe(10L, "maria"));
+    }
+
+    @Test
+    void deveRetornarForbiddenAoExcluirReceitaDeOutroUsuario() {
+        User user = User.builder().id(1L).username("joao").build();
+        Recipe recipe = Recipe.builder().id(10L).name("Antiga").user(user).build();
+        when(recipeRepository.findById(10L)).thenReturn(Optional.of(recipe));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> recipeService.deleteRecipe(10L, "maria"));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+        verify(recipeRepository, never()).delete(any());
     }
 }

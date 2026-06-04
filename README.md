@@ -32,7 +32,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 - ✅ **Gerenciamento de itens de refeição**
 
 ### 3.4. Avaliações e Feedback
-- ✅ **Sistema de ratings para receitas** → `POST /recipes/rating` (ou similar)
+- ✅ **Sistema de ratings para receitas** → `POST /recipes/{recipeId}/ratings` e `GET /recipes/ratings/me`
 - ✅ **Submissão de reviews do sistema** → `POST /system-reviews`
 - ✅ **Feedback dos usuários sobre a plataforma**
 
@@ -57,7 +57,7 @@ ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar 
 ### P1 - Fechar qualidade com pouco esforço de código
 - [x] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
 - [ ] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
-- [ ] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
+- [x] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
 
 Na última execução do runner, o SonarQube concluiu com `ANALYSIS SUCCESSFUL` e importou a cobertura do frontend a partir de `receitasapi-ui/coverage/lcov.info`.
 
@@ -129,22 +129,47 @@ Na última execução do runner, o SonarQube concluiu com `ANALYSIS SUCCESSFUL` 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | GET | `/recipes/search?name={termo}` | Buscar receitas na TheMealDB |
+| GET | `/recipes/external/{externalId}` | Detalhar receita externa da TheMealDB |
 | POST | `/recipes` | Criar receita customizada (autenticado) |
+| GET | `/recipes/me` | Listar receitas do usuário autenticado |
+| GET | `/recipes/{recipeId}` | Obter receita do usuário autenticado |
+| PUT | `/recipes/{recipeId}` | Atualizar receita do usuário autenticado |
+| DELETE | `/recipes/{recipeId}` | Excluir receita do usuário autenticado |
 
 ### Planos de Refeição
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | POST | `/meal-plans` | Criar plano de refeição (autenticado) |
+| GET | `/meal-plans` | Listar planos do usuário autenticado |
+| GET | `/meal-plans/{mealPlanId}` | Obter plano específico do usuário |
+| PUT | `/meal-plans/{mealPlanId}` | Atualizar plano de refeição |
+| DELETE | `/meal-plans/{mealPlanId}` | Excluir plano de refeição |
+| DELETE | `/meal-plans/{mealPlanId}/items/{itemId}` | Remover item do plano |
+| GET | `/meal-plans/{mealPlanId}/shopping-list` | Gerar lista de compras do plano |
 
 ### Avaliações
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| POST | `/recipes/rating` | Avaliar receita (autenticado) |
+| POST | `/recipes/{recipeId}/ratings` | Avaliar receita (autenticado) |
+| GET | `/recipes/ratings/me` | Listar avaliações do usuário autenticado |
+
+### Favoritos
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/favorites` | Adicionar favorito |
+| GET | `/favorites/me` | Listar favoritos do usuário |
+| DELETE | `/favorites/{favoriteId}` | Remover favorito |
 
 ### Reviews
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | POST | `/system-reviews` | Submeter feedback do sistema (autenticado) |
+
+### Perfil do Usuário
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| PUT | `/users/me` | Atualizar perfil do usuário autenticado |
+| DELETE | `/users/me` | Excluir conta do usuário autenticado |
 
 ## 7. Como Executar
 

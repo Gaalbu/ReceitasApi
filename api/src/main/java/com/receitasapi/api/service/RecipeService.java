@@ -66,8 +66,9 @@ public class RecipeService {
     }
 
     public Recipe updateRecipe(Long recipeId, RecipeCreateRequest request, String username) {
-        Recipe recipe = recipeRepository.findByIdAndUserUsername(recipeId, username)
+        Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+        validateRecipeOwner(recipe, username);
 
         recipe.setName(request.getTitle());
         recipe.setDescription(request.getIngredients());
@@ -80,9 +81,16 @@ public class RecipeService {
     }
 
     public void deleteRecipe(Long recipeId, String username) {
-        Recipe recipe = recipeRepository.findByIdAndUserUsername(recipeId, username)
+        Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+        validateRecipeOwner(recipe, username);
         recipeRepository.delete(recipe);
+    }
+
+    private void validateRecipeOwner(Recipe recipe, String username) {
+        if (!recipe.getUser().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario nao e dono da receita");
+        }
     }
 
     public Recipe createRecipe(RecipeCreateRequest request, String username) {
