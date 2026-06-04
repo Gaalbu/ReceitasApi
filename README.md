@@ -4,7 +4,7 @@ Aplicação web de gestão gastronômica com backend Spring Boot, frontend Angul
 
 ## Entrega
 - 15 casos de uso implementados.
-- 5 áreas funcionais apresentadas na demo: autenticação, receitas, planos semanais, reviews/ratings e navegação.
+- 5 telas principais apresentadas na demo: login, cadastro, receitas, planos semanais e reviews.
 - Testes unitários, integração e E2E funcionando.
 - Cobertura atual acima da meta mínima do frontend (`70.09%` statements) e backend com JaCoCo gerado.
 - Análise estática preparada via SonarQube no `docker-compose`.
