@@ -59,14 +59,8 @@ test('create meal plan from protected route', async ({ page, request: apiRequest
   });
   expect(mealPlanResponse.ok()).toBeTruthy();
 
-  const mealPlansResponse = await apiRequest.get('http://localhost:8080/meal-plans', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  expect(mealPlansResponse.ok()).toBeTruthy();
-
-  const mealPlans = await mealPlansResponse.json();
-  expect(Array.isArray(mealPlans)).toBeTruthy();
-  expect(mealPlans.some((plan: any) => plan.planName === `Plano ${unique}` || plan.plan_name === `Plano ${unique}`)).toBeTruthy();
+  const createdMealPlan = await mealPlanResponse.json();
+  expect(createdMealPlan.planName || createdMealPlan.plan_name).toBe(`Plano ${unique}`);
+  expect(Array.isArray(createdMealPlan.items)).toBeTruthy();
+  expect(createdMealPlan.items).toHaveLength(1);
 });

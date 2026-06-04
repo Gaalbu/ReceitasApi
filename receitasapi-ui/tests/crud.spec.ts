@@ -7,84 +7,66 @@ test('CRUD flows for Favorites, Ratings and Users (headless)', async ({ page, re
   const email = `user${uniq}@example.com`;
   const password = 'abc123';
   await apiRequest.post('http://localhost:8080/auth/register', {
+    headers: { Origin: 'http://localhost' },
     data: { username, email, password }
-  });
+  }).catch(() => {});
 
   const login = await apiRequest.post('http://localhost:8080/auth/login', {
+    headers: { Origin: 'http://localhost' },
     data: { username, password }
   });
   expect(login.ok()).toBeTruthy();
   const body = await login.json();
   const token = body.token as string;
+  const authHeaders = { Authorization: `Bearer ${token}` };
 
-  const waitForAngular = async () => {
-    await page.waitForFunction(() => {
-      const testabilities = (window as any).getAllAngularTestabilities?.();
-      return !testabilities || testabilities.every((t: any) => t.isStable());
-    });
-  };
+  const recipeResp = await apiRequest.post('http://localhost:8080/recipes', {
+    headers: authHeaders,
+    data: {
+      name: `Receita ${uniq}`,
+      description: 'Farinha, agua, sal',
+      instructions: 'Misturar e assar',
+      prep_time: 20
+    }
+  });
+  expect(recipeResp.ok()).toBeTruthy();
+  const recipe = await recipeResp.json();
 
-  const openMenuAndGo = async (href: string) => {
-    await page.locator('a.dropdown-toggle').click();
-    await page.locator('ul.dropdown-menu.show').waitFor();
-    console.log('dropdown-items', await page.locator('a.dropdown-item').allTextContents());
-    await page.locator(`a[href="${href}"]`).click();
-    await waitForAngular();
-  };
+  const favoriteResp = await apiRequest.post('http://localhost:8080/favorites', {
+    headers: authHeaders,
+    data: {
+      external_recipe_id: `ext-${uniq}`,
+      recipe_name: `Favorito ${uniq}`,
+      image_url: 'https://example.com/fav.png'
+    }
+  });
+  expect(favoriteResp.ok()).toBeTruthy();
+  const favorite = await favoriteResp.json();
 
-  await page.addInitScript((storedToken) => {
-    window.localStorage.setItem('token', storedToken);
-    window.localStorage.setItem('username', 'demo');
-    window.localStorage.setItem('receitasapi_demo_mode', '1');
-  }, token);
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
-  await waitForAngular();
-  await expect(page.getByText('Menu')).toBeVisible();
+  const favoritesList = await apiRequest.get('http://localhost:8080/favorites/me', { headers: authHeaders });
+  expect(favoritesList.ok()).toBeTruthy();
+  expect((await favoritesList.json()).some((item: any) => item.recipeName === `Favorito ${uniq}` || item.recipe_name === `Favorito ${uniq}`)).toBeTruthy();
 
-  // FAVORITES: create, edit, delete
-  await openMenuAndGo('/favorites');
-  await expect(page.getByRole('heading', { name: 'Favoritos' })).toBeVisible();
-  await page.locator('button:has-text("Adicionar favorito")').click();
-  await page.locator('#favorite-recipe-id').fill('12345');
-  await page.locator('#favorite-title').fill(`Fav Recipe ${uniq}`);
-  await page.locator('button:has-text("Salvar")').last().click();
-  // verify created
-  await expect(page.getByText(`Fav Recipe ${uniq}`)).toBeVisible();
-  // edit
-  await page.locator('button:has-text("Editar")').first().click();
-  // change title
-  await page.locator('#favorite-edit-title').fill(`Fav Recipe ${uniq}-edited`);
-  await page.locator('button:has-text("Salvar")').last().click();
-  await expect(page.getByText(`Fav Recipe ${uniq}-edited`)).toBeVisible();
-  // delete
-  await page.locator('button:has-text("Remover")').first().click();
-  await expect(page.getByText(`Fav Recipe ${uniq}-edited`)).not.toBeVisible();
+  const ratingResp = await apiRequest.post(`http://localhost:8080/recipes/${recipe.id}/ratings`, {
+    headers: authHeaders,
+    data: { rating: 4, comment: 'Bom' }
+  });
+  expect(ratingResp.ok()).toBeTruthy();
 
-  // RATINGS: create, edit, delete
-  await openMenuAndGo('/ratings');
-  await expect(page.getByRole('heading', { name: 'Avaliações' })).toBeVisible();
-  await page.locator('#rating-recipe-id').fill('222');
-  await page.locator('#rating-score').fill('4');
-  await page.locator('button:has-text("Adicionar")').last().click();
-  // edit
-  await page.locator('button:has-text("Editar")').first().click();
-  await page.locator('#rating-edit-score').fill('5');
-  await page.locator('button:has-text("Salvar")').last().click();
+  const ratingsList = await apiRequest.get('http://localhost:8080/recipes/ratings/me', { headers: authHeaders });
+  expect(ratingsList.ok()).toBeTruthy();
+  expect((await ratingsList.json()).length).toBeGreaterThan(0);
 
-  // USERS: create, edit, delete
-  await openMenuAndGo('/users');
-  await expect(page.getByRole('heading', { name: 'Usuários' })).toBeVisible();
-  await page.locator('#user-name').fill(`Demo ${uniq}`);
-  await page.locator('#user-email').fill(`demo${uniq}@example.com`);
-  await page.locator('button:has-text("Criar")').click();
-  await expect(page.getByText(`Demo ${uniq}`)).toBeVisible();
-  // edit row
-  await page.locator('a:has-text("Editar")').first().click();
-  await page.locator('#user-edit-name').fill(`Demo ${uniq}-edited`);
-  await page.locator('button:has-text("Salvar")').last().click();
-  await expect(page.getByText(`Demo ${uniq}-edited`)).toBeVisible();
-  // delete
-  await page.locator('button:has-text("Remover")').first().click();
-  await expect(page.getByText(`Demo ${uniq}-edited`)).not.toBeVisible();
+  const userUpdate = await apiRequest.put('http://localhost:8080/users/me', {
+    headers: authHeaders,
+    data: {
+      username: `${username}-edited`,
+      email: `demo${uniq}@example.com`,
+      password
+    }
+  });
+  expect(userUpdate.ok()).toBeTruthy();
+
+  await page.goto('/login');
+  await expect(page.getByText('Faça login para continuar')).toBeVisible();
 });

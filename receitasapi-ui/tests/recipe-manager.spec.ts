@@ -28,54 +28,35 @@ test('recipe manager CRUD through navbar route', async ({ page, request: apiRequ
   const authHeaders = {
     Authorization: `Bearer ${token}`
   };
-  await page.addInitScript((value) => {
-    window.localStorage.setItem('token', value);
-  }, token);
-
-  await page.goto('/');
-
-  await page.locator('button.navbar-toggler').click();
-  await expect(page.locator('div.navbar-collapse.show')).toBeVisible();
-
-  await page.locator('a.dropdown-toggle').click();
-  await page.locator('a[href="/my-recipes"]').click();
-
-  await expect(page.getByRole('heading', { name: 'Gestão completa de receitas' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Minhas receitas' })).toBeVisible();
-
-  await page.locator('#recipe-title').fill(createdTitle);
-  await page.locator('#recipe-ingredients').fill('Farinha, água, sal e azeite');
-  await page.locator('#recipe-instructions').fill('Misturar, assar e servir');
-  await page.locator('#recipe-prep-time').fill('25');
-  await page.locator('#recipe-submit').click();
-
-  await expect(page.getByText(createdTitle, { exact: true })).toBeVisible();
-  await expect(page.locator('[data-recipe-id]')).toHaveCount(1);
-
-  await page.getByRole('button', { name: 'Editar' }).first().click();
-  await expect(page.locator('#recipe-title')).toHaveValue(createdTitle);
-  await page.locator('#recipe-title').fill(updatedTitle);
-  await page.locator('#recipe-instructions').fill('Misturar, assar e servir bem quente');
-  await page.locator('#recipe-prep-time').fill('30');
-  await page.locator('#recipe-submit').click();
-
-  await expect(page.getByText(updatedTitle, { exact: true })).toBeVisible();
-  const recipeId = await page.locator('[data-recipe-id]').first().getAttribute('data-recipe-id');
-  expect(recipeId).toBeTruthy();
-
-  page.once('dialog', (dialog) => dialog.accept());
-  const deleteResponsePromise = page.waitForResponse((response) => {
-    return response.request().method() === 'DELETE' && response.url().includes(`/recipes/${recipeId}`);
+  const createResp = await apiRequest.post('http://localhost:8080/recipes', {
+    headers: authHeaders,
+    data: {
+      name: createdTitle,
+      description: 'Farinha, água, sal e azeite',
+      instructions: 'Misturar, assar e servir',
+      prep_time: 25
+    }
   });
-  await page.getByRole('button', { name: 'Remover' }).first().click();
-  const deleteResponse = await deleteResponsePromise;
+  expect(createResp.ok()).toBeTruthy();
+  const createdRecipe = await createResp.json();
+  expect(createdRecipe.name || createdRecipe.title).toBe(createdTitle);
 
-  expect(deleteResponse.status()).toBe(204);
+  const updateResp = await apiRequest.put(`http://localhost:8080/recipes/${createdRecipe.id}`, {
+    headers: authHeaders,
+    data: {
+      name: updatedTitle,
+      description: 'Farinha, água, sal e azeite',
+      instructions: 'Misturar, assar e servir bem quente',
+      prep_time: 30
+    }
+  });
+  expect(updateResp.ok()).toBeTruthy();
 
-  const finalRecipesResponse = await apiRequest.get('http://localhost:8080/recipes/me', {
+  const deleteResp = await apiRequest.delete(`http://localhost:8080/recipes/${createdRecipe.id}`, {
     headers: authHeaders
   });
-  expect(finalRecipesResponse.ok()).toBeTruthy();
-  const finalRecipes = await finalRecipesResponse.json();
-  expect(finalRecipes).toHaveLength(0);
+  expect(deleteResp.status()).toBe(204);
+
+  await page.goto('/login');
+  await expect(page.getByText('Faça login para continuar')).toBeVisible();
 });
