@@ -33,6 +33,9 @@ public class SystemReview {
     @Column(nullable = false, length = 2000)
     private String comment;
 
+    @Column(nullable = false)
+    private Integer rating;
+
     private LocalDateTime createdAt;
 
     @JsonIgnore

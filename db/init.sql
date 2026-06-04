@@ -55,3 +55,13 @@ CREATE TABLE favorites (
     CONSTRAINT fk_user_fav FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT uq_user_fav UNIQUE (user_id, external_recipe_id)
 );
+
+-- TABELA DE REVIEWS DO SISTEMA
+CREATE TABLE system_reviews (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
+    comment VARCHAR(2000) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_review FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
