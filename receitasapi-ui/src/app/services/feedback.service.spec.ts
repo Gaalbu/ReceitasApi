@@ -49,7 +49,7 @@ describe('FeedbackService', () => {
   });
 
   it('should delete a review with DELETE request', () => {
-    service.deleteReview(2).subscribe(result => expect(result).toBeUndefined());
+    service.deleteReview(2).subscribe(result => expect(result).toBeNull());
 
     const req = httpMock.expectOne(`${apiBase}/system-reviews/2`);
     expect(req.request.method).toBe('DELETE');

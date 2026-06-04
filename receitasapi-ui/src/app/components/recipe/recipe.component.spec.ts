@@ -5,11 +5,12 @@ import { RecipeService } from '../../services/recipe.service';
 
 describe('RecipeComponent', () => {
   let component: RecipeComponent;
-  let recipeServiceMock: { searchExternal: ReturnType<typeof vi.fn> };
+  let recipeServiceMock: { searchExternal: ReturnType<typeof vi.fn>; listMyRecipes: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     recipeServiceMock = {
-      searchExternal: vi.fn()
+      searchExternal: vi.fn(),
+      listMyRecipes: vi.fn().mockReturnValue(of([]))
     };
 
     await TestBed.configureTestingModule({

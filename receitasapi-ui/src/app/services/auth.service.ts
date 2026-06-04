@@ -29,7 +29,17 @@ export class AuthService {
   }
 
   register(payload: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(this.endpoint('/auth/register'), payload);
+    return this.http.post(this.endpoint('/auth/register'), payload).pipe(
+      tap((res: any) => {
+        if (res && res.token && this.isLocalStorageAvailable()) {
+          localStorage.setItem('token', res.token);
+          if (res.username) {
+            localStorage.setItem('username', res.username);
+          }
+          this.isAuthenticatedSubject.next(true);
+        }
+      })
+    );
   }
 
   login(payload: { username: string; password: string }): Observable<any> {

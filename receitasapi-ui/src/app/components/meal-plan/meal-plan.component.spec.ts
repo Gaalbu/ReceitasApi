@@ -6,14 +6,17 @@ import { RecipeService } from '../../services/recipe.service';
 
 describe('MealPlanComponent', () => {
   let component: MealPlanComponent;
-  let mealPlanServiceMock: { createMealPlan: ReturnType<typeof vi.fn> };
+  let mealPlanServiceMock: { createMealPlan: ReturnType<typeof vi.fn>; getMealPlans: ReturnType<typeof vi.fn>; updateMealPlan: ReturnType<typeof vi.fn>; deleteMealPlan: ReturnType<typeof vi.fn> };
   let recipeServiceMock: { getRecipeOptions: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     localStorage.clear();
 
     mealPlanServiceMock = {
-      createMealPlan: vi.fn()
+      createMealPlan: vi.fn(),
+      getMealPlans: vi.fn().mockReturnValue(of([])),
+      updateMealPlan: vi.fn(),
+      deleteMealPlan: vi.fn()
     };
 
     recipeServiceMock = {

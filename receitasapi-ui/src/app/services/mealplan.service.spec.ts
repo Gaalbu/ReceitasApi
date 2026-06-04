@@ -68,7 +68,7 @@ describe('MealPlanService', () => {
 
   it('should delete a meal plan with DELETE request', () => {
     service.deleteMealPlan(3).subscribe(result => {
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     const req = httpMock.expectOne(`${apiBase}/meal-plans/3`);

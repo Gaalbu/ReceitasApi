@@ -125,7 +125,7 @@ describe('RecipeService', () => {
 
   it('should delete a recipe with DELETE request', () => {
     service.deleteRecipe(10).subscribe(result => {
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     const req = httpMock.expectOne(`${apiBase}/recipes/10`);
