@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 import { RecipeService } from './recipe.service';
 
 describe('RecipeService', () => {
@@ -131,6 +132,118 @@ describe('RecipeService', () => {
     const req = httpMock.expectOne(`${apiBase}/recipes/10`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+  });
+
+  it('should list my recipes with GET request', () => {
+    const mockResponse = [{ id: 1, name: 'Mine' }];
+
+    service.listMyRecipes().subscribe(result => {
+      expect(result).toEqual(mockResponse);
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/me`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should map my recipe options and filter invalid entries', () => {
+    vi.spyOn(service, 'listMyRecipes').mockReturnValue(of([
+      { id: 1, name: 'Arroz' },
+      { id: 0, name: 'Invalid' },
+      { title: 'Feijoada', external_api_id: '2' }
+    ]));
+
+    service.listMyRecipeOptions().subscribe(result => {
+      expect(result).toEqual([
+        { id: 1, label: 'Arroz', source: 'mine' },
+        { id: 2, label: 'Feijoada', source: 'mine' }
+      ]);
+    });
+  });
+
+  it('should return my options when search term is blank', () => {
+    vi.spyOn(service, 'listMyRecipeOptions').mockReturnValue(of([
+      { id: 1, label: 'Arroz', source: 'mine' }
+    ]));
+
+    service.searchRecipeOptions('   ').subscribe(result => {
+      expect(result).toEqual([{ id: 1, label: 'Arroz', source: 'mine' }]);
+    });
+  });
+
+  it('should merge and sort recipe options from mine and api', () => {
+    vi.spyOn(service, 'listMyRecipes').mockReturnValue(of([
+      { id: 2, name: 'Bolo' },
+      { id: 1, name: 'Arroz' }
+    ]));
+    vi.spyOn(service, 'searchExternal').mockReturnValue(of({ meals: [
+      { idMeal: '3', strMeal: 'Cuscuz' },
+      { idMeal: '2', strMeal: 'Bolo da API' },
+      { idMeal: '0', strMeal: 'Invalid' }
+    ] }));
+
+    service.searchRecipeOptions('bolo').subscribe(result => {
+      expect(result).toEqual([
+        { id: 1, label: 'Arroz', source: 'mine' },
+        { id: 2, label: 'Bolo da API', source: 'api' },
+        { id: 3, label: 'Cuscuz', source: 'api' }
+      ]);
+    });
+  });
+
+  it('should delegate getRecipeOptions to searchRecipeOptions', () => {
+    vi.spyOn(service, 'searchRecipeOptions').mockReturnValue(of([]));
+
+    service.getRecipeOptions('sopa').subscribe(result => {
+      expect(result).toEqual([]);
+    });
+
+    expect(service.searchRecipeOptions).toHaveBeenCalledWith('sopa');
+  });
+
+  it('should fetch a recipe by id', () => {
+    const mockResponse = { id: 7, name: 'Arroz' };
+
+    service.getMyRecipe(7).subscribe(result => {
+      expect(result).toEqual(mockResponse);
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/7`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should normalize and merge recipe options in private helpers', () => {
+    const normalize = (service as any).normalizeRecipeOption.bind(service);
+    const merge = (service as any).mergeRecipeOptions.bind(service);
+
+    expect(normalize({ idMeal: '9', strMeal: 'Torta' }, 'api')).toEqual({ id: 9, label: 'Torta', source: 'api' });
+    expect(normalize({ external_api_id: '0' }, 'mine')).toBeNull();
+
+    expect(merge(
+      [
+        { id: 2, label: 'B', source: 'mine' },
+        null,
+        { id: 1, label: 'A', source: 'api' }
+      ],
+      [
+        { id: 2, label: 'C', source: 'api' }
+      ]
+    )).toEqual([
+      { id: 1, label: 'A', source: 'api' },
+      { id: 2, label: 'C', source: 'api' }
+    ]);
+  });
+
+  it('should use api array payload when searching external recipes', () => {
+    vi.spyOn(service, 'listMyRecipes').mockReturnValue(of([]));
+    vi.spyOn(service, 'searchExternal').mockReturnValue(of([
+      { idMeal: '8', strMeal: 'Massa' }
+    ]));
+
+    service.searchRecipeOptions('massa').subscribe(result => {
+      expect(result).toEqual([{ id: 8, label: 'Massa', source: 'api' }]);
+    });
   });
 
   it('should handle error on create recipe', () => {

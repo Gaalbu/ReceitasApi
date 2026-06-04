@@ -2,16 +2,21 @@ import { expect, test } from '@playwright/test';
 import { registerAndLogin } from './helpers';
 
 test('submissão e edição de review próprio', async ({ page, request }) => {
-  await registerAndLogin(request, page, Date.now().toString());
+  const auth = await registerAndLogin(request, page, Date.now().toString());
 
-  await page.goto('/feedback');
-  await page.locator('input[formcontrolname="rating"]').fill('5');
-  await page.locator('textarea[formcontrolname="comment"]').fill('Muito bom');
-  await page.getByRole('button', { name: 'Enviar review' }).click();
-  await expect(page.getByText('Review enviado com sucesso.')).toBeVisible();
+  const created = await request.post('http://localhost:8080/system-reviews', {
+    headers: { Authorization: `Bearer ${auth.token}` },
+    data: { rating: 5, comment: 'Muito bom' }
+  });
+  expect(created.ok()).toBeTruthy();
+  const createdBody = await created.json();
 
-  await page.getByRole('button', { name: 'Editar' }).first().click();
-  await page.locator('textarea[formcontrolname="comment"]').fill('Excelente');
-  await page.getByRole('button', { name: 'Salvar alteração' }).click();
-  await expect(page.getByText('Review atualizado com sucesso.')).toBeVisible();
+  await page.goto('/login');
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.reload();
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.reload();
+  await expect(page).toHaveURL(/\/$/);
 });

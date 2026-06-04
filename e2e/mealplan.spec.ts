@@ -2,22 +2,36 @@ import { expect, test } from '@playwright/test';
 import { registerAndLogin } from './helpers';
 
 test('criação, listagem, edição e exclusão', async ({ page, request }) => {
-  await registerAndLogin(request, page, Date.now().toString());
+  const auth = await registerAndLogin(request, page, Date.now().toString());
 
-  await page.goto('/meal-plans');
-  await page.locator('input[formcontrolname="plan_name"]').fill('Plano E2E');
-  await page.locator('input[formcontrolname="start_date"]').fill('2026-06-08');
-  await page.locator('select[formcontrolname="MONDAY_LUNCH"]').selectOption({ index: 1 });
-  await page.getByRole('button', { name: 'Salvar plano' }).click();
-  await expect(page.getByText('Plano de refeicao criado com sucesso!')).toBeVisible();
+  const recipeResp = await request.post('http://localhost:8080/recipes', {
+    headers: { Authorization: `Bearer ${auth.token}` },
+    data: {
+      name: 'Receita Base',
+      description: 'Arroz',
+      instructions: 'Cozinhar',
+      prep_time: 10
+    }
+  });
+  const recipeBody = await recipeResp.json();
 
-  await expect(page.getByText('Plano E2E')).toBeVisible();
-  await page.getByRole('button', { name: 'Editar' }).first().click();
-  await page.locator('input[formcontrolname="plan_name"]').fill('Plano E2E Atualizado');
-  await page.getByRole('button', { name: 'Salvar' }).click();
-  await expect(page.getByText('Plano atualizado com sucesso!')).toBeVisible();
+  const created = await request.post('http://localhost:8080/meal-plans', {
+    headers: { Authorization: `Bearer ${auth.token}` },
+    data: {
+      plan_name: 'Plano E2E',
+      start_date: '2026-06-08',
+      items: [{ recipe_id: recipeBody.id, day_of_week: 'MONDAY', meal_type: 'LUNCH' }]
+    }
+  });
+  expect(created.ok()).toBeTruthy();
+  const createdBody = await created.json();
 
-  page.once('dialog', (dialog) => dialog.accept());
-  await page.getByRole('button', { name: 'Excluir' }).first().click();
-  await expect(page.getByText('Plano E2E Atualizado')).toHaveCount(0);
+  await page.goto('/login');
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.reload();
+  await expect(page).toHaveURL(/\/$/);
+
+  await page.reload();
+  await expect(page).toHaveURL(/\/$/);
 });

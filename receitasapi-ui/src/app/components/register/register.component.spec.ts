@@ -2,28 +2,25 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  let authService: any;
-  let router: any;
+  let router: Router;
+  let authRegisterSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    const authServiceMock = {
-      register: () => of({})
-    };
+    authRegisterSpy = vi.fn().mockReturnValue(of({}));
     await TestBed.configureTestingModule({
       imports: [RegisterComponent, ReactiveFormsModule, RouterTestingModule],
       providers: [
-        { provide: AuthService, useValue: authServiceMock }
+        { provide: AuthService, useValue: { register: authRegisterSpy } }
       ]
     }).compileComponents();
 
-    authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
 
     fixture = TestBed.createComponent(RegisterComponent);
@@ -138,5 +135,51 @@ describe('RegisterComponent', () => {
     freshFixture.detectChanges();
     const usernameControl = freshComp.form.get('username');
     expect(usernameControl?.disabled).toBe(true);
+  });
+
+  it('should submit and navigate on success', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+    component.form.setValue({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    component.submit();
+
+    expect(authRegisterSpy).toHaveBeenCalledWith({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password123'
+    });
+    expect(component.loading).toBe(false);
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should extract message from nested register error response', () => {
+    authRegisterSpy.mockReturnValueOnce(throwError(() => ({ error: { message: 'Email já cadastrado' } })));
+    component.form.setValue({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    component.submit();
+
+    expect(component.loading).toBe(false);
+    expect(component.error).toBe('Email já cadastrado');
+  });
+
+  it('should extract status text from register error response', () => {
+    authRegisterSpy.mockReturnValueOnce(throwError(() => ({ status: 409, statusText: 'Conflict' })));
+    component.form.setValue({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    component.submit();
+
+    expect(component.error).toBe('409: Conflict');
   });
 });

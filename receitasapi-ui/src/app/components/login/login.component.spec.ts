@@ -8,22 +8,18 @@ import { AuthService } from '../../services/auth.service';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authService: any;
-  let router: any;
+  let authLoginSpy: ReturnType<typeof vi.fn>;
+  let routerNavigateSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    const authServiceMock = {
-      login: () => of({ token: 'jwt-token' })
-    };
-    const routerMock = {
-      navigateByUrl: () => {}
-    };
+    authLoginSpy = vi.fn().mockReturnValue(of({ token: 'jwt-token' }));
+    routerNavigateSpy = vi.fn();
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
       providers: [
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock },
+        { provide: AuthService, useValue: { login: authLoginSpy } },
+        { provide: Router, useValue: { navigateByUrl: routerNavigateSpy } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -32,9 +28,6 @@ describe('LoginComponent', () => {
         }
       ]
     }).compileComponents();
-
-    authService = TestBed.inject(AuthService);
-    router = TestBed.inject(Router);
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -117,6 +110,36 @@ describe('LoginComponent', () => {
     component.submit();
 
     expect(component.error).toBe('');
+    expect(authLoginSpy).not.toHaveBeenCalled();
+  });
+
+  it('should submit and navigate on success', () => {
+    component.form.setValue({ username: 'testuser', password: 'password123' });
+
+    component.submit();
+
+    expect(authLoginSpy).toHaveBeenCalledWith({ username: 'testuser', password: 'password123' });
+    expect(component.loading).toBe(false);
+    expect(routerNavigateSpy).toHaveBeenCalledWith('/');
+  });
+
+  it('should extract error message from nested response message', () => {
+    authLoginSpy.mockReturnValueOnce(throwError(() => ({ error: { message: 'Credenciais inválidas' } })));
+    component.form.setValue({ username: 'testuser', password: 'password123' });
+
+    component.submit();
+
+    expect(component.loading).toBe(false);
+    expect(component.error).toBe('Credenciais inválidas');
+  });
+
+  it('should extract error message from status text when available', () => {
+    authLoginSpy.mockReturnValueOnce(throwError(() => ({ status: 401, statusText: 'Unauthorized' })));
+    component.form.setValue({ username: 'testuser', password: 'password123' });
+
+    component.submit();
+
+    expect(component.error).toBe('401: Unauthorized');
   });
 
   it('should set returnUrl from route params', () => {
