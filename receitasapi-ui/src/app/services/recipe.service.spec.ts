@@ -110,6 +110,29 @@ describe('RecipeService', () => {
     req.flush(mockResponse);
   });
 
+  it('should update a recipe with PUT request', () => {
+    const payload = { name: 'Updated', description: 'Desc', instructions: 'Steps' };
+
+    service.updateRecipe(10, payload).subscribe(result => {
+      expect(result).toEqual({ id: 10, ...payload });
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/10`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 10, ...payload });
+  });
+
+  it('should delete a recipe with DELETE request', () => {
+    service.deleteRecipe(10).subscribe(result => {
+      expect(result).toBeUndefined();
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/recipes/10`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
   it('should handle error on create recipe', () => {
     const payload = { name: 'Invalid Recipe' };
     const errorMessage = 'Recipe validation failed';

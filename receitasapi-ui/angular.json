@@ -97,17 +97,16 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "runner": "vitest"
-          },
-          "configurations": {
-            "coverage": {
-              "coverage": true,
-              "coverageReporters": [
-                "lcov",
-                "text-summary"
-              ],
-              "coverageDirectory": "coverage"
-            }
+            "runner": "vitest",
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "**/*.spec.ts",
+              "**/*.cy.ts",
+              "src/main.ts",
+              "src/main.server.ts",
+              "src/server.ts"
+            ],
+            "coverageDirectory": "coverage/receitasapi-frontend"
           }
         }
       }

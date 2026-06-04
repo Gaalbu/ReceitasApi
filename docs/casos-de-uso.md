@@ -1,159 +1,207 @@
-# Casos de Uso — ReceitasApi
+# Casos de Uso
 
-Este documento lista 15 casos de uso essenciais no formato: nome, ator, pré-condição, fluxo principal e pós-condição. Baseado nos controllers: `Auth`, `Recipe`, `MealPlan`, `RecipeRating`, `Favorite`, `SystemReview` e `User`.
+## UC01 - Registrar usuário
+- ID: UC01
+- Nome: Registrar usuário
+- Ator principal: Visitante
+- Pré-condições: Não possuir conta ativa.
+- Fluxo principal:
+  1. O visitante acessa a tela de cadastro.
+  2. Informa username, email e senha.
+  3. Envia os dados para o sistema.
+  4. O sistema valida os campos.
+  5. O sistema cria o usuário.
+- Fluxos alternativos:
+  - FA01: Se username ou email já existir, o sistema rejeita o cadastro.
+- Pós-condições: Conta criada.
 
----
+## UC02 - Fazer login
+- ID: UC02
+- Nome: Fazer login
+- Ator principal: Usuário cadastrado
+- Pré-condições: Possuir credenciais válidas.
+- Fluxo principal:
+  1. O usuário acessa a tela de login.
+  2. Informa username e senha.
+  3. Envia as credenciais.
+  4. O sistema autentica o usuário.
+  5. O sistema retorna o JWT.
+- Fluxos alternativos:
+  - FA01: Se as credenciais forem inválidas, o sistema retorna erro.
+- Pós-condições: Sessão autenticada.
 
-1) Nome: Registrar Usuário
-   - Ator: Usuário (anônimo)
-   - Pré-condição: Usuário não possui conta; dados mínimos válidos (username, email, senha).
-   - Fluxo principal:
-     1. Usuário acessa a tela de registro.
-     2. Preenche formulário com `username`, `email` e `senha`.
-     3. Envia o formulário para `POST /auth/register`.
-     4. Sistema valida dados e cria conta.
-     5. Sistema retorna confirmação de sucesso.
-   - Pós-condição: Conta criada; usuário pode realizar login.
+## UC03 - Fazer logout
+- ID: UC03
+- Nome: Fazer logout
+- Ator principal: Usuário autenticado
+- Pré-condições: Estar autenticado.
+- Fluxo principal:
+  1. O usuário aciona logout.
+  2. O cliente remove o token local.
+  3. O cliente redireciona para login.
+- Fluxos alternativos:
+  - FA01: Se não houver token, a ação apenas encerra a sessão local.
+- Pós-condições: Sessão encerrada no cliente.
 
-2) Nome: Login
-   - Ator: Usuário
-   - Pré-condição: Usuário já possui conta e credenciais válidas.
-   - Fluxo principal:
-     1. Usuário acessa a tela de login.
-     2. Informa `username/email` e `senha`.
-     3. Envia para `POST /auth/login`.
-     4. Sistema autentica e retorna JWT.
-     5. Cliente armazena token e redireciona para dashboard.
-   - Pós-condição: Sessão autenticada (token válido).
+## UC04 - Buscar receita na TheMealDB
+- ID: UC04
+- Nome: Buscar receita na TheMealDB
+- Ator principal: Usuário
+- Pré-condições: Ter acesso à tela de busca.
+- Fluxo principal:
+  1. O usuário informa um termo de busca.
+  2. O sistema consulta a API externa.
+  3. O sistema exibe os resultados.
+- Fluxos alternativos:
+  - FA01: Se não houver resultado, o sistema exibe lista vazia.
+- Pós-condições: Receitas externas exibidas.
 
-3) Nome: Logout
-   - Ator: Usuário autenticado
-   - Pré-condição: Usuário autenticado com token válido.
-   - Fluxo principal:
-     1. Usuário aciona logout na UI.
-     2. Cliente remove token localmente e redireciona à tela de login.
-   - Pós-condição: Sessão encerrada no cliente.
+## UC05 - Criar receita customizada
+- ID: UC05
+- Nome: Criar receita customizada
+- Ator principal: Usuário autenticado
+- Pré-condições: Estar autenticado.
+- Fluxo principal:
+  1. O usuário abre o formulário de receita.
+  2. Informa título, ingredientes e instruções.
+  3. Envia o formulário.
+  4. O sistema salva a receita.
+- Fluxos alternativos:
+  - FA01: Se campos obrigatórios faltarem, o sistema rejeita o envio.
+- Pós-condições: Receita criada.
 
-4) Nome: Criar Receita
-   - Ator: Usuário autenticado
-   - Pré-condição: Usuário autenticado; dados da receita válidos.
-   - Fluxo principal:
-     1. Usuário abre formulário `create-recipe`.
-     2. Preenche campos (título, ingredientes, instruções, tempo).
-     3. Envia para `POST /recipes` com token.
-     4. Backend cria `Recipe` ligado ao usuário e retorna recurso criado.
-   - Pós-condição: Receita persistida vinculada ao usuário.
+## UC06 - Editar receita própria
+- ID: UC06
+- Nome: Editar receita própria
+- Ator principal: Dono da receita
+- Pré-condições: Receita existente e pertencente ao usuário.
+- Fluxo principal:
+  1. O usuário seleciona uma receita própria.
+  2. O sistema abre o formulário preenchido.
+  3. O usuário altera os dados.
+  4. O sistema atualiza a receita.
+- Fluxos alternativos:
+  - FA01: Se a receita não pertencer ao usuário, o sistema bloqueia a ação.
+- Pós-condições: Receita atualizada.
 
-5) Nome: Editar Receita
-   - Ator: Proprietário da receita (usuário autenticado)
-   - Pré-condição: Receita existe e pertence ao usuário; formulário de edição válido.
-   - Fluxo principal:
-     1. Usuário acessa `GET /recipes/{id}` para obter dados.
-     2. Abre o formulário de edição (`create-recipe` pré-preenchido).
-     3. Altera campos e envia para `PUT /recipes/{id}`.
-     4. Backend valida posse e atualiza entidade.
-     5. Retorna receita atualizada.
-   - Pós-condição: Receita atualizada no banco.
+## UC07 - Excluir receita própria
+- ID: UC07
+- Nome: Excluir receita própria
+- Ator principal: Dono da receita
+- Pré-condições: Receita existente e pertencente ao usuário.
+- Fluxo principal:
+  1. O usuário solicita exclusão.
+  2. O sistema exibe confirmação.
+  3. O usuário confirma a ação.
+  4. O sistema remove a receita.
+- Fluxos alternativos:
+  - FA01: Se o usuário não for o dono, o sistema retorna 403.
+- Pós-condições: Receita removida.
 
-6) Nome: Excluir Receita
-   - Ator: Proprietário da receita
-   - Pré-condição: Receita existe e pertence ao usuário.
-   - Fluxo principal:
-     1. Usuário solicita exclusão na UI.
-     2. Cliente chama `DELETE /recipes/{id}` com token.
-     3. Backend verifica posse e remove o registro.
-     4. Retorna `204 No Content`.
-   - Pós-condição: Receita removida.
+## UC08 - Criar plano de refeição
+- ID: UC08
+- Nome: Criar plano de refeição
+- Ator principal: Usuário autenticado
+- Pré-condições: Estar autenticado.
+- Fluxo principal:
+  1. O usuário abre o formulário de plano.
+  2. Informa nome, data inicial e itens do calendário.
+  3. Envia o formulário.
+  4. O sistema persiste o plano e os itens.
+- Fluxos alternativos:
+  - FA01: Se não houver itens válidos, o sistema rejeita o envio.
+- Pós-condições: Plano criado.
 
-7) Nome: Buscar Receitas Externas
-   - Ator: Usuário (pode ser anônimo ou autenticado)
-   - Pré-condição: Palavra-chave válida.
-   - Fluxo principal:
-     1. Usuário informa termo de busca na UI.
-     2. Cliente chama `GET /recipes/search?name={termo}`.
-     3. Backend consulta TheMealDB e mapeia resposta.
-     4. Retorna lista de resultados para exibição.
-   - Pós-condição: Lista de receitas externas exibida ao usuário.
+## UC09 - Adicionar receita ao plano
+- ID: UC09
+- Nome: Adicionar receita ao plano
+- Ator principal: Usuário autenticado
+- Pré-condições: Plano existente e receita válida.
+- Fluxo principal:
+  1. O usuário seleciona um dia e refeição.
+  2. Escolhe uma receita válida.
+  3. O sistema associa a receita ao item do plano.
+- Fluxos alternativos:
+  - FA01: Se a receita não for válida, o sistema rejeita a associação.
+- Pós-condições: Item incluído no plano.
 
-8) Nome: Criar Plano de Refeição
-   - Ator: Usuário autenticado
-   - Pré-condição: Usuário autenticado; receitas referenciadas existem.
-   - Fluxo principal:
-     1. Usuário abre formulário de criação de plano (`meal-plan`).
-     2. Preenche `plan_name`, `start_date` e lista de `items` (recipe_id, day_of_week, meal_type).
-     3. Envia para `POST /meal-plans` com token.
-     4. Backend valida posse das receitas e persiste `MealPlan` com `MealItem`s.
-     5. Retorna plano criado.
-   - Pós-condição: Plano salvo e visível no dashboard do usuário.
+## UC10 - Editar plano de refeição
+- ID: UC10
+- Nome: Editar plano de refeição
+- Ator principal: Dono do plano
+- Pré-condições: Plano existente e pertencente ao usuário.
+- Fluxo principal:
+  1. O usuário abre a listagem de planos.
+  2. Seleciona editar.
+  3. Informa nome e número da semana.
+  4. O sistema atualiza o plano.
+- Fluxos alternativos:
+  - FA01: Se não for o dono, o sistema retorna 403.
+- Pós-condições: Plano atualizado.
 
-9) Nome: Editar Plano de Refeição
-   - Ator: Proprietário do plano
-   - Pré-condição: Plano existe e pertence ao usuário.
-   - Fluxo principal:
-     1. Usuário requisita `GET /meal-plans/{id}` para carregar dados.
-     2. Altera nome, data inicial ou itens e envia `PUT /meal-plans/{id}`.
-     3. Backend valida e substitui itens conforme payload.
-     4. Retorna plano atualizado.
-   - Pós-condição: Plano atualizado no banco.
+## UC11 - Excluir plano de refeição
+- ID: UC11
+- Nome: Excluir plano de refeição
+- Ator principal: Dono do plano
+- Pré-condições: Plano existente e pertencente ao usuário.
+- Fluxo principal:
+  1. O usuário solicita a exclusão.
+  2. O sistema valida a posse.
+  3. O sistema remove o plano e seus itens.
+- Fluxos alternativos:
+  - FA01: Se o usuário não for o dono, o sistema retorna 403.
+- Pós-condições: Plano removido.
 
-10) Nome: Remover Plano de Refeição
-    - Ator: Proprietário do plano
-    - Pré-condição: Plano existe e pertence ao usuário.
-    - Fluxo principal:
-      1. Usuário solicita exclusão na UI.
-      2. Cliente chama `DELETE /meal-plans/{id}` com token.
-      3. Backend verifica posse e remove o plano.
-      4. Retorna `204 No Content`.
-    - Pós-condição: Plano removido.
+## UC12 - Submeter review do sistema
+- ID: UC12
+- Nome: Submeter review do sistema
+- Ator principal: Usuário autenticado
+- Pré-condições: Estar autenticado.
+- Fluxo principal:
+  1. O usuário acessa a área de reviews.
+  2. Informa nota e comentário.
+  3. Envia o formulário.
+  4. O sistema salva o review.
+- Fluxos alternativos:
+  - FA01: Se dados obrigatórios faltarem, o sistema rejeita a solicitação.
+- Pós-condições: Review gravado.
 
-11) Nome: Gerar Lista de Compras (Shopping List)
-    - Ator: Usuário autenticado
-    - Pré-condição: Plano existe com itens que referenciam receitas com ingredientes.
-    - Fluxo principal:
-      1. Usuário solicita lista de compras na tela do plano.
-      2. Cliente chama `GET /meal-plans/{id}/shopping-list`.
-      3. Backend agrega ingredientes das receitas do plano e retorna `ShoppingListResponse`.
-      4. UI exibe lista de ingredientes agrupados.
-    - Pós-condição: Lista de compras disponível para o usuário.
+## UC13 - Editar review próprio
+- ID: UC13
+- Nome: Editar review próprio
+- Ator principal: Dono do review
+- Pré-condições: Review existente e pertencente ao usuário.
+- Fluxo principal:
+  1. O usuário seleciona o review próprio.
+  2. O sistema preenche o formulário.
+  3. O usuário altera nota e comentário.
+  4. O sistema atualiza o review.
+- Fluxos alternativos:
+  - FA01: Se não for o dono, o sistema retorna 403.
+- Pós-condições: Review atualizado.
 
-12) Nome: Avaliar Receita (Rating)
-    - Ator: Usuário autenticado
-    - Pré-condição: Receita existe; usuário autenticado.
-    - Fluxo principal:
-      1. Usuário fornece nota e comentário na UI.
-      2. Cliente envia `POST /recipes/{recipeId}/ratings` com payload e token.
-      3. Backend persiste `RecipeRating` associado ao usuário e receita.
-      4. Retorna confirmação/objeto criado.
-    - Pós-condição: Avaliação gravada e visível nas métricas da receita.
+## UC14 - Excluir review próprio
+- ID: UC14
+- Nome: Excluir review próprio
+- Ator principal: Dono do review ou ADMIN
+- Pré-condições: Review existente.
+- Fluxo principal:
+  1. O usuário solicita exclusão.
+  2. O sistema valida se o usuário é dono ou ADMIN.
+  3. O sistema remove o review.
+- Fluxos alternativos:
+  - FA01: Se não for dono nem ADMIN, o sistema retorna 403.
+- Pós-condições: Review removido.
 
-13) Nome: Consultar Minhas Avaliações
-    - Ator: Usuário autenticado
-    - Pré-condição: Usuário autenticado com ao menos zero avaliações cadastradas.
-    - Fluxo principal:
-      1. Usuário acessa a seção de avaliações.
-      2. Cliente chama `GET /recipes/ratings/me`.
-      3. Backend retorna as avaliações do usuário autenticado.
-      4. UI exibe a lista para consulta.
-    - Pós-condição: Avaliações do usuário disponíveis para visualização.
-
-14) Nome: Gerenciar Favoritos
-    - Ator: Usuário autenticado
-    - Pré-condição: Usuário autenticado; receita válida para favoritar.
-    - Fluxo principal:
-      1. Usuário adiciona favorito via `POST /favorites`.
-      2. Usuário consulta a lista via `GET /favorites/me`.
-      3. Usuário remove favorito via `DELETE /favorites/{favoriteId}`.
-    - Pós-condição: Coleção de favoritos do usuário atualizada.
-
-15) Nome: Enviar Feedback e Gerenciar Perfil
-    - Ator: Usuário autenticado
-    - Pré-condição: Usuário autenticado e dados válidos de perfil/feedback.
-    - Fluxo principal:
-      1. Usuário envia feedback para `POST /system-reviews`.
-      2. Usuário pode atualizar dados da conta via `PUT /users/me`.
-      3. Usuário pode encerrar a conta via `DELETE /users/me`.
-    - Pós-condição: Feedback persistido e perfil do usuário atualizado/removido conforme ação.
-
----
-
-Observações: cada caso de uso assume validações básicas no backend (campos obrigatórios, formatos de data, posse do recurso) e o uso de JWT para endpoints autenticados.
+## UC15 - Avaliar receita com rating
+- ID: UC15
+- Nome: Avaliar receita com rating
+- Ator principal: Usuário autenticado
+- Pré-condições: Receita existente e usuário autenticado.
+- Fluxo principal:
+  1. O usuário seleciona uma receita.
+  2. Informa nota e comentário.
+  3. O sistema salva a avaliação.
+- Fluxos alternativos:
+  - FA01: Se a receita não existir, o sistema retorna erro.
+- Pós-condições: Avaliação registrada.
