@@ -99,6 +99,11 @@ services:
         condition: service_started
       sonarqube:
         condition: service_started
+    command: >
+      sh -c "until curl -fsS http://sonarqube:9000/api/system/status | grep -q UP; do echo 'Aguardando SonarQube...'; sleep 5; done &&
+      cd /workspace/api && mvn test &&
+      cd /workspace/receitasapi-ui && npm run test -- --watch=false --code-coverage &&
+      cd /workspace && sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=$${SONAR_TOKEN}"
     restart: "no"
 
 volumes:

@@ -232,20 +232,37 @@ npm run serve:ssr:receitasapi-frontend
 
 ## 8. Testes
 
-### Back-end
+### Testes unitários back-end
 ```bash
 cd api
 ./mvnw test
 # No Windows, use .\mvnw.cmd test
 ```
 
-### Front-end
+### Testes de integração back-end
 ```bash
-cd receitasapi-ui
-ng test
+cd api
+./mvnw verify -P integration-tests
 ```
 
-## 9. SonarQube
+### Testes unitários front-end com cobertura
+```bash
+cd receitasapi-ui
+ng test --watch=false --code-coverage
+```
+
+### Testes E2E
+```bash
+# Suba a API e o front antes de executar
+npx playwright test
+```
+
+## 9. Relatórios
+- JaCoCo: `api/target/site/jacoco/index.html`
+- LCOV do Angular: `receitasapi-ui/coverage/`
+- SonarQube: `http://localhost:9000`
+
+## 10. SonarQube
 
 O repositório já traz o fluxo automático de Sonar no Docker Compose. O passo a passo detalhado está em [docs/roteiro-sonar.md](docs/roteiro-sonar.md).
 
