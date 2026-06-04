@@ -64,27 +64,18 @@ test('recipe manager CRUD through navbar route', async ({ page, request: apiRequ
   expect(recipeId).toBeTruthy();
 
   page.once('dialog', (dialog) => dialog.accept());
+  const deleteResponsePromise = page.waitForResponse((response) => {
+    return response.request().method() === 'DELETE' && response.url().includes(`/recipes/${recipeId}`);
+  });
   await page.getByRole('button', { name: 'Remover' }).first().click();
+  const deleteResponse = await deleteResponsePromise;
 
-  const deleteStatus = await page.evaluate(async ({ token, id }) => {
-    const response = await fetch(`/api/recipes/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.status;
-  }, { token, id: recipeId });
+  expect(deleteResponse.status()).toBe(204);
 
-  expect(deleteStatus).toBe(204);
-
-  const finalRecipes = await page.evaluate(async (tokenValue) => {
-    const response = await fetch('/api/recipes/me', {
-      headers: {
-        Authorization: `Bearer ${tokenValue}`
-      }
-    });
-    return response.json();
-  }, token);
+  const finalRecipesResponse = await apiRequest.get('http://localhost:8080/recipes/me', {
+    headers: authHeaders
+  });
+  expect(finalRecipesResponse.ok()).toBeTruthy();
+  const finalRecipes = await finalRecipesResponse.json();
   expect(finalRecipes).toHaveLength(0);
 });

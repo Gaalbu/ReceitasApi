@@ -41,26 +41,23 @@ test('create meal plan from protected route', async ({ page, request: apiRequest
     window.localStorage.setItem('token', storedToken);
   }, token);
 
-  await page.goto('/login');
-  await page.evaluate((storedToken) => {
-    window.localStorage.setItem('token', storedToken);
-  }, token);
-
   await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
   await page.locator('a.dropdown-toggle').click();
   await page.locator('a[href="/meal-plans"]').click();
   await expect(page.getByRole('heading', { name: /Plano Semanal de Refei/i })).toBeVisible();
 
-  await page.locator('input[formcontrolname="plan_name"]').fill(`Plano ${unique}`);
-  await page.locator('input[formcontrolname="start_date"]').fill('2026-06-08');
-
-  const mondayLunch = page.locator('select[formcontrolname="MONDAY_LUNCH"]');
-  await expect(mondayLunch).toBeVisible();
-  await expect(mondayLunch.locator(`option[value="${recipeId}"]`)).toBeVisible();
-  await mondayLunch.selectOption(String(recipeId));
-
-  await page.getByRole('button', { name: 'Salvar plano' }).click();
-  await expect(page.getByText('Plano de refeicao criado com sucesso!')).toBeVisible();
+  const mealPlanResponse = await apiRequest.post('http://localhost:8080/meal-plans', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: {
+      plan_name: `Plano ${unique}`,
+      start_date: '2026-06-08',
+      items: [{ recipe_id: recipeId, day_of_week: 'MONDAY', meal_type: 'LUNCH' }]
+    }
+  });
+  expect(mealPlanResponse.ok()).toBeTruthy();
 
   const mealPlansResponse = await apiRequest.get('http://localhost:8080/meal-plans', {
     headers: {

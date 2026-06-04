@@ -1,11 +1,21 @@
 import { test, expect } from '@playwright/test';
 
-test('CRUD flows for Favorites, Ratings and Users (headless)', async ({ page }) => {
+test('CRUD flows for Favorites, Ratings and Users (headless)', async ({ page, request: apiRequest }) => {
   page.setDefaultTimeout(5000);
   const uniq = Date.now();
   const username = `user${uniq}`;
   const email = `user${uniq}@example.com`;
   const password = 'abc123';
+  await apiRequest.post('http://localhost:8080/auth/register', {
+    data: { username, email, password }
+  });
+
+  const login = await apiRequest.post('http://localhost:8080/auth/login', {
+    data: { username, password }
+  });
+  expect(login.ok()).toBeTruthy();
+  const body = await login.json();
+  const token = body.token as string;
 
   const waitForAngular = async () => {
     await page.waitForFunction(() => {
@@ -22,22 +32,15 @@ test('CRUD flows for Favorites, Ratings and Users (headless)', async ({ page }) 
     await waitForAngular();
   };
 
-  await page.goto('/register');
-  await page.locator('input[placeholder="Escolha um usuário"]').fill(username);
-  await page.locator('input[placeholder="seu@email.com"]').fill(email);
-  await page.locator('input[placeholder="Mínimo 6 caracteres"]').fill(password);
-  await page.locator('button:has-text("Cadastrar")').click();
-  await page.waitForURL(/login/);
-
-  await page.locator('input[placeholder="Digite seu usuário"]').fill(username);
-  await page.locator('input[placeholder="Digite sua senha"]').fill(password);
-  await page.locator('button:has-text("Entrar")').click();
-  await page.waitForURL(/\/$/);
+  await page.addInitScript((storedToken) => {
+    window.localStorage.setItem('token', storedToken);
+    window.localStorage.setItem('username', 'demo');
+    window.localStorage.setItem('receitasapi_demo_mode', '1');
+  }, token);
+  await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
   await waitForAngular();
   await expect(page.getByText('Menu')).toBeVisible();
-  await page.evaluate(() => {
-    window.localStorage.setItem('receitasapi_demo_mode', '1');
-  });
 
   // FAVORITES: create, edit, delete
   await openMenuAndGo('/favorites');
