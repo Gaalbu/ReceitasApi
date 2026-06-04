@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.receitasapi.api.dto.MealItemRequest;
 import com.receitasapi.api.dto.MealPlanRequest;
+import com.receitasapi.api.dto.MealPlanUpdateRequest;
 import com.receitasapi.api.dto.ShoppingListResponse;
 import com.receitasapi.api.model.MealItem;
 import com.receitasapi.api.model.MealPlan;
@@ -115,6 +116,43 @@ class MealPlanServiceTest {
     }
 
     @Test
+    void updateMealPlanUpdatesNameAndWeekNumber() {
+        User user = User.builder().id(1L).username("joao").build();
+        MealPlan plan = new MealPlan();
+        plan.setId(99L);
+        plan.setUser(user);
+        plan.setPlanName("Antigo");
+        plan.setWeekNumber(1);
+
+        when(mealPlanRepository.findById(99L)).thenReturn(Optional.of(plan));
+        when(mealPlanRepository.save(any(MealPlan.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        MealPlanUpdateRequest request = new MealPlanUpdateRequest("Novo", 4);
+
+        MealPlan result = mealPlanService.updateMealPlan(99L, request, "joao");
+
+        assertEquals("Novo", result.getPlanName());
+        assertEquals(4, result.getWeekNumber());
+        verify(mealPlanRepository).save(plan);
+    }
+
+    @Test
+    void updateMealPlanRejectsNonOwner() {
+        User owner = User.builder().id(1L).username("joao").build();
+        MealPlan plan = new MealPlan();
+        plan.setId(99L);
+        plan.setUser(owner);
+
+        when(mealPlanRepository.findById(99L)).thenReturn(Optional.of(plan));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> mealPlanService.updateMealPlan(99L, new MealPlanUpdateRequest("Novo", 2), "maria"));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+        verify(mealPlanRepository, never()).save(any());
+    }
+
+    @Test
     void removeMealItemDeletesExistingItem() {
         User user = User.builder().id(1L).username("joao").build();
         MealPlan plan = new MealPlan();
@@ -172,5 +210,21 @@ class MealPlanServiceTest {
         assertEquals(99L, response.getMealPlanId());
         assertEquals("Semana", response.getMealPlanName());
         assertEquals(List.of("ovo", "leite", "farinha", "açúcar"), response.getIngredients());
+    }
+
+    @Test
+    void deleteMealPlanRejectsNonOwner() {
+        User owner = User.builder().id(1L).username("joao").build();
+        MealPlan plan = new MealPlan();
+        plan.setId(99L);
+        plan.setUser(owner);
+
+        when(mealPlanRepository.findById(99L)).thenReturn(Optional.of(plan));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> mealPlanService.deleteMealPlan(99L, "maria"));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+        verify(mealPlanRepository, never()).delete(any());
     }
 }

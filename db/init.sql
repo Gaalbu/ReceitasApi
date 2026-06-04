@@ -27,6 +27,7 @@ CREATE TABLE meal_plans (
     user_id INTEGER NOT NULL,
     plan_name VARCHAR(100) NOT NULL,
     start_date DATE NOT NULL,
+    week_number INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_plan FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

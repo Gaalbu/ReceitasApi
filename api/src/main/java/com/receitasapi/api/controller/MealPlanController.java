@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.receitasapi.api.dto.MealPlanRequest;
+import com.receitasapi.api.dto.MealPlanUpdateRequest;
 import com.receitasapi.api.dto.ShoppingListResponse;
 import com.receitasapi.api.model.MealPlan;
 import com.receitasapi.api.service.MealPlanService;
@@ -55,8 +56,8 @@ public class MealPlanController {
 
     @PutMapping("/{mealPlanId}")
     public ResponseEntity<MealPlan> updateMealPlan(@PathVariable Long mealPlanId,
-                                                   @Valid @RequestBody MealPlanRequest request,
-                                                   Authentication authentication) {
+                                                   @Valid @RequestBody MealPlanUpdateRequest request,
+                                                    Authentication authentication) {
         return ResponseEntity.ok(mealPlanService.updateMealPlan(mealPlanId, request, authentication.getName()));
     }
 

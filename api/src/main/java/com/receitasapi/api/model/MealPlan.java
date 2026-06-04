@@ -45,6 +45,9 @@ public class MealPlan {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
+    @Column(name = "week_number")
+    private Integer weekNumber;
+
     @OneToMany(mappedBy = "mealPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealItem> items = new ArrayList<>();
 
