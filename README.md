@@ -280,13 +280,13 @@ http://localhost:9000
 Observações rápidas:
 - O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
 - O backend já entra com JaCoCo antes da análise.
-- O frontend entra como código analisado com cobertura automatizada via `npm run test:coverage`.
+- O frontend entra como código analisado com cobertura automatizada via `npm run test -- --watch=false --code-coverage`.
 - O scanner usa o token exportado em `SONAR_TOKEN`.
 
 **Análise atual (artefatos gerados)**
 
 - **Backend (JaCoCo)**: Line coverage ~ 74.01% — artefato: [api/target/site/jacoco/jacoco.xml](api/target/site/jacoco/jacoco.xml)
-- **Frontend (Vitest/LCOV)**: Statements coverage 82.41% — artefato: [receitasapi-ui/coverage/lcov.info](receitasapi-ui/coverage/lcov.info)
+- **Frontend (Vitest/LCOV)**: artefato: [receitasapi-ui/coverage/receitasapi-frontend/lcov.info](receitasapi-ui/coverage/receitasapi-frontend/lcov.info)
 
 Esses arquivos já existem no repositório após a execução dos testes locais. Para gerar a análise completa do SonarQube (dashboard, issues e relatório consolidado), rode o runner Docker abaixo — ele executa os testes, coleta as coberturas e envia os resultados ao Sonar:
 
@@ -296,7 +296,7 @@ docker compose --profile sonar up --build --abort-on-container-exit sonar
 
 Ao final, abra `http://localhost:9000` e verifique o projeto com chave `receitasapi`.
 
-## 10. Modelos de Dados Principais
+## 11. Modelos de Dados Principais
 
 ### User
 - `id` (Long)
