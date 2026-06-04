@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ class MealPlanFlowIntegrationTest {
 
     @Test
     void createRecipeAndMealPlanWithJwt() throws Exception {
-        String token = registerAndLogin("maria", "maria@email.com", "senha123");
+        String unique = UUID.randomUUID().toString().replace("-", "");
+        String token = registerAndLogin("maria-" + unique, "maria-" + unique + "@email.com", "senha123");
 
         RecipeCreateRequest recipeRequest = new RecipeCreateRequest(
                 "Macarrao", "Massa e molho", "Cozinhe e sirva");
@@ -52,7 +54,7 @@ class MealPlanFlowIntegrationTest {
         JsonNode recipeJson = objectMapper.readTree(recipeResult.getResponse().getContentAsString());
         long recipeId = recipeJson.get("id").asLong();
 
-        MealItemRequest item = new MealItemRequest(recipeId, "monday", "lunch");
+        MealItemRequest item = new MealItemRequest(recipeId, null, null, "monday", "lunch");
         MealPlanRequest planRequest = new MealPlanRequest("Plano semanal", "2026-01-01", List.of(item));
 
         mockMvc.perform(post("/meal-plans")

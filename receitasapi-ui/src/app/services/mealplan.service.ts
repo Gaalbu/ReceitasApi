@@ -7,7 +7,13 @@ export interface MealPlanPayload {
   plan_name: string;
   start_date?: string;
   week_number?: number;
-  items?: Array<{ day_of_week: string; meal_type: string; recipe_id: number }>;
+  items?: Array<{
+    day_of_week: string;
+    meal_type: string;
+    recipe_id?: number;
+    external_recipe_id?: string;
+    external_recipe_name?: string;
+  }>;
 }
 
 @Injectable({ providedIn: 'root' })

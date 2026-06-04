@@ -33,6 +33,7 @@ export class MealPlanComponent implements OnInit {
   editForm!: FormGroup;
   mealPlans: any[] = [];
   loadingMealPlans = false;
+  savingPlan = false;
   editingMealPlanId: number | null = null;
   message = '';
   error = '';
@@ -154,12 +155,14 @@ export class MealPlanComponent implements OnInit {
     return parsed;
   }
 
-  private isAllowedRecipeId(recipeId: number): boolean {
-    return this.availableRecipes.some((recipe) => recipe.id === recipeId);
-  }
-
   private buildItemsFromGrid() {
-    const items: Array<{ day_of_week: string; meal_type: string; recipe_id: number }> = [];
+    const items: Array<{
+      day_of_week: string;
+      meal_type: string;
+      recipe_id?: number;
+      external_recipe_id?: string;
+      external_recipe_name?: string;
+    }> = [];
     const invalidIds: number[] = [];
 
     for (const day of this.weekdays) {
@@ -168,12 +171,22 @@ export class MealPlanComponent implements OnInit {
         const recipeId = this.toPositiveNumber(control?.value);
 
         if (recipeId !== null) {
-          if (this.isAllowedRecipeId(recipeId)) {
-            items.push({
-              day_of_week: day.value,
-              meal_type: mealType.value,
-              recipe_id: recipeId
-            });
+          const selectedRecipe = this.availableRecipes.find((recipe) => recipe.id === recipeId);
+          if (selectedRecipe) {
+            if (selectedRecipe.source === 'api') {
+              items.push({
+                day_of_week: day.value,
+                meal_type: mealType.value,
+                external_recipe_id: String(selectedRecipe.id),
+                external_recipe_name: selectedRecipe.label
+              });
+            } else {
+              items.push({
+                day_of_week: day.value,
+                meal_type: mealType.value,
+                recipe_id: recipeId
+              });
+            }
           } else {
             invalidIds.push(recipeId);
           }
@@ -237,15 +250,18 @@ export class MealPlanComponent implements OnInit {
       items
     };
 
+    this.savingPlan = true;
     this.mealPlanService.createMealPlan(payload).subscribe({
       next: () => {
         this.message = 'Plano de refeicao criado com sucesso!';
+        this.savingPlan = false;
         this.clearDraft();
         this.loadMealPlans();
       },
       error: (err) => {
         console.error(err);
         this.message = 'Erro ao criar o plano de refeicao. Verifique o console para mais detalhes.';
+        this.savingPlan = false;
       }
     });
   }

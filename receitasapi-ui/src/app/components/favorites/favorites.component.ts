@@ -21,6 +21,9 @@ export class FavoritesComponent implements OnInit {
   recipeSearch = '';
   availableRecipes: RecipeOption[] = [];
   loadingRecipes = false;
+  loadingFavorites = false;
+  savingFavorite = false;
+  removingFavoriteId: number | null = null;
 
   constructor(private favoritesService: FavoritesService, private recipeService: RecipeService) {}
 
@@ -30,9 +33,16 @@ export class FavoritesComponent implements OnInit {
   }
 
   loadFavorites(): void {
+    this.loadingFavorites = true;
     this.favoritesService.listMyFavorites().subscribe({
-      next: data => this.favorites = data || [],
-      error: err => this.error = 'Não foi possível carregar favoritos'
+      next: data => {
+        this.favorites = data || [];
+        this.loadingFavorites = false;
+      },
+      error: () => {
+        this.error = 'Não foi possível carregar favoritos';
+        this.loadingFavorites = false;
+      }
     });
   }
 
@@ -86,9 +96,16 @@ export class FavoritesComponent implements OnInit {
   }
 
   remove(id: number): void {
+    this.removingFavoriteId = id;
     this.favoritesService.deleteFavorite(id).subscribe({
-      next: () => this.loadFavorites(),
-      error: () => this.error = 'Falha ao remover favorito'
+      next: () => {
+        this.removingFavoriteId = null;
+        this.loadFavorites();
+      },
+      error: () => {
+        this.removingFavoriteId = null;
+        this.error = 'Falha ao remover favorito';
+      }
     });
   }
 
@@ -99,8 +116,25 @@ export class FavoritesComponent implements OnInit {
       return;
     }
 
-    const payload = { recipeId: this.newRecipeId || 0, recipeTitle: this.newRecipeTitle };
-    this.favoritesService.addFavorite(payload).subscribe({ next: () => { this.newRecipeTitle = ''; this.newRecipeId = null; this.loadFavorites(); }, error: () => this.error = 'Falha ao adicionar favorito' });
+    const payload = {
+      external_recipe_id: String(this.newRecipeId),
+      recipe_name: this.newRecipeTitle || selected.label,
+      image_url: null
+    };
+
+    this.savingFavorite = true;
+    this.favoritesService.addFavorite(payload).subscribe({
+      next: () => {
+        this.newRecipeTitle = '';
+        this.newRecipeId = null;
+        this.savingFavorite = false;
+        this.loadFavorites();
+      },
+      error: () => {
+        this.savingFavorite = false;
+        this.error = 'Falha ao adicionar favorito';
+      }
+    });
   }
 
   startEdit(f: any): void { this.editing = { ...f }; }

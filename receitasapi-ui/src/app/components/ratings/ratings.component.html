@@ -7,6 +7,11 @@
 
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
+  <div *ngIf="loadingRatings" class="alert alert-info d-flex align-items-center gap-2">
+    <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+    Carregando avaliações...
+  </div>
+
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3 align-items-end">
@@ -36,7 +41,10 @@
           <input id="rating-score" class="form-control" type="number" min="1" max="5" [(ngModel)]="newScore">
         </div>
         <div class="col-12 col-md-3 d-grid">
-          <button class="btn btn-primary" type="button" (click)="add()">Adicionar</button>
+          <button class="btn btn-primary" type="button" (click)="add()" [disabled]="savingRating">
+            <span *ngIf="savingRating" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            {{ savingRating ? 'Salvando...' : 'Adicionar' }}
+          </button>
         </div>
       </div>
     </div>

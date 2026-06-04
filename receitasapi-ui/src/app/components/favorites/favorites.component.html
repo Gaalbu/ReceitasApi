@@ -10,6 +10,11 @@
     </div>
   </section>
 
+  <div *ngIf="loadingFavorites" class="alert alert-info d-flex align-items-center gap-2">
+    <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+    Carregando favoritos...
+  </div>
+
   <div *ngIf="showCreate" class="card border-0 shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3 align-items-end">
@@ -39,7 +44,10 @@
           <input id="favorite-title" class="form-control" [(ngModel)]="newRecipeTitle" placeholder="Título do favorito">
         </div>
         <div class="col-12 col-md-3 d-grid">
-          <button class="btn btn-success" type="button" (click)="create()">Salvar</button>
+          <button class="btn btn-success" type="button" (click)="create()" [disabled]="savingFavorite">
+            <span *ngIf="savingFavorite" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            {{ savingFavorite ? 'Salvando...' : 'Salvar' }}
+          </button>
         </div>
       </div>
 
@@ -75,11 +83,14 @@
             <tr *ngFor="let f of favorites">
               <td>{{ f.id }}</td>
               <td>
-                <div class="fw-semibold">{{ f.recipeTitle || ('Receita ' + f.id) }}</div>
+                <div class="fw-semibold">{{ f.recipeName || f.recipe_name || f.recipeTitle || ('Receita ' + f.id) }}</div>
               </td>
               <td class="text-end">
                 <button class="btn btn-sm btn-outline-secondary me-2" (click)="startEdit(f)">Editar</button>
-                <button class="btn btn-sm btn-outline-danger" (click)="remove(f.id)">Remover</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="remove(f.id)" [disabled]="removingFavoriteId === f.id">
+                  <span *ngIf="removingFavoriteId === f.id" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                  {{ removingFavoriteId === f.id ? 'Removendo...' : 'Remover' }}
+                </button>
               </td>
             </tr>
           </tbody>

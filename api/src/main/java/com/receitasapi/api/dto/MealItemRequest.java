@@ -1,7 +1,8 @@
 package com.receitasapi.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MealItemRequest {
 
-    @NotNull(message = "O ID da receita não pode ser nulo")
     private Long recipe_id;
+
+    @JsonProperty("external_recipe_id")
+    @Size(max = 50)
+    private String externalRecipeId;
+
+    @JsonProperty("external_recipe_name")
+    @Size(max = 150)
+    private String externalRecipeName;
 
     @NotBlank(message = "O dia da semana não pode estar em branco")
     private String day_of_week;

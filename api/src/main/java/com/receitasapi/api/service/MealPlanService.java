@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.util.StringUtils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,14 +54,23 @@ public class MealPlanService {
 
         List<MealItem> items = new ArrayList<>();
         for (MealItemRequest itemRequest : request.getItems()) {
-            Recipe recipe = recipeRepository.findById(itemRequest.getRecipe_id())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
-
             MealItem item = new MealItem();
             item.setDayOfWeek(DayOfWeek.valueOf(itemRequest.getDay_of_week().toUpperCase()));
             item.setMealType(MealType.valueOf(itemRequest.getMeal_type().toUpperCase()));
-            item.setRecipe(recipe);
             item.setMealPlan(mealPlan);
+
+            if (itemRequest.getRecipe_id() != null) {
+                Recipe recipe = recipeRepository.findById(itemRequest.getRecipe_id())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receita nao encontrada"));
+                item.setRecipe(recipe);
+            } else if (StringUtils.hasText(itemRequest.getExternalRecipeId())
+                    && StringUtils.hasText(itemRequest.getExternalRecipeName())) {
+                item.setExternalRecipeId(itemRequest.getExternalRecipeId());
+                item.setExternalRecipeName(itemRequest.getExternalRecipeName());
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item do plano sem receita válida");
+            }
+
             items.add(item);
         }
         mealPlan.setItems(items);

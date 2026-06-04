@@ -90,6 +90,13 @@ describe('MealPlanComponent', () => {
     expect(payload.plan_name).toBe('Semana 1');
     expect(payload.start_date).toBe('2026-05-23');
     expect(payload.items.length).toBe(2);
+    expect(payload.items[0]).toEqual({ day_of_week: 'MONDAY', meal_type: 'LUNCH', recipe_id: 1 });
+    expect(payload.items[1]).toEqual({
+      day_of_week: 'TUESDAY',
+      meal_type: 'DINNER',
+      external_recipe_id: '2',
+      external_recipe_name: 'Salada da API'
+    });
     expect(component.message).toBe('Plano de refeicao criado com sucesso!');
   });
 

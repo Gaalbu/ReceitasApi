@@ -20,6 +20,8 @@ export class RatingsComponent implements OnInit {
   recipeSearch = '';
   availableRecipes: RecipeOption[] = [];
   loadingRecipes = false;
+  loadingRatings = false;
+  savingRating = false;
 
   constructor(private ratingsService: RatingsService, private recipeService: RecipeService) {}
 
@@ -29,9 +31,16 @@ export class RatingsComponent implements OnInit {
   }
 
   loadRatings(): void {
+    this.loadingRatings = true;
     this.ratingsService.myRatings().subscribe({
-      next: data => this.ratings = data || [],
-      error: () => this.error = 'Não foi possível carregar avaliações'
+      next: data => {
+        this.ratings = data || [];
+        this.loadingRatings = false;
+      },
+      error: () => {
+        this.error = 'Não foi possível carregar avaliações';
+        this.loadingRatings = false;
+      }
     });
   }
 
@@ -89,7 +98,19 @@ export class RatingsComponent implements OnInit {
       return;
     }
     const payload = { rating: this.newScore };
-    this.ratingsService.addRating(this.newRecipeId, payload).subscribe({ next: () => { this.newRecipeId = null; this.newScore = null; this.loadRatings(); }, error: () => this.error = 'Falha ao salvar avaliação' });
+    this.savingRating = true;
+    this.ratingsService.addRating(this.newRecipeId, payload).subscribe({
+      next: () => {
+        this.newRecipeId = null;
+        this.newScore = null;
+        this.savingRating = false;
+        this.loadRatings();
+      },
+      error: () => {
+        this.savingRating = false;
+        this.error = 'Falha ao salvar avaliação';
+      }
+    });
   }
 
   startEdit(r: any): void { this.editing = { ...r }; }

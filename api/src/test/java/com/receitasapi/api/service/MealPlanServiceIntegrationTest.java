@@ -54,7 +54,7 @@ public class MealPlanServiceIntegrationTest {
         recipe.setUser(user);
         recipe = recipeRepository.save(recipe);
 
-        MealItemRequest item = new MealItemRequest(recipe.getId(), "MONDAY", "LUNCH");
+        MealItemRequest item = new MealItemRequest(recipe.getId(), null, null, "MONDAY", "LUNCH");
         MealPlanRequest req = new MealPlanRequest("Plano A", LocalDate.now().toString(), List.of(item));
 
         MealPlan plan = mealPlanService.createMealPlan(req, "joao");

@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,8 +38,14 @@ public class MealItem {
     private MealType mealType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
+    @JoinColumn(name = "recipe_id")
     private Recipe recipe;
+
+    @Column(name = "external_recipe_id", length = 50)
+    private String externalRecipeId;
+
+    @Column(name = "external_recipe_name", length = 150)
+    private String externalRecipeName;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

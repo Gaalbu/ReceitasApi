@@ -53,7 +53,7 @@ class MealPlanServiceTest {
         User user = User.builder().id(1L).username("joao").build();
         when(userRepository.findByUsername("joao")).thenReturn(Optional.of(user));
 
-        MealItemRequest item = new MealItemRequest(10L, "monday", "lunch");
+        MealItemRequest item = new MealItemRequest(10L, null, null, "monday", "lunch");
         MealPlanRequest request = new MealPlanRequest("Plano", "2026/01/01", List.of(item));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
@@ -65,7 +65,7 @@ class MealPlanServiceTest {
 
     @Test
     void createMealPlanThrowsWhenUserMissing() {
-        MealItemRequest item = new MealItemRequest(10L, "monday", "lunch");
+        MealItemRequest item = new MealItemRequest(10L, null, null, "monday", "lunch");
         MealPlanRequest request = new MealPlanRequest("Plano", "2026-01-01", List.of(item));
 
         when(userRepository.findByUsername("joao")).thenReturn(Optional.empty());
@@ -82,7 +82,7 @@ class MealPlanServiceTest {
         when(userRepository.findByUsername("joao")).thenReturn(Optional.of(user));
         when(recipeRepository.findById(10L)).thenReturn(Optional.empty());
 
-        MealItemRequest item = new MealItemRequest(10L, "monday", "lunch");
+        MealItemRequest item = new MealItemRequest(10L, null, null, "monday", "lunch");
         MealPlanRequest request = new MealPlanRequest("Plano", "2026-01-01", List.of(item));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
@@ -100,7 +100,7 @@ class MealPlanServiceTest {
         when(recipeRepository.findById(10L)).thenReturn(Optional.of(recipe));
         when(mealPlanRepository.save(any(MealPlan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        MealItemRequest item = new MealItemRequest(10L, "monday", "lunch");
+        MealItemRequest item = new MealItemRequest(10L, null, null, "monday", "lunch");
         MealPlanRequest request = new MealPlanRequest("Plano", "2026-01-01", List.of(item));
 
         MealPlan result = mealPlanService.createMealPlan(request, "joao");
@@ -113,6 +113,24 @@ class MealPlanServiceTest {
         assertEquals(DayOfWeek.MONDAY, savedItem.getDayOfWeek());
         assertEquals(MealType.LUNCH, savedItem.getMealType());
         assertEquals(recipe.getId(), savedItem.getRecipe().getId());
+    }
+
+    @Test
+    void createMealPlanSupportsExternalRecipes() {
+        User user = User.builder().id(1L).username("joao").build();
+        when(userRepository.findByUsername("joao")).thenReturn(Optional.of(user));
+        when(mealPlanRepository.save(any(MealPlan.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        MealItemRequest item = new MealItemRequest(null, "60003", "Frango Assado", "monday", "lunch");
+        MealPlanRequest request = new MealPlanRequest("Plano", "2026-01-01", List.of(item));
+
+        MealPlan result = mealPlanService.createMealPlan(request, "joao");
+
+        assertEquals(1, result.getItems().size());
+        MealItem savedItem = result.getItems().get(0);
+        assertEquals("60003", savedItem.getExternalRecipeId());
+        assertEquals("Frango Assado", savedItem.getExternalRecipeName());
+        assertEquals(null, savedItem.getRecipe());
     }
 
     @Test
