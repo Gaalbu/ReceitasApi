@@ -1,15 +1,17 @@
 import { test, expect } from '@playwright/test';
 
-test('create meal plan from protected route', async ({ page, request: apiRequest }) => {
+test('login, cria plano semanal e ve na propria lista', async ({ page, request: apiRequest }) => {
   const unique = Date.now();
   const username = `meal-user-${unique}`;
   const email = `${username}@example.com`;
   const password = 'abc12345';
   const recipeName = `Receita Plano ${unique}`;
+  const planName = `Plano ${unique}`;
 
-  await apiRequest.post('http://localhost:8080/auth/register', {
+  const register = await apiRequest.post('http://localhost:8080/auth/register', {
     data: { username, email, password }
   });
+  expect(register.ok() || register.status() === 400).toBeTruthy();
 
   const loginResponse = await apiRequest.post('http://localhost:8080/auth/login', {
     data: { username, password }
@@ -41,26 +43,16 @@ test('create meal plan from protected route', async ({ page, request: apiRequest
     window.localStorage.setItem('token', storedToken);
   }, token);
 
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
-  await page.locator('a.dropdown-toggle').click();
-  await page.locator('a[href="/meal-plans"]').click();
+  await page.goto('/meal-plans');
   await expect(page.getByRole('heading', { name: /Plano Semanal de Refei/i })).toBeVisible();
 
-  const mealPlanResponse = await apiRequest.post('http://localhost:8080/meal-plans', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-    data: {
-      plan_name: `Plano ${unique}`,
-      start_date: '2026-06-08',
-      items: [{ recipe_id: recipeId, day_of_week: 'MONDAY', meal_type: 'LUNCH' }]
-    }
-  });
-  expect(mealPlanResponse.ok()).toBeTruthy();
+  await page.locator('input[formcontrolname="plan_name"]').fill(planName);
+  await page.locator('input[formcontrolname="start_date"]').fill('2026-06-08');
+  await page.locator('select[formcontrolname="MONDAY_LUNCH"]').selectOption(String(recipeId));
 
-  const createdMealPlan = await mealPlanResponse.json();
-  expect(createdMealPlan.planName || createdMealPlan.plan_name).toBe(`Plano ${unique}`);
-  expect(Array.isArray(createdMealPlan.items)).toBeTruthy();
-  expect(createdMealPlan.items).toHaveLength(1);
+  await page.getByRole('button', { name: 'Salvar plano' }).click();
+
+  await expect(page.getByText('Plano de refeicao criado com sucesso!')).toBeVisible();
+  await expect(page.getByRole('cell', { name: planName })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Segunda' })).toBeVisible();
 });

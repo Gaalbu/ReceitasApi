@@ -1,37 +1,33 @@
 import { expect, test } from '@playwright/test';
 import { registerAndLogin } from './helpers';
 
-test('criação, listagem, edição e exclusão', async ({ page, request }) => {
-  const auth = await registerAndLogin(request, page, Date.now().toString());
+test('login, cria plano semanal e vê na própria lista', async ({ page, request }) => {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const auth = await registerAndLogin(request, page, suffix);
 
   const recipeResp = await request.post('http://localhost:8080/recipes', {
     headers: { Authorization: `Bearer ${auth.token}` },
     data: {
-      name: 'Receita Base',
+      name: `Receita Base ${suffix}`,
       description: 'Arroz',
       instructions: 'Cozinhar',
       prep_time: 10
     }
   });
+  expect(recipeResp.ok()).toBeTruthy();
   const recipeBody = await recipeResp.json();
+  const recipeId = String(recipeBody.id);
+  const planName = `Plano E2E ${suffix}`;
 
-  const created = await request.post('http://localhost:8080/meal-plans', {
-    headers: { Authorization: `Bearer ${auth.token}` },
-    data: {
-      plan_name: 'Plano E2E',
-      start_date: '2026-06-08',
-      items: [{ recipe_id: recipeBody.id, day_of_week: 'MONDAY', meal_type: 'LUNCH' }]
-    }
-  });
-  expect(created.ok()).toBeTruthy();
-  const createdBody = await created.json();
+  await page.goto('/meal-plans');
+  await expect(page.getByRole('heading', { name: /Plano Semanal de Refei/i })).toBeVisible();
 
-  await page.goto('/login');
-  await expect(page).toHaveURL(/\/$/);
+  await page.locator('input[formcontrolname="plan_name"]').fill(planName);
+  await page.locator('input[formcontrolname="start_date"]').fill('2026-06-08');
+  await page.locator('select[formcontrolname="MONDAY_LUNCH"]').selectOption(recipeId);
 
-  await page.reload();
-  await expect(page).toHaveURL(/\/$/);
-
-  await page.reload();
-  await expect(page).toHaveURL(/\/$/);
+  await page.getByRole('button', { name: 'Salvar plano' }).click();
+  await expect(page.getByText('Plano de refeicao criado com sucesso!')).toBeVisible();
+  await expect(page.getByRole('cell', { name: planName })).toBeVisible();
+  await expect(page.locator('tbody tr')).toContainText(planName);
 });

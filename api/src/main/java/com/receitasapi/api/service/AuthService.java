@@ -30,11 +30,21 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username ja existe");
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email ja existe");
+        User existing = userRepository.findByUsername(request.getUsername())
+                .or(() -> userRepository.findByEmail(request.getEmail()))
+                .orElse(null);
+
+        if (existing != null) {
+            if (!passwordEncoder.matches(request.getPassword(), existing.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username ja existe");
+            }
+
+            String token = jwtService.generateToken(existing);
+            return AuthResponse.builder()
+                    .token(token)
+                    .username(existing.getUsername())
+                    .email(existing.getEmail())
+                    .build();
         }
 
         User user = User.builder()

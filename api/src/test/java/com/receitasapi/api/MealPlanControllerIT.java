@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.receitasapi.api.model.MealPlan;
 import com.receitasapi.api.model.Recipe;
 import com.receitasapi.api.model.User;
+import com.receitasapi.api.repository.MealItemRepository;
 import com.receitasapi.api.repository.MealPlanRepository;
 import com.receitasapi.api.repository.RecipeRepository;
 import com.receitasapi.api.repository.UserRepository;
@@ -41,8 +42,12 @@ class MealPlanControllerIT {
     @Autowired
     private MealPlanRepository mealPlanRepository;
 
+    @Autowired
+    private MealItemRepository mealItemRepository;
+
     @BeforeEach
     void clean() {
+        mealItemRepository.deleteAll();
         mealPlanRepository.deleteAll();
         recipeRepository.deleteAll();
         userRepository.deleteAll();
@@ -76,5 +81,26 @@ class MealPlanControllerIT {
 
         mockMvc.perform(delete("/meal-plans/{id}", saved.getId()))
                 .andExpect(status().isNoContent());
+
+        mealItemRepository.deleteAll();
+    }
+
+    @Test
+    @WithMockUser(username = "maria")
+    void shouldDeleteMealPlanAndCascadeItems() throws Exception {
+        User user = userRepository.save(User.builder().username("maria").email("maria@example.com").password("x").build());
+        Recipe recipe = recipeRepository.save(Recipe.builder().name("Bolo").description("Farinha").instructions("Assar").user(user).build());
+
+        String createBody = "{\"plan_name\":\"Semana 3\",\"start_date\":\"2026-06-08\",\"items\":[{\"recipe_id\":" + recipe.getId() + ",\"day_of_week\":\"MONDAY\",\"meal_type\":\"LUNCH\"}]}";
+        mockMvc.perform(post("/meal-plans")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createBody))
+                .andExpect(status().isOk());
+
+        MealPlan saved = mealPlanRepository.findAll().get(0);
+        mockMvc.perform(delete("/meal-plans/{id}", saved.getId()))
+                .andExpect(status().isNoContent());
+
+        org.junit.jupiter.api.Assertions.assertEquals(0, mealItemRepository.count());
     }
 }

@@ -63,10 +63,10 @@ class SystemReviewServiceTest {
     }
 
     @Test
-    void listAllReviewsReturnsOrderedReviews() {
-        when(systemReviewRepository.findAllByOrderByIdDesc()).thenReturn(List.of());
+    void listMyReviewsReturnsOrderedReviews() {
+        when(systemReviewRepository.findByUserUsernameOrderByIdDesc("maria")).thenReturn(List.of());
 
-        assertEquals(0, systemReviewService.listAllReviews().size());
+        assertEquals(0, systemReviewService.listMyReviews("maria").size());
     }
 
     @Test

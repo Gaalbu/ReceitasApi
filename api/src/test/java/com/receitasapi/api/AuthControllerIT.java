@@ -36,7 +36,7 @@ class AuthControllerIT {
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\":\"ana\",\"email\":\"ana@example.com\",\"password\":\"senha123\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").exists());
 
         mockMvc.perform(post("/auth/login")

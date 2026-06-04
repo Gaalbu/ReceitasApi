@@ -5,9 +5,13 @@ export async function registerAndLogin(request: APIRequestContext, page: Page, s
   const email = `${username}@example.com`;
   const password = 'Passw0rd!';
 
-  await request.post('http://localhost:8080/auth/register', {
+  const register = await request.post('http://localhost:8080/auth/register', {
     data: { username, email, password }
   });
+
+  if (!register.ok() && register.status() !== 400) {
+    throw new Error(`Falha ao registrar usuário: ${register.status()}`);
+  }
 
   const login = await request.post('http://localhost:8080/auth/login', {
     data: { username, password }

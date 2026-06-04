@@ -35,8 +35,8 @@ public class SystemReviewService {
         return systemReviewRepository.save(review);
     }
 
-    public List<SystemReview> listAllReviews() {
-        return systemReviewRepository.findAllByOrderByIdDesc();
+    public List<SystemReview> listMyReviews(String username) {
+        return systemReviewRepository.findByUserUsernameOrderByIdDesc(username);
     }
 
     public SystemReview getReview(Long id) {

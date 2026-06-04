@@ -82,6 +82,18 @@ class RecipeControllerIT {
     }
 
     @Test
+    @WithMockUser(username = "maria")
+    void shouldForbidUpdatingRecipeOfAnotherUser() throws Exception {
+        User owner = userRepository.save(User.builder().username("joao").email("joao@example.com").password("x").build());
+        Recipe recipe = recipeRepository.save(Recipe.builder().name("Bolo").description("Farinha").instructions("Assar").user(owner).build());
+
+        mockMvc.perform(put("/recipes/{id}", recipe.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Bolo Novo\",\"description\":\"Leite\",\"instructions\":\"Assar\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void shouldSearchExternalRecipes() throws Exception {
         mockMvc.perform(get("/recipes/search").param("name", "bolo"))
                 .andExpect(status().isOk());

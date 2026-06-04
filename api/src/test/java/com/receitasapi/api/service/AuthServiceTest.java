@@ -51,8 +51,6 @@ class AuthServiceTest {
     void registerCreatesUserAndReturnsToken() {
         RegisterRequest request = new RegisterRequest("ana", "ana@email.com", "senha123");
 
-        when(userRepository.existsByUsername("ana")).thenReturn(false);
-        when(userRepository.existsByEmail("ana@email.com")).thenReturn(false);
         when(passwordEncoder.encode("senha123")).thenReturn("encoded");
 
         User saved = User.builder()
@@ -73,22 +71,45 @@ class AuthServiceTest {
     }
 
     @Test
-    void registerThrowsWhenUsernameExists() {
+    void registerReturnsTokenWhenUsernameExistsAndPasswordMatches() {
         RegisterRequest request = new RegisterRequest("ana", "ana@email.com", "senha123");
-        when(userRepository.existsByUsername("ana")).thenReturn(true);
+        User existing = User.builder().id(1L).username("ana").email("ana@email.com").password("encoded").build();
 
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> authService.register(request));
+        when(userRepository.findByUsername("ana")).thenReturn(Optional.of(existing));
+        when(passwordEncoder.matches("senha123", "encoded")).thenReturn(true);
+        when(jwtService.generateToken(existing)).thenReturn("token-123");
 
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        AuthResponse response = authService.register(request);
+
+        assertEquals("token-123", response.getToken());
+        assertEquals("ana", response.getUsername());
+        assertEquals("ana@email.com", response.getEmail());
         verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
-    void registerThrowsWhenEmailExists() {
+    void registerReturnsTokenWhenEmailExistsAndPasswordMatches() {
         RegisterRequest request = new RegisterRequest("ana", "ana@email.com", "senha123");
-        when(userRepository.existsByUsername("ana")).thenReturn(false);
-        when(userRepository.existsByEmail("ana@email.com")).thenReturn(true);
+        User existing = User.builder().id(1L).username("ana").email("ana@email.com").password("encoded").build();
+
+        when(userRepository.findByUsername("ana")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("ana@email.com")).thenReturn(Optional.of(existing));
+        when(passwordEncoder.matches("senha123", "encoded")).thenReturn(true);
+        when(jwtService.generateToken(existing)).thenReturn("token-123");
+
+        AuthResponse response = authService.register(request);
+
+        assertEquals("token-123", response.getToken());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void registerThrowsWhenExistingUserPasswordDoesNotMatch() {
+        RegisterRequest request = new RegisterRequest("ana", "ana@email.com", "senha123");
+        User existing = User.builder().id(1L).username("ana").email("ana@email.com").password("encoded").build();
+
+        when(userRepository.findByUsername("ana")).thenReturn(Optional.of(existing));
+        when(passwordEncoder.matches("senha123", "encoded")).thenReturn(false);
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> authService.register(request));

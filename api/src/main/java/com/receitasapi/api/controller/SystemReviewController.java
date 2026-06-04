@@ -29,8 +29,8 @@ public class SystemReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<java.util.List<SystemReview>> listReviews() {
-        return ResponseEntity.ok(systemReviewService.listAllReviews());
+    public ResponseEntity<java.util.List<SystemReview>> listReviews(Authentication authentication) {
+        return ResponseEntity.ok(systemReviewService.listMyReviews(authentication.getName()));
     }
 
     @GetMapping("/{id}")

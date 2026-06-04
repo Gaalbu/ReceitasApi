@@ -36,10 +36,10 @@ npx playwright test
 ## SonarQube
 ```bash
 export SONAR_TOKEN=seu_token_aqui
-npm run sonar
+npm run sonar:all
 ```
 
-O comando `npm run sonar` roda os testes, gera as coberturas e publica a análise no SonarQube local em `http://localhost:9000`.
+O comando `npm run sonar:all` roda os testes, gera as coberturas, publica a análise e abre o SonarQube local em `http://localhost:9000`.
 
 ## Casos de uso
 - UC01 registrar usuário
