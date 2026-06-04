@@ -36,8 +36,10 @@ npx playwright test
 ## SonarQube
 ```bash
 export SONAR_TOKEN=seu_token_aqui
-docker compose --profile sonar up --build --abort-on-container-exit sonar
+npm run sonar
 ```
+
+O comando `npm run sonar` roda os testes, gera as coberturas e publica a análise no SonarQube local em `http://localhost:9000`.
 
 ## Casos de uso
 - UC01 registrar usuário
