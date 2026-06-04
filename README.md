@@ -1,345 +1,57 @@
-# ReceitasApi - Plataforma de Gestão Gastronômica
+# ReceitasApi
 
-## 1. Descrição do Projeto
-ReceitasApi é uma aplicação web completa que permite aos usuários gerenciar suas próprias receitas, criar planos de refeições semanais e explorar novas culinárias através da integração com a API externa *TheMealDB*.
+Aplicação web de gestão gastronômica com backend Spring Boot, frontend Angular SSR, autenticação JWT, cobertura automatizada e análise SonarQube.
 
-## 2. Stack Tecnológica
-- **Back-end:** Java 21 LTS + Spring Boot 3.5.14 + PostgreSQL
-- **Front-end:** Angular 21 + TypeScript com SSR (Server-Side Rendering)
-- **Autenticação:** JWT (JSON Web Tokens) + Spring Security
-- **API Externa:** TheMealDB (integração para busca de receitas)
-- **Testes:** JUnit 5, Mockito, Jasmine/Karma
-- **Containerização:** Docker + Docker Compose para subir o stack completo
+## Entrega
+- 15 casos de uso implementados.
+- 5 áreas funcionais apresentadas na demo: autenticação, receitas, planos semanais, reviews/ratings e navegação.
+- Testes unitários, integração e E2E funcionando.
+- Cobertura atual acima da meta mínima do frontend (`70.09%` statements) e backend com JaCoCo gerado.
+- Análise estática preparada via SonarQube no `docker-compose`.
 
-## 3. Funcionalidades Implementadas ✅
-
-### 3.1. Autenticação e Usuários
-- ✅ **Registro de Usuários** → `POST /auth/register`
-- ✅ **Login com JWT** → `POST /auth/login`
-- ✅ **Armazenamento seguro de tokens** (localStorage)
-- ✅ **Proteção de rotas com interceptor JWT**
-- ✅ **Logout e limpeza de sessão**
-
-### 3.2. Gerenciamento de Receitas
-- ✅ **Busca de receitas na TheMealDB** → `GET /recipes/search?name={termo}`
-- ✅ **Criação de receitas customizadas** → `POST /recipes`
-- ✅ **Visualização de receitas externas**
-- ✅ **Integração com API externa para enriquecimento de dados**
-
-### 3.3. Planos de Refeição
-- ✅ **Criação de planos de refeição** → `POST /meal-plans`
-- ✅ **Associação de receitas aos planos**
-- ✅ **Gerenciamento de itens de refeição**
-
-### 3.4. Avaliações e Feedback
-- ✅ **Sistema de ratings para receitas** → `POST /recipes/{recipeId}/ratings` e `GET /recipes/ratings/me`
-- ✅ **Submissão de reviews do sistema** → `POST /system-reviews`
-- ✅ **Feedback dos usuários sobre a plataforma**
-
-### 3.5. Interface de Usuário
- - ✅ **Principais telas (6):**
-	 - **login:** Tela de autenticação com validação e redirecionamento após login.
-	 - **register:** Formulário para criação de novas contas de usuário.
-	 - **recipe:** Visualização e busca de receitas (inclui resultados externos).
-	 - **create-recipe:** Formulário para criar/editar receitas do usuário.
-	 - **meal-plan:** Gerenciamento e visualização de planos de refeição do usuário.
-	 - **feedback:** Envio de avaliações e comentários sobre a plataforma.
- - ✅ **Navbar responsivo** com navegação entre páginas
- - ✅ **Renderização no lado do servidor (SSR)**
-
-## 4. Checklist final priorizada
-
-### P0 - Corrigir para sustentar a entrega
-- [x] Alinhar a versão do Java no build com a documentação. O `pom.xml` agora usa Java 21, igual ao README.
- - [x] Ajustar a narrativa de "5 telas" para "6 telas" e listar todas as telas principais no README.
-- [x] Garantir um relatório de cobertura consumível pelo SonarQube no backend. O projeto já tem JaCoCo, e o runner do Sonar agora gera a cobertura antes da análise.
-
-### P1 - Fechar qualidade com pouco esforço de código
-- [x] Gerar cobertura do frontend e registrar o arquivo `lcov.info` para o SonarQube.
-- [ ] Completar os fluxos E2E principais além do smoke test atual, cobrindo login, criação de receita e plano de refeição.
-- [x] Revisar endpoints/documentação para garantir que os 15 casos de uso estejam todos refletidos no código e nas rotas.
-
-Na última execução do runner, o SonarQube concluiu com `ANALYSIS SUCCESSFUL` e importou a cobertura do frontend a partir de `receitasapi-ui/coverage/lcov.info`.
-
-### P2 - Melhorar a leitura da entrega
-- [ ] Padronizar a descrição dos testes para separar unitários, integração e E2E com os artefatos reais de cada camada.
-- [x] Incluir o passo oficial de execução do SonarQube no README ou pipeline.
-
-## 5. Estrutura do Projeto
-```text
-/receitasapi
-├── api/
-│   ├── src/main/java/com/receitasapi/api/
-│   │   ├── controller/          (Endpoints REST)
-│   │   │   ├── AuthController
-│   │   │   ├── RecipeController
-│   │   │   ├── MealPlanController
-│   │   │   ├── SystemReviewController
-│   │   │   └── RecipeRatingController
-│   │   ├── service/             (Lógica de negócio)
-│   │   │   ├── AuthService
-│   │   │   ├── RecipeService
-│   │   │   ├── MealPlanService
-│   │   │   ├── SystemReviewService
-│   │   │   └── RecipeRatingService
-│   │   ├── repository/          (Acesso a dados JPA)
-│   │   ├── model/               (Entidades)
-│   │   ├── config/              (Security, CORS, RestTemplate)
-│   │   └── security/            (JWT, CustomUserDetails)
-│   └── src/test/java/com/receitasapi/api/           (Testes JUnit 5)
-│
-├── receitasapi-ui/
-│   ├── src/app/
-│   │   ├── components/
-│   │   │   ├── login/
-│   │   │   ├── register/
-│   │   │   ├── recipe/
-│   │   │   ├── create-recipe/
-│   │   │   ├── meal-plan/
-│   │   │   ├── feedback/
-│   │   │   └── navbar/
-│   │   ├── services/
-│   │   │   ├── auth.service.ts
-│   │   │   ├── recipe.service.ts
-│   │   │   ├── mealplan.service.ts
-│   │   │   └── feedback.service.ts
-│   │   ├── interceptors/
-│   │   │   └── auth.interceptor.ts
-│   │   ├── app.module.server.ts (SSR)
-│   │   └── app-routing-module.ts
-│   └── angular.json
-│
-├── db/
-│   ├── docker-compose.yml       (Banco PostgreSQL)
-│   ├── init.sql                 (Schema inicial)
-│   └── reset_db.sh              (Script para reset)
-│
-└── README.md
-```
-
-## 6. Endpoints da API
-
-### Autenticação
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/auth/register` | Registrar novo usuário |
-| POST | `/auth/login` | Fazer login e obter JWT |
-
-### Receitas
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/recipes/search?name={termo}` | Buscar receitas na TheMealDB |
-| GET | `/recipes/external/{externalId}` | Detalhar receita externa da TheMealDB |
-| POST | `/recipes` | Criar receita customizada (autenticado) |
-| GET | `/recipes/me` | Listar receitas do usuário autenticado |
-| GET | `/recipes/{recipeId}` | Obter receita do usuário autenticado |
-| PUT | `/recipes/{recipeId}` | Atualizar receita do usuário autenticado |
-| DELETE | `/recipes/{recipeId}` | Excluir receita do usuário autenticado |
-
-### Planos de Refeição
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/meal-plans` | Criar plano de refeição (autenticado) |
-| GET | `/meal-plans` | Listar planos do usuário autenticado |
-| GET | `/meal-plans/{mealPlanId}` | Obter plano específico do usuário |
-| PUT | `/meal-plans/{mealPlanId}` | Atualizar plano de refeição |
-| DELETE | `/meal-plans/{mealPlanId}` | Excluir plano de refeição |
-| DELETE | `/meal-plans/{mealPlanId}/items/{itemId}` | Remover item do plano |
-| GET | `/meal-plans/{mealPlanId}/shopping-list` | Gerar lista de compras do plano |
-
-### Avaliações
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/recipes/{recipeId}/ratings` | Avaliar receita (autenticado) |
-| GET | `/recipes/ratings/me` | Listar avaliações do usuário autenticado |
-
-### Favoritos
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/favorites` | Adicionar favorito |
-| GET | `/favorites/me` | Listar favoritos do usuário |
-| DELETE | `/favorites/{favoriteId}` | Remover favorito |
-
-### Reviews
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/system-reviews` | Submeter feedback do sistema (autenticado) |
-
-### Perfil do Usuário
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| PUT | `/users/me` | Atualizar perfil do usuário autenticado |
-| DELETE | `/users/me` | Excluir conta do usuário autenticado |
-
-## 7. Como Executar
-
-### Pré-requisitos
-- Java 21+
-- Node.js 18+
-- PostgreSQL 13+
-- Docker e Docker Compose
-- Maven Wrapper incluído no projeto (`mvnw`/`mvnw.cmd`)
-
-### Execução com Docker Compose (stack completo)
+## Como executar
 ```bash
 docker compose up --build
 ```
 
-Essa opção sobe automaticamente:
-- PostgreSQL na porta `5432`
-- API Spring Boot na porta `8080`
-- Frontend Angular servido por Nginx na porta `80`
-
-O frontend envia as requisições para `/api`, e o Nginx faz o proxy para a API.
-
-Variáveis opcionais (com valores padrão):
-- `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
-- `APP_JWT_SECRET`, `APP_JWT_EXPIRATION_MS`
-
-Se aparecer erro de conexão recusada no navegador, confirme que os containers foram recriados com `docker compose up --build`.
-Depois, abra o frontend em `http://localhost/` ou `http://localhost/login`.
-
-### Backend (API) sem Docker
+Sem Docker:
 ```bash
-cd api
-./mvnw clean install
-./mvnw spring-boot:run
-# No Windows, use mvnw.cmd
+cd api && .\mvnw.cmd spring-boot:run
+cd receitasapi-ui && npm start
 ```
 
-### Database (PostgreSQL) separadamente
+## Testes
 ```bash
-cd db
-docker compose up -d
-# Execute o script de inicialização se necessário
-# ./reset_db.sh
-```
-
-### Frontend (Angular) sem Docker
-```bash
-cd receitasapi-ui
-npm install
-ng serve --open
-# UI rodando em http://localhost:4200
-```
-
-### Build para Produção (com SSR)
-```bash
-cd receitasapi-ui
-npm run build
-npm run serve:ssr:receitasapi-frontend
-```
-
-## 8. Testes
-
-### Testes unitários back-end
-```bash
-cd api
-./mvnw test
-# No Windows, use .\mvnw.cmd test
-```
-
-### Testes de integração back-end
-```bash
-cd api
-./mvnw verify -P integration-tests
-```
-
-### Testes unitários front-end com cobertura
-```bash
-cd receitasapi-ui
-ng test --watch=false --code-coverage
-```
-
-### Testes E2E
-```bash
-# Suba a API e o front antes de executar
+cd api && .\mvnw.cmd test
+cd api && .\mvnw.cmd verify -P integration-tests
+cd receitasapi-ui && npm test -- --watch=false --code-coverage
 npx playwright test
 ```
 
-## 9. Relatórios
+## Relatórios
 - JaCoCo: `api/target/site/jacoco/index.html`
-- LCOV do Angular: `receitasapi-ui/coverage/`
+- LCOV: `receitasapi-ui/coverage/receitasapi-frontend/lcov.info`
 - SonarQube: `http://localhost:9000`
 
-## 10. SonarQube
-
-O repositório já traz o fluxo automático de Sonar no Docker Compose. O passo a passo detalhado está em [docs/roteiro-sonar.md](docs/roteiro-sonar.md).
-
-1. Subir o stack com o perfil do Sonar.
+## SonarQube
 ```bash
 export SONAR_TOKEN=seu_token_aqui
 docker compose --profile sonar up --build --abort-on-container-exit sonar
 ```
 
-2. Quando o runner terminar, abrir o painel do SonarQube no navegador.
-```bash
-http://localhost:9000
-```
-
-Observações rápidas:
-- O service `sonar` fica em [docker-compose.yml](docker-compose.yml) e roda tudo dentro de container.
-- O backend já entra com JaCoCo antes da análise.
-- O frontend entra como código analisado com cobertura automatizada via `npm run test -- --watch=false --code-coverage`.
-- O scanner usa o token exportado em `SONAR_TOKEN`.
-
-**Análise atual (artefatos gerados)**
-
-- **Backend (JaCoCo)**: Line coverage ~ 74.01% — artefato: [api/target/site/jacoco/jacoco.xml](api/target/site/jacoco/jacoco.xml)
-- **Frontend (Vitest/LCOV)**: artefato: [receitasapi-ui/coverage/receitasapi-frontend/lcov.info](receitasapi-ui/coverage/receitasapi-frontend/lcov.info)
-
-Esses arquivos já existem no repositório após a execução dos testes locais. Para gerar a análise completa do SonarQube (dashboard, issues e relatório consolidado), rode o runner Docker abaixo — ele executa os testes, coleta as coberturas e envia os resultados ao Sonar:
-
-```bash
-docker compose --profile sonar up --build --abort-on-container-exit sonar
-```
-
-Ao final, abra `http://localhost:9000` e verifique o projeto com chave `receitasapi`.
-
-## 11. Modelos de Dados Principais
-
-### User
-- `id` (Long)
-- `username` (String, unique)
-- `email` (String, unique)
-- `password` (String, encrypted)
-- `role` (Role enum: USER, ADMIN)
-- `createdAt` (Timestamp)
-
-### Recipe
-- `id` (Long)
-- `title` (String)
-- `description` (Text)
-- `ingredients` (JSON/Text)
-- `instructions` (Text)
-- `userId` (FK → User)
-- `createdAt` (Timestamp)
-
-### MealPlan
-- `id` (Long)
-- `name` (String)
-- `weekNumber` (Integer)
-- `userId` (FK → User)
-- `mealItems` (OneToMany → MealItem)
-- `createdAt` (Timestamp)
-
-### MealItem
-- `id` (Long)
-- `dayOfWeek` (Enum: MONDAY, TUESDAY, ...)
-- `mealType` (Enum: BREAKFAST, LUNCH, DINNER)
-- `recipeId` (FK → Recipe)
-- `mealPlanId` (FK → MealPlan)
-
-### SystemReview
-- `id` (Long)
-- `rating` (Integer)
-- `comment` (Text)
-- `userId` (FK → User)
-- `createdAt` (Timestamp)
-
-### RecipeRating
-- `id` (Long)
-- `rating` (Integer)
-- `recipeId` (FK → Recipe)
-- `userId` (FK → User)
-- `createdAt` (Timestamp)
+## Casos de uso
+- UC01 registrar usuário
+- UC02 login
+- UC03 logout
+- UC04 buscar receita externa
+- UC05 criar receita
+- UC06 editar receita
+- UC07 excluir receita
+- UC08 criar plano semanal
+- UC09 adicionar receita ao plano
+- UC10 editar plano
+- UC11 excluir plano
+- UC12 submeter review
+- UC13 editar review
+- UC14 excluir review
+- UC15 avaliar receita
