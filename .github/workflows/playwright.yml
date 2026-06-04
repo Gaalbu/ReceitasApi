@@ -28,7 +28,7 @@ jobs:
             fi
             sleep 2
           done
-          docker-compose logs api || true
+          docker compose logs api || true
           exit 1
 
       - name: Wait for frontend (80)
@@ -39,7 +39,7 @@ jobs:
             fi
             sleep 2
           done
-          docker-compose logs frontend || true
+          docker compose logs frontend || true
           exit 1
 
       - name: Install Playwright and browsers
