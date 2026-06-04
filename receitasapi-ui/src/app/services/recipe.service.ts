@@ -74,8 +74,16 @@ export class RecipeService {
     return this.http.put<any>(this.endpoint(`/recipes/${recipeId}`), payload, { headers });
   }
 
+  updateRecipe(recipeId: number, payload: any): Observable<any> {
+    return this.updateMyRecipe(recipeId, payload);
+  }
+
   deleteMyRecipe(recipeId: number): Observable<void> {
     return this.http.delete<void>(this.endpoint(`/recipes/${recipeId}`));
+  }
+
+  deleteRecipe(recipeId: number): Observable<void> {
+    return this.deleteMyRecipe(recipeId);
   }
 
   private normalizeRecipeOption(recipe: any, source: RecipeOption['source']): RecipeOption | null {

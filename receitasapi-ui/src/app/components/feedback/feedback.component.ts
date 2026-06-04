@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { resolveApiBase } from '../../services/api-base';
 import { timeout } from 'rxjs';
+import { FeedbackService } from '../../services/feedback.service';
+import { AuthService } from '../../services/auth.service';
 
 type MyRecipeReview = {
   id: number;
@@ -25,13 +27,18 @@ export class FeedbackComponent implements OnInit {
 
   reviewForm!: FormGroup;
   myReviews: MyRecipeReview[] = [];
+  systemReviews: any[] = [];
   loadingReviews = false;
+  loadingSystemReviews = false;
+  editingSystemReviewId: number | null = null;
   private readonly localReviewsKey = 'receitasapi.recipe-reviews';
   private loadingFallbackTimer?: number;
 
   message = '';
+  systemMessage = '';
+  systemError = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private feedbackService: FeedbackService, private authService: AuthService) {
     this.reviewForm = this.fb.group({ rating: [5, [Validators.min(1), Validators.max(5)]], comment: [''] });
   }
 
@@ -42,7 +49,7 @@ export class FeedbackComponent implements OnInit {
     }
 
     if (!this.recipeId) {
-      this.loadMyRecipeReviews();
+      this.loadSystemReviews();
     }
   }
 
@@ -99,6 +106,20 @@ export class FeedbackComponent implements OnInit {
     });
   }
 
+  loadSystemReviews(): void {
+    this.loadingSystemReviews = true;
+    this.feedbackService.getReviews().subscribe({
+      next: (reviews) => {
+        this.systemReviews = Array.isArray(reviews) ? reviews : [];
+        this.loadingSystemReviews = false;
+      },
+      error: () => {
+        this.systemError = 'Nao foi possivel carregar os reviews.';
+        this.loadingSystemReviews = false;
+      }
+    });
+  }
+
   private clearLoadingFallback() {
     if (this.loadingFallbackTimer !== undefined && typeof window !== 'undefined') {
       window.clearTimeout(this.loadingFallbackTimer);
@@ -135,6 +156,72 @@ export class FeedbackComponent implements OnInit {
         };
         this.myReviews = this.upsertReview(entry, this.myReviews);
         this.message = 'Não foi possível enviar ao servidor — review salva localmente.';
+      }
+    });
+  }
+
+  submitSystemReview(): void {
+    if (this.reviewForm.invalid) {
+      this.systemError = 'Preencha nota e comentario.';
+      return;
+    }
+
+    const payload = { rating: this.reviewForm.value.rating, comment: this.reviewForm.value.comment };
+    const request$ = this.editingSystemReviewId
+      ? this.feedbackService.updateReview(this.editingSystemReviewId, payload)
+      : this.feedbackService.createReview(payload);
+
+    request$.subscribe({
+      next: (savedReview) => {
+        if (this.editingSystemReviewId) {
+          this.systemReviews = this.systemReviews.map((review) => review.id === this.editingSystemReviewId ? savedReview : review);
+          this.systemMessage = 'Review atualizado com sucesso.';
+        } else {
+          this.systemReviews = [savedReview, ...this.systemReviews];
+          this.systemMessage = 'Review enviado com sucesso.';
+        }
+
+        this.reviewForm.reset({ rating: 5, comment: '' });
+        this.editingSystemReviewId = null;
+        this.systemError = '';
+      },
+      error: () => {
+        this.systemError = 'Nao foi possivel salvar o review.';
+      }
+    });
+  }
+
+  isOwnSystemReview(review: any): boolean {
+    return review?.user?.username && review.user.username === this.authService.getUsername();
+  }
+
+  editSystemReview(review: any): void {
+    this.editingSystemReviewId = review.id;
+    this.systemMessage = '';
+    this.systemError = '';
+    this.reviewForm.setValue({ rating: review.rating ?? 5, comment: review.comment ?? '' });
+  }
+
+  cancelSystemEdit(): void {
+    this.editingSystemReviewId = null;
+    this.reviewForm.reset({ rating: 5, comment: '' });
+  }
+
+  deleteSystemReview(review: any): void {
+    if (!globalThis.confirm('Excluir este review?')) {
+      return;
+    }
+
+    this.feedbackService.deleteReview(review.id).subscribe({
+      next: () => {
+        this.systemReviews = this.systemReviews.filter((item) => item.id !== review.id);
+        if (this.editingSystemReviewId === review.id) {
+          this.cancelSystemEdit();
+        }
+        this.systemMessage = 'Review removido com sucesso.';
+      },
+      error: () => {
+        this.systemError = 'Nao foi possivel excluir o review.';
       }
     });
   }

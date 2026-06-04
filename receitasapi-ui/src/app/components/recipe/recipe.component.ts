@@ -13,7 +13,14 @@ import { FeedbackComponent } from '../feedback/feedback.component';
 })
 export class RecipeComponent implements OnInit {
   searchForm!: FormGroup;
+  recipeForm!: FormGroup;
   results: any[] = [];
+  myRecipes: any[] = [];
+  loadingMyRecipes = false;
+  savingRecipe = false;
+  recipeMessage = '';
+  recipeError = '';
+  editingRecipeId: number | null = null;
   selectedRecipeId: number | null = null;
   selectedRecipeName = '';
 
@@ -21,6 +28,27 @@ export class RecipeComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({ q: ['', Validators.required] });
+    this.recipeForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      ingredients: ['', [Validators.required, Validators.maxLength(500)]],
+      instructions: ['', [Validators.required, Validators.maxLength(4000)]],
+      prep_time: [15, [Validators.required, Validators.min(1), Validators.max(9999)]]
+    });
+    this.loadMyRecipes();
+  }
+
+  loadMyRecipes(): void {
+    this.loadingMyRecipes = true;
+    this.recipeService.listMyRecipes().subscribe({
+      next: (recipes) => {
+        this.myRecipes = recipes || [];
+        this.loadingMyRecipes = false;
+      },
+      error: () => {
+        this.recipeError = 'Nao foi possivel carregar suas receitas.';
+        this.loadingMyRecipes = false;
+      }
+    });
   }
 
   search() {
@@ -51,6 +79,84 @@ export class RecipeComponent implements OnInit {
     });
   }
 
+  submitRecipe(): void {
+    if (this.recipeForm.invalid) {
+      this.recipeError = 'Preencha os campos obrigatorios da receita.';
+      return;
+    }
+
+    const payload = {
+      name: this.recipeForm.value.title,
+      description: this.recipeForm.value.ingredients,
+      instructions: this.recipeForm.value.instructions,
+      prep_time: Number(this.recipeForm.value.prep_time || 0)
+    };
+
+    this.savingRecipe = true;
+    const request$ = this.editingRecipeId
+      ? this.recipeService.updateRecipe(this.editingRecipeId, payload)
+      : this.recipeService.createMyRecipe(payload);
+
+    request$.subscribe({
+      next: (savedRecipe) => {
+        if (this.editingRecipeId) {
+          this.myRecipes = this.myRecipes.map((recipe) => recipe.id === this.editingRecipeId ? savedRecipe : recipe);
+          this.recipeMessage = 'Receita atualizada com sucesso.';
+        } else {
+          this.myRecipes = [savedRecipe, ...this.myRecipes];
+          this.recipeMessage = 'Receita criada com sucesso.';
+        }
+
+        this.recipeForm.reset({ title: '', ingredients: '', instructions: '', prep_time: 15 });
+        this.editingRecipeId = null;
+        this.recipeError = '';
+        this.savingRecipe = false;
+      },
+      error: () => {
+        this.recipeError = 'Falha ao salvar a receita.';
+        this.savingRecipe = false;
+      }
+    });
+  }
+
+  startEdit(recipe: any): void {
+    this.editingRecipeId = recipe.id;
+    this.recipeMessage = '';
+    this.recipeError = '';
+    this.recipeForm.setValue({
+      title: recipe.name || '',
+      ingredients: recipe.description || '',
+      instructions: recipe.instructions || '',
+      prep_time: recipe.prepTime ?? 15
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingRecipeId = null;
+    this.recipeForm.reset({ title: '', ingredients: '', instructions: '', prep_time: 15 });
+    this.recipeError = '';
+    this.recipeMessage = '';
+  }
+
+  deleteOwnRecipe(recipe: any): void {
+    if (!globalThis.confirm(`Excluir a receita "${recipe.name}"?`)) {
+      return;
+    }
+
+    this.recipeService.deleteRecipe(recipe.id).subscribe({
+      next: () => {
+        this.myRecipes = this.myRecipes.filter((item) => item.id !== recipe.id);
+        if (this.editingRecipeId === recipe.id) {
+          this.cancelEdit();
+        }
+        this.recipeMessage = 'Receita removida com sucesso.';
+      },
+      error: () => {
+        this.recipeError = 'Falha ao remover a receita.';
+      }
+    });
+  }
+
   trackByMeal(index: number, item: any) {
     return item?.idMeal || item?.id || item?.external_api_id || index;
   }
@@ -69,5 +175,9 @@ export class RecipeComponent implements OnInit {
   clearRatingSelection() {
     this.selectedRecipeId = null;
     this.selectedRecipeName = '';
+  }
+
+  trackByRecipeId(_: number, recipe: any): number {
+    return recipe?.id;
   }
 }

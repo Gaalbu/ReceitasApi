@@ -8,6 +8,72 @@
   </section>
 
   <div *ngIf="message" class="alert alert-info">{{ message }}</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <section class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="mb-1">Planos salvos</h4>
+          <p class="text-muted mb-0">Veja, edite ou exclua os planos da sua conta.</p>
+        </div>
+        <span class="badge text-bg-dark">{{ mealPlans.length }}</span>
+      </div>
+
+      @if (editingMealPlanId) {
+        <form class="border rounded-3 p-3 mb-3 bg-light" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label">Nome</label>
+              <input class="form-control" formControlName="plan_name" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Semana</label>
+              <input type="number" min="1" class="form-control" formControlName="week_number" />
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-primary" type="submit">Salvar</button>
+            <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()">Cancelar</button>
+          </div>
+        </form>
+      }
+
+      @if (loadingMealPlans) {
+        <p class="text-muted mb-0">Carregando planos...</p>
+      } @else if (mealPlans.length === 0) {
+        <p class="text-muted mb-0">Nenhum plano encontrado.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Semana</th>
+                <th>Data inicial</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (plan of mealPlans; track plan.id) {
+                <tr>
+                  <td class="fw-semibold">{{ plan.planName }}</td>
+                  <td>{{ plan.weekNumber ?? '—' }}</td>
+                  <td>{{ plan.startDate || '—' }}</td>
+                  <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                      <button class="btn btn-sm btn-outline-primary" type="button" (click)="startEdit(plan)">Editar</button>
+                      <button class="btn btn-sm btn-outline-danger" type="button" (click)="deletePlan(plan)">Excluir</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </section>
 
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">

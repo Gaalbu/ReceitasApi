@@ -1,5 +1,89 @@
 <div class="container" style="max-width:900px;margin:2rem auto;">
   <h1 class="mb-4">🍳 Buscar Receitas</h1>
+
+  @if (recipeMessage) {
+    <div class="alert alert-success">{{ recipeMessage }}</div>
+  }
+
+  @if (recipeError) {
+    <div class="alert alert-danger">{{ recipeError }}</div>
+  }
+
+  <section class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h4 mb-1">Minhas receitas</h2>
+          <p class="text-muted mb-0">Edite ou exclua apenas as receitas criadas pela sua conta.</p>
+        </div>
+        <span class="badge text-bg-dark">{{ myRecipes.length }}</span>
+      </div>
+
+      @if (editingRecipeId) {
+        <form class="border rounded-3 p-3 mb-3 bg-light" [formGroup]="recipeForm" (ngSubmit)="submitRecipe()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Título</label>
+              <input class="form-control" formControlName="title" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tempo de preparo</label>
+              <input type="number" class="form-control" formControlName="prep_time" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Ingredientes</label>
+              <textarea class="form-control" rows="3" formControlName="ingredients"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Instruções</label>
+              <textarea class="form-control" rows="4" formControlName="instructions"></textarea>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-primary" type="submit" [disabled]="savingRecipe">
+              {{ savingRecipe ? 'Salvando...' : 'Salvar' }}
+            </button>
+            <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()">Cancelar</button>
+          </div>
+        </form>
+      }
+
+      @if (loadingMyRecipes) {
+        <p class="text-muted mb-0">Carregando suas receitas...</p>
+      } @else if (myRecipes.length === 0) {
+        <p class="text-muted mb-0">Nenhuma receita criada ainda.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Tempo</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (recipe of myRecipes; track trackByRecipeId($index, recipe)) {
+                <tr>
+                  <td>
+                    <div class="fw-semibold">{{ recipe.name }}</div>
+                    <div class="text-muted small">{{ recipe.description || 'Sem descrição' }}</div>
+                  </td>
+                  <td>{{ recipe.prepTime ?? '—' }} min</td>
+                  <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                      <button class="btn btn-sm btn-outline-primary" type="button" (click)="startEdit(recipe)">Editar</button>
+                      <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteOwnRecipe(recipe)">Excluir</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </section>
   
   <form (ngSubmit)="search()" [formGroup]="searchForm" class="d-flex gap-2 mb-4">
     <input class="form-control" formControlName="q" placeholder="Digite o nome da receita..." />

@@ -14,29 +14,55 @@
   </div>
 
   <div *ngIf="!recipeId">
-    <h4>Minhas Reviews em Receitas</h4>
-    <p class="text-muted">Aqui aparecem as reviews que voce ja fez em receitas.</p>
+    <h4>Reviews do Sistema</h4>
+    <p class="text-muted">Aqui aparecem todos os reviews enviados pelos usuários.</p>
 
-    <div *ngIf="loadingReviews" class="alert alert-light">Carregando reviews...</div>
+    <form class="border rounded-3 p-3 mb-3" (ngSubmit)="submitSystemReview()" [formGroup]="reviewForm">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Nota</label>
+          <input type="number" class="form-control" formControlName="rating" />
+        </div>
+        <div class="col-md-10">
+          <label class="form-label">Comentario</label>
+          <textarea class="form-control" rows="3" formControlName="comment"></textarea>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-primary" type="submit">{{ editingSystemReviewId ? 'Salvar alteração' : 'Enviar review' }}</button>
+        @if (editingSystemReviewId) {
+          <button class="btn btn-outline-secondary" type="button" (click)="cancelSystemEdit()">Cancelar</button>
+        }
+      </div>
+    </form>
 
-    <div *ngIf="!loadingReviews && myReviews.length === 0" class="alert alert-light">
-      Voce ainda nao fez reviews em receitas.
+    <div *ngIf="loadingSystemReviews" class="alert alert-light">Carregando reviews...</div>
+
+    <div *ngIf="!loadingSystemReviews && systemReviews.length === 0" class="alert alert-light">
+      Nenhum review encontrado.
     </div>
 
-    <div *ngIf="!loadingReviews && myReviews.length > 0" class="table-responsive">
+    <div *ngIf="!loadingSystemReviews && systemReviews.length > 0" class="table-responsive">
       <table class="table table-striped align-middle">
         <thead>
           <tr>
-            <th>Receita</th>
             <th>Nota</th>
             <th>Comentario</th>
+            <th>Autor</th>
+            <th class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let review of myReviews">
-            <td>{{ review.recipeName }} (#{{ review.recipeId }})</td>
+          <tr *ngFor="let review of systemReviews">
             <td>{{ review.rating }}/5</td>
             <td>{{ review.comment || '-' }}</td>
+            <td>{{ review.user?.username || '—' }}</td>
+            <td class="text-end">
+              <div *ngIf="isOwnSystemReview(review)" class="d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-outline-primary" type="button" (click)="editSystemReview(review)">Editar</button>
+                <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteSystemReview(review)">Excluir</button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -44,4 +70,6 @@
   </div>
 
   <div *ngIf="message" class="mt-2 alert alert-info">{{ message }}</div>
+  <div *ngIf="systemMessage" class="mt-2 alert alert-info">{{ systemMessage }}</div>
+  <div *ngIf="systemError" class="mt-2 alert alert-danger">{{ systemError }}</div>
 </div>

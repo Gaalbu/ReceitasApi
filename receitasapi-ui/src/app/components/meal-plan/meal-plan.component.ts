@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MealPlanService } from '../../services/mealplan.service';
+import { MealPlanService, MealPlanPayload } from '../../services/mealplan.service';
 import { CommonModule } from '@angular/common';
 import { RecipeOption, RecipeService } from '../../services/recipe.service';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +30,12 @@ export class MealPlanComponent implements OnInit {
   ] as const;
 
   form!: FormGroup;
+  editForm!: FormGroup;
+  mealPlans: any[] = [];
+  loadingMealPlans = false;
+  editingMealPlanId: number | null = null;
   message = '';
+  error = '';
   recipeSearch = '';
   availableRecipes: RecipeOption[] = [];
   loadingRecipes = false;
@@ -46,9 +51,29 @@ export class MealPlanComponent implements OnInit {
       }
     );
 
+    this.editForm = this.fb.group({
+      plan_name: ['', [Validators.required, Validators.maxLength(100)]],
+      week_number: [1, [Validators.required, Validators.min(1)]]
+    });
+
     this.loadDraft();
     this.loadAvailableRecipes();
+    this.loadMealPlans();
     this.form.valueChanges.subscribe(() => this.saveDraft());
+  }
+
+  loadMealPlans(): void {
+    this.loadingMealPlans = true;
+    this.mealPlanService.getMealPlans().subscribe({
+      next: (plans) => {
+        this.mealPlans = plans || [];
+        this.loadingMealPlans = false;
+      },
+      error: () => {
+        this.error = 'Nao foi possivel carregar os planos.';
+        this.loadingMealPlans = false;
+      }
+    });
   }
 
   loadAvailableRecipes(term = ''): void {
@@ -216,10 +241,68 @@ export class MealPlanComponent implements OnInit {
       next: () => {
         this.message = 'Plano de refeicao criado com sucesso!';
         this.clearDraft();
+        this.loadMealPlans();
       },
       error: (err) => {
         console.error(err);
         this.message = 'Erro ao criar o plano de refeicao. Verifique o console para mais detalhes.';
+      }
+    });
+  }
+
+  startEdit(plan: any): void {
+    this.editingMealPlanId = plan.id;
+    this.message = '';
+    this.error = '';
+    this.editForm.setValue({
+      plan_name: plan.planName || '',
+      week_number: plan.weekNumber ?? 1
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingMealPlanId = null;
+    this.editForm.reset({ plan_name: '', week_number: 1 });
+  }
+
+  saveEdit(): void {
+    if (this.editForm.invalid || !this.editingMealPlanId) {
+      this.error = 'Preencha os dados do plano.';
+      return;
+    }
+
+    const payload: MealPlanPayload = {
+      plan_name: this.editForm.value.plan_name,
+      week_number: Number(this.editForm.value.week_number)
+    };
+
+    this.mealPlanService.updateMealPlan(this.editingMealPlanId, payload).subscribe({
+      next: (updated) => {
+        this.mealPlans = this.mealPlans.map((plan) => plan.id === this.editingMealPlanId ? updated : plan);
+        this.message = 'Plano atualizado com sucesso!';
+        this.cancelEdit();
+      },
+      error: () => {
+        this.error = 'Nao foi possivel atualizar o plano.';
+      }
+    });
+  }
+
+  deletePlan(plan: any): void {
+    if (!globalThis.confirm(`Excluir o plano "${plan.planName}"?`)) {
+      return;
+    }
+
+    this.mealPlanService.deleteMealPlan(plan.id).subscribe({
+      next: () => {
+        this.mealPlans = this.mealPlans.filter((item) => item.id !== plan.id);
+        if (this.editingMealPlanId === plan.id) {
+          this.cancelEdit();
+        }
+        this.message = 'Plano excluido com sucesso.';
+      },
+      error: () => {
+        this.error = 'Nao foi possivel excluir o plano.';
       }
     });
   }

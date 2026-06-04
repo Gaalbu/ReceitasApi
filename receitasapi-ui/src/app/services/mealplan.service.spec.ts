@@ -43,6 +43,39 @@ describe('MealPlanService', () => {
     req.flush(mockResponse);
   });
 
+  it('should get meal plans with GET request', () => {
+    service.getMealPlans().subscribe(result => {
+      expect(result).toEqual([{ id: 1 }]);
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/meal-plans`);
+    expect(req.request.method).toBe('GET');
+    req.flush([{ id: 1 }]);
+  });
+
+  it('should update a meal plan with PUT request', () => {
+    const payload = { plan_name: 'Plan', week_number: 2 };
+
+    service.updateMealPlan(3, payload).subscribe(result => {
+      expect(result).toEqual({ id: 3, ...payload });
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/meal-plans/3`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(payload);
+    req.flush({ id: 3, ...payload });
+  });
+
+  it('should delete a meal plan with DELETE request', () => {
+    service.deleteMealPlan(3).subscribe(result => {
+      expect(result).toBeUndefined();
+    });
+
+    const req = httpMock.expectOne(`${apiBase}/meal-plans/3`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
   it('should handle error on create meal plan', () => {
     const payload = { name: 'Weekly Plan' };
     const errorMessage = 'Failed to create meal plan';
