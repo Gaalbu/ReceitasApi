@@ -50,21 +50,46 @@ E2E oficial: Playwright em `receitasapi-ui/tests`.
 
 ## Relatórios
 - JaCoCo: `api/target/site/jacoco/index.html`
-- LCOV: `receitasapi-ui/coverage/receitasapi-frontend/lcov.info`
+- LCOV: `receitasapi-ui/coverage/lcov.info`
 - SonarQube: `http://localhost:9000`
 
 ## SonarQube
-Primeira execução no Windows/PowerShell:
+Fluxo recomendado para apresentação no Windows/PowerShell:
 
 ```powershell
-copy .env.example .env
-notepad .env
+npm run sonar:setup
 npm run sonar:all
 ```
 
-No `.env`, preencha `SONAR_TOKEN` com um token válido do SonarQube local. Se preferir usar usuário e senha, deixe `SONAR_TOKEN` vazio e preencha `SONAR_LOGIN` e `SONAR_PASSWORD`.
+O comando `npm run sonar:setup` sobe o SonarQube, configura o login local, gera o token do scanner e grava o `.env` automaticamente. O comando `npm run sonar:all` acompanha os logs ate a analise terminar e abre o dashboard somente no final.
 
-Depois que o `.env` estiver criado, nas próximas execuções basta rodar:
+Login do SonarQube local:
+
+```text
+URL: http://localhost:9000
+Login: admin
+Senha: ReceitasApi@123
+```
+
+Se o login não funcionar porque o volume local já tinha outra senha, resetar e preparar de novo:
+
+```powershell
+npm run sonar:setup:reset
+npm run sonar:all
+```
+
+O comando `npm run sonar:setup:reset` apaga os volumes do SonarQube local, recria o admin com a senha acima e gera um novo token.
+
+O runner usa autenticação por token e falha antes do scanner se `SONAR_TOKEN` não estiver definido.
+
+Se usar variável de ambiente em vez de `.env`, rode sempre no mesmo terminal:
+
+```powershell
+$env:SONAR_TOKEN='SEU_TOKEN_DO_SONAR'
+npm run sonar:all
+```
+
+Depois que o `.env` estiver criado e preenchido, nas próximas execuções basta rodar:
 
 ```powershell
 npm run sonar:all

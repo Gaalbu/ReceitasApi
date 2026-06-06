@@ -94,8 +94,6 @@ services:
       - sonar
     environment:
       SONAR_TOKEN: ${SONAR_TOKEN:-}
-      SONAR_LOGIN: ${SONAR_LOGIN:-admin}
-      SONAR_PASSWORD: ${SONAR_PASSWORD:-admin}
     depends_on:
       sonar-db:
         condition: service_started
@@ -107,12 +105,8 @@ services:
       cd /workspace/receitasapi-ui && npm ci && npm run test:coverage &&
       NODE_PATH=/workspace/receitasapi-ui/node_modules node /workspace/sonar/generate-lcov.js &&
       cd /workspace &&
-      if [ -n \"$${SONAR_TOKEN}\" ]; then
-        AUTH_ARGS=\"-Dsonar.token=$${SONAR_TOKEN}\";
-      else
-        AUTH_ARGS=\"-Dsonar.login=$${SONAR_LOGIN:-admin} -Dsonar.password=$${SONAR_PASSWORD:-admin}\";
-      fi &&
-      sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.host.url=http://sonarqube:9000 $$AUTH_ARGS"
+      : \"$${SONAR_TOKEN:?Defina SONAR_TOKEN com um token do SonarQube antes de rodar o runner.}\" &&
+      sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=$${SONAR_TOKEN} -Dsonar.login=$${SONAR_TOKEN}"
     restart: "no"
 
 volumes:

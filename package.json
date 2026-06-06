@@ -5,10 +5,12 @@
     "e2e": "npm --prefix receitasapi-ui run test:playwright",
     "test:playwright": "npm --prefix receitasapi-ui run test:playwright",
     "flow:mealplan": "npm --prefix receitasapi-ui run test:playwright -- --config playwright.config.ts tests/meal-plan.spec.ts",
-    "sonar": "docker compose --profile sonar up --build --abort-on-container-exit sonar",
+    "sonar:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sonar-setup.ps1",
+    "sonar:setup:reset": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sonar-setup.ps1 -Reset",
+    "sonar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sonar-run.ps1",
     "sonar:down": "docker compose --profile sonar down -v",
     "sonar:open": "powershell -NoProfile -Command \"Start-Process 'http://localhost:9000'\"",
-    "sonar:all": "npm run sonar && npm run sonar:open"
+    "sonar:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sonar-run.ps1 -OpenDashboard"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
