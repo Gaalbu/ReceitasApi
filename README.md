@@ -10,21 +10,39 @@ Aplicação web de gestão gastronômica com backend Spring Boot, frontend Angul
 - Análise estática preparada via SonarQube no `docker-compose`.
 
 ## Como executar
-```bash
+No Windows/PowerShell, rode na raiz do projeto:
+
+```powershell
 docker compose up --build
 ```
 
 Sem Docker:
-```bash
-cd api && .\mvnw.cmd spring-boot:run
-cd receitasapi-ui && npm start
+```powershell
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd api; .\mvnw.cmd spring-boot:run'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd receitasapi-ui; npm start'
 ```
 
 ## Testes
-```bash
-cd api && .\mvnw.cmd test
-cd api && .\mvnw.cmd verify -P integration-tests
-cd receitasapi-ui && npm test -- --watch=false --code-coverage
+Backend:
+
+```powershell
+cd api
+.\mvnw.cmd test
+.\mvnw.cmd verify -P integration-tests
+cd ..
+```
+
+Frontend com cobertura:
+
+```powershell
+cd receitasapi-ui
+npm test -- --watch=false --code-coverage
+cd ..
+```
+
+E2E:
+
+```powershell
 npm run test:playwright
 ```
 
@@ -36,8 +54,19 @@ E2E oficial: Playwright em `receitasapi-ui/tests`.
 - SonarQube: `http://localhost:9000`
 
 ## SonarQube
-```bash
-export SONAR_TOKEN=seu_token_aqui
+Primeira execução no Windows/PowerShell:
+
+```powershell
+copy .env.example .env
+notepad .env
+npm run sonar:all
+```
+
+No `.env`, preencha `SONAR_TOKEN` com um token válido do SonarQube local. Se preferir usar usuário e senha, deixe `SONAR_TOKEN` vazio e preencha `SONAR_LOGIN` e `SONAR_PASSWORD`.
+
+Depois que o `.env` estiver criado, nas próximas execuções basta rodar:
+
+```powershell
 npm run sonar:all
 ```
 

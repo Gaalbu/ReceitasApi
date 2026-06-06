@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const coverageFile = '/workspace/receitasapi-ui/coverage/receitasapi-frontend/coverage-final.json';
+const lcovSourceFile = '/workspace/receitasapi-ui/coverage/receitasapi-frontend/lcov.info';
 const coverageDir = '/workspace/receitasapi-ui/coverage';
 const workspaceRoot = '/workspace';
 
@@ -66,13 +67,20 @@ function buildFileReport(filePath, coverageEntry) {
   return lines;
 }
 
-const rawCoverage = fs.readFileSync(coverageFile, 'utf8');
-const coverageMap = JSON.parse(rawCoverage);
-const lcovLines = [];
+fs.mkdirSync(coverageDir, { recursive: true });
 
-for (const [filePath, coverageEntry] of Object.entries(coverageMap)) {
-  lcovLines.push(...buildFileReport(filePath, coverageEntry));
+if (fs.existsSync(lcovSourceFile)) {
+  fs.copyFileSync(lcovSourceFile, path.join(coverageDir, 'lcov.info'));
+  console.log(`LCOV copied to ${path.join(coverageDir, 'lcov.info')}`);
+} else {
+  const rawCoverage = fs.readFileSync(coverageFile, 'utf8');
+  const coverageMap = JSON.parse(rawCoverage);
+  const lcovLines = [];
+
+  for (const [filePath, coverageEntry] of Object.entries(coverageMap)) {
+    lcovLines.push(...buildFileReport(filePath, coverageEntry));
+  }
+
+  fs.writeFileSync(path.join(coverageDir, 'lcov.info'), `${lcovLines.join('\n')}\n`);
+  console.log(`LCOV written to ${path.join(coverageDir, 'lcov.info')}`);
 }
-
-fs.writeFileSync(path.join(coverageDir, 'lcov.info'), `${lcovLines.join('\n')}\n`);
-console.log(`LCOV written to ${path.join(coverageDir, 'lcov.info')}`);

@@ -94,6 +94,8 @@ services:
       - sonar
     environment:
       SONAR_TOKEN: ${SONAR_TOKEN:-}
+      SONAR_LOGIN: ${SONAR_LOGIN:-admin}
+      SONAR_PASSWORD: ${SONAR_PASSWORD:-admin}
     depends_on:
       sonar-db:
         condition: service_started
@@ -101,9 +103,16 @@ services:
         condition: service_started
     command: >
       sh -c "until curl -fsS http://sonarqube:9000/api/system/status | grep -q UP; do echo 'Aguardando SonarQube...'; sleep 5; done &&
-      cd /workspace/api && mvn test &&
-      cd /workspace/receitasapi-ui && npm run test -- --watch=false --code-coverage &&
-      cd /workspace && sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=$${SONAR_TOKEN}"
+      cd /workspace/api && mvn test && cd /workspace &&
+      cd /workspace/receitasapi-ui && npm ci && npm run test:coverage &&
+      NODE_PATH=/workspace/receitasapi-ui/node_modules node /workspace/sonar/generate-lcov.js &&
+      cd /workspace &&
+      if [ -n \"$${SONAR_TOKEN}\" ]; then
+        AUTH_ARGS=\"-Dsonar.token=$${SONAR_TOKEN}\";
+      else
+        AUTH_ARGS=\"-Dsonar.login=$${SONAR_LOGIN:-admin} -Dsonar.password=$${SONAR_PASSWORD:-admin}\";
+      fi &&
+      sonar-scanner -Dproject.settings=sonar-project.properties -Dsonar.host.url=http://sonarqube:9000 $$AUTH_ARGS"
     restart: "no"
 
 volumes:
