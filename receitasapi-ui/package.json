@@ -12,12 +12,9 @@
     "sonar:open": "npm --prefix .. run sonar:open",
     "sonar:all": "npm --prefix .. run sonar:all",
     "serve:ssr:receitasapi-frontend": "node dist/receitasapi-frontend/server/server.mjs",
-    "e2e": "cypress open",
-    "e2e:run": "cypress run --config baseUrl=http://localhost:4200",
     "playwright:install": "npx playwright install --with-deps",
     "test:playwright": "npx playwright test",
-    "test:coverage": "ng test --coverage --watch=false",
-    "e2e:docker": "cross-env CYPRESS_BASE_URL=http://localhost CYPRESS_API_URL=http://localhost/api cypress run"
+    "test:coverage": "ng test --coverage --watch=false"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -44,8 +41,6 @@
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "@vitest/coverage-v8": "^4.1.7",
-    "cross-env": "^10.1.0",
-    "cypress": "^12.17.4",
     "jsdom": "^28.0.0",
     "playwright": "^1.60.0",
     "postcss": "^8.5.3",

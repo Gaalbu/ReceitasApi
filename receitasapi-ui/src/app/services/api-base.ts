@@ -5,7 +5,7 @@ export function resolveApiBase(): string {
         && (process.env['NODE_ENV'] === 'test' || process.env['VITEST'] === 'true');
 
       if (!isTestEnv) {
-        return 'http://localhost:8080';
+        return window.location.port === '4200' ? 'http://localhost:8080' : '/api';
       }
 
       return '/api';

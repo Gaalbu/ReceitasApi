@@ -25,8 +25,10 @@ cd receitasapi-ui && npm start
 cd api && .\mvnw.cmd test
 cd api && .\mvnw.cmd verify -P integration-tests
 cd receitasapi-ui && npm test -- --watch=false --code-coverage
-npx playwright test
+npm run test:playwright
 ```
+
+E2E oficial: Playwright em `receitasapi-ui/tests`.
 
 ## Relatórios
 - JaCoCo: `api/target/site/jacoco/index.html`

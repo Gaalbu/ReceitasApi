@@ -9,8 +9,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.auth.getToken();
-    // Only attach Authorization header when token looks like a JWT (contains two dots)
-    if (token && typeof token === 'string' && (token.match(/\./g) || []).length === 2) {
+    if (token && typeof token === 'string') {
       const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
       return next.handle(cloned);
     }
