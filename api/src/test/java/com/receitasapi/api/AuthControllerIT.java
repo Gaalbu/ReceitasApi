@@ -11,13 +11,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.receitasapi.api.repository.UserRepository;
+import com.receitasapi.api.repository.RecipeRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class AuthControllerIT {
 
     @Autowired
@@ -26,8 +29,12 @@ class AuthControllerIT {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RecipeRepository recipeRepository;
+
     @BeforeEach
     void clean() {
+        recipeRepository.deleteAll();
         userRepository.deleteAll();
     }
 
