@@ -13,7 +13,7 @@
     "sonar:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sonar-run.ps1 -OpenDashboard"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.62.1",
     "playwright": "^1.60.0"
   }
 }
