@@ -44,7 +44,6 @@ export class UsersService {
     }
     return this.http.delete<void>(this.endpoint('/users/me')).pipe(
       catchError(() => {
-        // remove local demo account
         const local = this.local.get<any[]>('users') || [];
         // assume current user is first one in local for demo
         local.shift();

@@ -14,7 +14,6 @@ export class UsersComponent implements OnInit {
   users: any[] = [];
   error: string | null = null;
 
-  // create / edit form
   formName = '';
   formEmail = '';
   editingId: number | null = null;

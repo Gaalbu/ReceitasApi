@@ -37,8 +37,7 @@ export class LoginComponent {
     this.error = '';
     
     this.auth.login(this.form.value).subscribe({
-      next: (res) => {
-        console.log('✓ Login bem-sucedido:', res);
+      next: (_res) => {
         this.loading = false;
         this.router.navigateByUrl(this.returnUrl);
       },

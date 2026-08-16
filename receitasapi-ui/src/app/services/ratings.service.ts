@@ -25,6 +25,13 @@ export class RatingsService {
     );
   }
 
+  updateRatingLocally(rating: any): void {
+    const stored = (this.local.get<any[]>('ratings') || []).map((item) =>
+      item.id === rating.id ? rating : item
+    );
+    this.local.set('ratings', stored);
+  }
+
   addRating(recipeId: number, payload: any) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     if (this.local.isDemoMode()) {

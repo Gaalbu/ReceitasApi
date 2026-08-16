@@ -140,9 +140,7 @@ export class FavoritesComponent implements OnInit {
   startEdit(f: any): void { this.editing = { ...f }; }
   saveEdit(): void {
     // no backend update endpoint; update local store directly
-    const local = this.favoritesService as any;
-    const stored = (local.local.get('favorites') || []).map((x: any) => x.id === this.editing.id ? this.editing : x);
-    local.local.set('favorites', stored);
+    this.favoritesService.updateFavoriteLocally(this.editing);
     this.loadFavorites();
     this.editing = null;
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from "rxjs/operators";
 import { resolveApiBase } from './api-base';
 import { LocalStoreService } from './local-store.service';
 
@@ -43,6 +43,13 @@ export class FavoritesService {
         return of(entry);
       })
     );
+  }
+
+  updateFavoriteLocally(favorite: any): void {
+    const stored = (this.local.get<any[]>('favorites') || []).map((item) =>
+      item.id === favorite.id ? favorite : item
+    );
+    this.local.set('favorites', stored);
   }
 
   deleteFavorite(id: number) {

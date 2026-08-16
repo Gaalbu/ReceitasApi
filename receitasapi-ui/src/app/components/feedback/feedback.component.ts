@@ -1,8 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { OnInit } from '@angular/core';
 import { resolveApiBase } from '../../services/api-base';
 import { timeout } from 'rxjs';
 import { FeedbackService } from '../../services/feedback.service';
@@ -132,32 +131,27 @@ export class FeedbackComponent implements OnInit {
     const payload = { rating: this.reviewForm.value.rating, comment: this.reviewForm.value.comment };
     this.http.post(this.endpoint(`/recipes/${this.recipeId}/ratings`), payload).subscribe({
       next: () => {
-        this.saveLocalReview(payload.rating, payload.comment || '');
-        // Update visible list immediately
-        const entry: MyRecipeReview = {
-          id: Date.now(),
-          recipeId: this.recipeId!,
-          recipeName: this.recipeName || `Receita #${this.recipeId}`,
-          rating: payload.rating,
-          comment: payload.comment || ''
-        };
-        this.myReviews = this.upsertReview(entry, this.myReviews);
+        this.recordLocalRating(payload);
         this.message = 'Avaliação enviada';
       },
       error: () => {
         // Persist locally so the user still sees their review even if server rejects
-        this.saveLocalReview(payload.rating, payload.comment || '');
-        const entry: MyRecipeReview = {
-          id: Date.now(),
-          recipeId: this.recipeId!,
-          recipeName: this.recipeName || `Receita #${this.recipeId}`,
-          rating: payload.rating,
-          comment: payload.comment || ''
-        };
-        this.myReviews = this.upsertReview(entry, this.myReviews);
+        this.recordLocalRating(payload);
         this.message = 'Não foi possível enviar ao servidor — review salva localmente.';
       }
     });
+  }
+
+  private recordLocalRating(payload: { rating: number; comment: string }): void {
+    this.saveLocalReview(payload.rating, payload.comment || '');
+    const entry: MyRecipeReview = {
+      id: Date.now(),
+      recipeId: this.recipeId!,
+      recipeName: this.recipeName || `Receita #${this.recipeId}`,
+      rating: payload.rating,
+      comment: payload.comment || ''
+    };
+    this.myReviews = this.upsertReview(entry, this.myReviews);
   }
 
   submitSystemReview(): void {
