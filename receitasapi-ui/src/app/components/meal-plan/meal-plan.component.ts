@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
 import { MealPlanService, MealPlanPayload } from '../../services/mealplan.service';
 import { CommonModule } from '@angular/common';
 import { RecipeOption, RecipeService } from '../../services/recipe.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-meal-plan',

@@ -116,9 +116,7 @@ export class RatingsComponent implements OnInit {
   startEdit(r: any): void { this.editing = { ...r }; }
   saveEdit(): void {
     // no backend update endpoint: update local store
-    const local = (this.ratingsService as any).local;
-    const arr = (local.get('ratings') || []).map((x: any) => x.id === this.editing.id ? this.editing : x);
-    local.set('ratings', arr);
+    this.ratingsService.updateRatingLocally(this.editing);
     this.loadRatings();
     this.editing = null;
   }

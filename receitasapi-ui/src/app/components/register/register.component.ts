@@ -46,7 +46,6 @@ export class RegisterComponent {
     
     this.auth.register(this.form.value).subscribe({
       next: () => {
-        console.log('✓ Cadastro bem-sucedido');
         this.loading = false;
         this.router.navigate(['/login']);
       },

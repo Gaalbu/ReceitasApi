@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { RecipeService } from '../../services/recipe.service';
-import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FeedbackComponent } from '../feedback/feedback.component';
 
@@ -57,24 +56,16 @@ export class RecipeComponent implements OnInit {
       return;
     }
     const term = this.searchForm.value.q;
-    const url = `/api/recipes/search?name=${encodeURIComponent(term)}`;
-    console.log('Buscando por:', term);
-    console.log('URL:', url);
-    
+
     this.recipeService.searchExternal(term).subscribe({
       next: (res: any) => {
-        console.log('✓ Resposta recebida:', res);
         this.results = res?.meals || [];
-        console.log('✓ Results atualizado com', this.results.length, 'itens');
       },
       error: (err: any) => {
         console.error('✗ Erro na busca:', err);
         console.error('Status:', err?.status);
         console.error('Message:', err?.message);
         this.results = [];
-      },
-      complete: () => {
-        console.log('✓ Busca completada');
       }
     });
   }

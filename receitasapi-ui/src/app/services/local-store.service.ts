@@ -30,7 +30,11 @@ export class LocalStoreService {
   }
 
   remove(key: string): void {
-    try { localStorage.removeItem(this.prefix + key); } catch {}
+    try {
+      localStorage.removeItem(this.prefix + key);
+    } catch {
+      // ignore
+    }
   }
 
   generateId(): number {
